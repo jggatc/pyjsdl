@@ -1,0 +1,39 @@
+Pyjsdl Version History
+
+0.10    April 24, 2013
+-initial release
+
+0.11    April 26, 2013
+-updated Sprite.clear to allow callable argument.
+-updated Surface._blit_clear with clipping.
+-updated Surface.blits to directly call drawImage.
+-updated Surface.fill rect argument.
+-updated Draw.arc, Transform.rotate, and Rect with int() division.
+
+0.12    April 29, 2013
+-added mouse events to Canvas.
+-updated Event to process JS mouse events.
+-updated Mouse.get_pressed and Mouse.get_pos for JS mouse events.
+-updated Time.wait to use JS Timeout.
+
+0.13    May 4, 2013
+-added key events to Canvas.
+-updated Event for process JS key events.
+-updated Mouse methods variable.
+
+0.14    May 15, 2013
+-added Font rendering to canvas.
+-updated Event so key event works in IE browser.
+-updated Display.update rect argument for pyjs -O compilation.
+-updated Event key handling for IE browser.
+-updated Sprite Group __contains__ to work with pyjs.
+-updated Surface.blit to take rect argument and return rect.
+-updated Surface.fill color argument.
+-modified pyjs0.8+ git-130513build (pyjs_changes.zip) i. IE9+ compatibility: edited pyjs/src/pyjs/boilerplate/home.nocache.html and pyjs/src/pyjs/browser.py, and added <!DOCTYPE html> to top of main program html in pyjs output. ii. HTML5canvas usage: renamed library/pyjamas/Canvas/HTML5Canvas.ie6.py.
+
+git development (https://github.com/jggatc/pyjsdl)
+-adding Mask using Pyjsarray and Pyjsbitset.
+-added Surface get_at/set_at using Canvas getImageData and putImageData.
+-updated Canvas and Surface to use pyjamas.Canvas.HTML5Canvas.
+-updated Rect.createIntersection.
+
