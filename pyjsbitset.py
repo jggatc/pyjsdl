@@ -52,17 +52,17 @@ class BitSet:
         setBit = []
         for index in xrange(self.__width):
             if self.get(index):
-                setBit.append(index)
+                setBit.append(str(index))
         return "{" + ", ".join(setBit) + "}"
 
     def __getitem__(self, index):
-       """
+        """
         Get bit by index.
         """
         return self.get(index)
 
     def __setitem__(self, index, value):
-       """
+        """
         Set bit by index.
         """
         self.set(index, value)
@@ -86,7 +86,7 @@ class BitSet:
             index += 1
 
     def get(self, index, toIndex=None):
-       """
+        """
         Get bit by index.
         Arguments include index of bit, and optional toIndex that return a slice as a BitSet.
         """
@@ -116,7 +116,7 @@ class BitSet:
                 return None 
 
     def set(self, index, value=1):
-       """
+        """
         Set bit by index.
         Optional argument value is the bit state of 1(True) or 0(False). Default:1
         """
@@ -126,9 +126,11 @@ class BitSet:
             else:
                 return
         if value:
-            self.__data[ int(index/BitSet.__bit) ] |= BitSet.__bitmask[ index%BitSet.__bit ]
+            self.__data[ int(index/BitSet.__bit) ] = self.__data[ int(index/BitSet.__bit) ] | BitSet.__bitmask[ index%BitSet.__bit ]
+#            self.__data[ int(index/BitSet.__bit) ] |= BitSet.__bitmask[ index%BitSet.__bit ]    #pyjs -O: |= not processed
         else:
-            self.__data[ int(index/BitSet.__bit) ] &= ~(BitSet.__bitmask[ index%BitSet.__bit ])
+            self.__data[ int(index/BitSet.__bit) ] = self.__data[ int(index/BitSet.__bit) ] & ~(BitSet.__bitmask[ index%BitSet.__bit ])
+#            self.__data[ int(index/BitSet.__bit) ] &= ~(BitSet.__bitmask[ index%BitSet.__bit ])     #pyjs -O: &= not processed
         return None
 
     def clear(self, index=None, toIndex=None):
@@ -188,67 +190,36 @@ class BitSet:
                 return True
         return False
 
-    def __and__(self, bitset):      #pyjs -S: &= calls __and__ instead of __iand__
+    def andSet(self, bitset):
         """
-        BitSet & BitSet
-        """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] &= bitset.__data[byte]
-        return self
-
-    def __or__(self, bitset):
-        """
-        BitSet | BitSet
+        BitSet and BitSet
         """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
-            self.__data[byte] |= bitset.__data[byte]
-        return self
+            self.__data[byte] = self.__data[byte] & bitset.__data[byte]
+#            self.__data[byte] &= bitset.__data[byte]     #pyjs -O: &= not processed
+#        pyjs -S: &= calls __and__ instead of __iand__, -O: no call to operator methods
+#        return self
 
-    def __xor__(self, bitset):
+    def orSet(self, bitset):
         """
-        BitSet ^ BitSet
+        BitSet or BitSet
         """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
-            self.__data[byte] ^= bitset.__data[byte]
-        return self
+            self.__data[byte] = self.__data[byte] | bitset.__data[byte]
+#            self.__data[byte] |= bitset.__data[byte]    #pyjs -O: |= not processed
+#        return self
 
-    def __not__(self):      #pyjs -S: ~ no call to __not__
+    def xorSet(self, bitset):
         """
-        ~BitSet
-        """
-        for byte in xrange(len(self.__data)):
-            self.__data[byte] = ~self.__data[byte]
-        return self
-
-    def __iand__(self, bitset):
-        """
-        BitSet & BitSet
+        BitSet xor BitSet
         """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
-            self.__data[byte] &= bitset.__data[byte]
-        return self
-
-    def __ior__(self, bitset):
-        """
-        BitSet | BitSet
-        """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] |= bitset.__data[byte]
-        return self
-
-    def __ixor__(self, bitset):
-        """
-        BitSet ^ BitSet
-        """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] ^= bitset.__data[byte]
-        return self
+            self.__data[byte] = self.__data[byte] ^ bitset.__data[byte]
+#            self.__data[byte] ^= bitset.__data[byte]    #pyjs -O: |= not processed
+#        return self
 
     def resize(self, width):
         """
