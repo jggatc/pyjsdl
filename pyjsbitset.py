@@ -13,15 +13,19 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#PyjsBitSet version 1.0
-#Download Site: http://gatc.ca
+#PyjsBitset version 0.5
+#Project Site: http://gatc.ca
 
 import math
 from pyjsarray import PyUint8Array, PyUint16Array, PyUint32Array
-from __pyjamas__ import JS
 
 
 class BitSet:
+
+    """
+    BitSet provides a bitset object to use in a Python-to-JavaScript application. It uses the PyUint8Array implementation of the JavaScript Uint8Array 8-bit typedarray. BitSet16 and BitSet32 stores data in the PyUint16Array (16-bit) and PyUint32Array (32-bit) that implement the Uint16Array and Uint32Array typedarray. The BitSet will dynamically expand to hold the bits required, an optional width argument define number of bits the BitSet instance will initially hold.  
+    """
+
     __bit = 8
     __bitmask = None
     __typedarray = PyUint8Array
@@ -36,9 +40,15 @@ class BitSet:
         self.__data = BitSet.__typedarray( math.ceil(self.__width/(BitSet.__bit*1.0)) )
 
     def __str__(self):
+        """
+        Return string representation of BitSet object.
+        """
         return "%s" % self.__class__
 
     def __repr__(self):
+        """
+        Return string of the indexes of the set bits.
+        """
         setBit = []
         for index in xrange(self.__width):
             if self.get(index):
@@ -46,24 +56,40 @@ class BitSet:
         return "{" + ", ".join(setBit) + "}"
 
     def __getitem__(self, index):
+       """
+        Get bit by index.
+        """
         return self.get(index)
 
     def __setitem__(self, index, value):
+       """
+        Set bit by index.
+        """
         self.set(index, value)
 
     def __len__(self):
+        """
+        Get bit length.
+        """
         for index in xrange(self.__width-1, -1, -1):
             if self.get(index):
                 break
         return index+1
 
     def __iter__(self):
+        """
+        Iterate over bits.
+        """
         index = 0
         while index < self.__width:
             yield self.get(index)
             index += 1
 
     def get(self, index, toIndex=None):
+       """
+        Get bit by index.
+        Arguments include index of bit, and optional toIndex that return a slice as a BitSet.
+        """
         if index > self.__width-1:
             if not toIndex:
                 return False
@@ -90,6 +116,10 @@ class BitSet:
                 return None 
 
     def set(self, index, value=1):
+       """
+        Set bit by index.
+        Optional argument value is the bit state of 1(True) or 0(False). Default:1
+        """
         if index > self.__width-1:
             if value:
                 self.resize(index+1)
@@ -102,6 +132,10 @@ class BitSet:
         return None
 
     def clear(self, index=None, toIndex=None):
+        """
+        Clear the bit. If no argument provided, all bits are cleared.
+        Optional argument index is bit index to clear, and toIndex to clear a range of bits.
+        """
         if index is None:
             for i in xrange(len(self.__data)):
                 self.__data[i] = 0
@@ -117,6 +151,10 @@ class BitSet:
                         self.set(i, 0)
 
     def flip(self, index, toIndex=None):
+        """
+        Flip the state of the bit.
+        Argument index is the bit index to flip, and toIndex to flip a range of bits
+        """
         if toIndex is None:
             self.set(index, not self.get(index))
         else:
@@ -131,6 +169,9 @@ class BitSet:
                     self.set(i, not self.get(i))
 
     def cardinality(self):
+        """
+        Return the count of bit set.
+        """
         count = 0
         for bit in xrange(self.__width):
             if self.get(bit):
@@ -138,53 +179,81 @@ class BitSet:
         return count
 
     def intersects(self, bitset):
+        """
+        Check if set bits in this BitSet are also set in the bitset argument.
+        Return True if bitsets intersect, other return False.
+        """
         for byte in xrange(len(bitset.__data)):
             if bitset.__data[byte] & self.__data[byte]:
                 return True
         return False
 
     def __and__(self, bitset):      #pyjs -S: &= calls __and__ instead of __iand__
+        """
+        BitSet & BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] &= bitset.__data[byte]
         return self
 
     def __or__(self, bitset):
+        """
+        BitSet | BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] |= bitset.__data[byte]
         return self
 
     def __xor__(self, bitset):
+        """
+        BitSet ^ BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] ^= bitset.__data[byte]
         return self
 
     def __not__(self):      #pyjs -S: ~ no call to __not__
+        """
+        ~BitSet
+        """
         for byte in xrange(len(self.__data)):
             self.__data[byte] = ~self.__data[byte]
         return self
 
     def __iand__(self, bitset):
+        """
+        BitSet & BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] &= bitset.__data[byte]
         return self
 
     def __ior__(self, bitset):
+        """
+        BitSet | BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] |= bitset.__data[byte]
         return self
 
     def __ixor__(self, bitset):
+        """
+        BitSet ^ BitSet
+        """
         bytes = min(len(self.__data), len(bitset.__data))
         for byte in xrange(bytes):
             self.__data[byte] ^= bitset.__data[byte]
         return self
 
     def resize(self, width):
+        """
+        Resize the BitSet to width argument.
+        """
         if width > self.__width:
             self.__width = width
             if self.__width > len(self.__data) * BitSet.__bit:
@@ -201,15 +270,25 @@ class BitSet:
                 self.__data = array            
 
     def size(self):
+        """
+        Return bits used by BitSet storage array.
+        """
         return len(self.__data) * BitSet.__bit
 
     def isEmpty(self):
+        """
+        Check whether any bit is set.
+        Return True if none set, other return False.
+        """
         for data in self.__data:
             if data:
                 return False
         return True
 
     def clone(self):
+        """
+        Return a copy of the BitSet.
+        """
         new_bitset = BitSet(1)
         data = BitSet.__typedarray(self.__data)
         new_bitset.__data = data
