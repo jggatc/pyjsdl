@@ -20,7 +20,7 @@ class Timer(object):
     def set_time(self):
         self.time_i = self.get_time()
 
-    def lap_time(self, time_i=None, time_f=None, number=100, print_result=True):    ###
+    def lap_time(self, time_i=None, time_f=None, number=100, print_result=True):
         if time_i is None:
             time_i = self.time_i
         if time_f is None:

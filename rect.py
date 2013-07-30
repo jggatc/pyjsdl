@@ -43,7 +43,7 @@ class Rect(object):
         'h': lambda self,val: self.setSize( self.width, val ),
         'x': lambda self,val: self.setLocation( val, self.y ),
         'y': lambda self,val: self.setLocation( self.x, val )
-          }    ###// > /    #int 0.11
+          }    ###// > /    #int
     _at = {
         'center': lambda self: (self.x+int(self.width/2), self.y+int(self.height/2)),
         'centerx': lambda self: self.x+int(self.width/2),
@@ -63,7 +63,7 @@ class Rect(object):
         'size': lambda self: (self.width, self.height),
         'w': lambda self: self.width,
         'h': lambda self: self.height
-          }    ###// > /    #int 0.11
+          }    ###// > /    #int
 
     def __init__(self, *arg):
         """

@@ -1,8 +1,8 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-import pyjsdl.event    ###0.13
-import locals as Const  ###0.13
-from pyjamas.ui import KeyboardListener     ###0.13
+import pyjsdl.event
+import locals as Const
+from pyjamas.ui import KeyboardListener
 
 __docformat__ = 'restructuredtext'
 
@@ -14,7 +14,7 @@ class Key(object):
     * pyjsdl.key.get_mods
     """
 
-    def __init__(self):    ###0.13
+    def __init__(self):
         """
         Provides methods to access the key function.
         
@@ -27,7 +27,7 @@ class Key(object):
         self.shift = Const.K_SHIFT
         self._nonimplemented_methods()
 
-    def get_mods(self):     ###0.13
+    def get_mods(self):
         """
         Return int modifier keys alt|ctrl|shift.
         """
@@ -39,7 +39,7 @@ class Key(object):
         """
         self.get_focused = lambda *arg: None
         self.get_pressed = lambda *arg: None
-        self.name = lambda *arg: ''     ###0.13
+        self.name = lambda *arg: ''
         self.set_mods = lambda *arg: None
         self.set_repeat = lambda *arg: None
         self.get_repeat = lambda *arg: True

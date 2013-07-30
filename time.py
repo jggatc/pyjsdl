@@ -23,9 +23,9 @@ class Clock(object):
         Return Clock.
         """
         self.time_init = self.time()
-        self.time_diff = [0 for i in range(10)]     ###0.12
+        self.time_diff = [0 for i in range(10)]
         self.pos = 0
-        self.tick = self._tick_init  ###
+        self.tick = self._tick_init
 
     def get_time(self):
         """
@@ -33,8 +33,8 @@ class Clock(object):
         """
         return self.time_diff[self.pos]
 
-    def _tick_init(self, framerate=0):  ###
-        if not env.canvas.time_wait:    ###0.12
+    def _tick_init(self, framerate=0):
+        if not env.canvas.time_wait:
             time = self.time()
         else:
             self.time_init += env.canvas.time_wait
@@ -52,12 +52,12 @@ class Clock(object):
             self.tick = self._tick
         return self.time_diff[self.pos]
 
-    def _tick(self, framerate=0):   ###
+    def _tick(self, framerate=0):
         """
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
         """
-        if not env.canvas.time_wait:    ###0.12
+        if not env.canvas.time_wait:
             time = self.time()
         else:
             self.time_init += env.canvas.time_wait
@@ -88,7 +88,7 @@ class Clock(object):
         """
         return 1000/(sum(self.time_diff)/10)
 
-    def time(self):     ###
+    def time(self):
         """
         **pyjsdl.time.time**
         
@@ -124,7 +124,7 @@ class Time(object):
             pass
         return self.time() - start
 
-    def wait(self, time=0):   ###0.12
+    def wait(self, time=0):
         """
         **pyjsdl.time.wait**
         

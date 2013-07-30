@@ -143,8 +143,8 @@ class Surface(HTML5Canvas):      ###0.15
             sx, sy, sw, sh = area
             self.drawImage(surface.canvas, sx, sy, sw, sh, x, y, sw, sh)    ###pyjs0.8 *.canvas
 #            self.drawImage(surface, sx, sy, sw, sh, x, y, sw, sh)
-            rect = Rect(x,y,sw,sh)     ###0.14
-        return rect     ###0.14     #clipping?
+            rect = Rect(x,y,sw,sh)
+        return rect     #clipping?
 
     def blits(self, surfaces):  ###
         """

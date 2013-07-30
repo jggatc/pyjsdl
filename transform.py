@@ -27,7 +27,7 @@ class Transform(object):
         """
         self.deg_rad = math.pi/180.0  ###180>180.0
 
-    def rotate(self, surface, angle):   ###
+    def rotate(self, surface, angle):
         """
         Return Surface rotated by the given angle.
         """
@@ -46,19 +46,19 @@ class Transform(object):
 #        surf.drawImage(surface, 0, 0)
         return surf
 
-    def rotozoom(self, surface, angle, size):   ###
+    def rotozoom(self, surface, angle, size):
         """
         Return Surface rotated and resized by the given angle and size.
         """
         surf = self.rotate(surface, angle)
         if size != 1.0:
-#            try:   ###exception check  ###
+#            try:   ###exception check
             surf = self.scale(surf, (int(surface.get_width()*size), int(surface.get_height()*size)))
 #            except IllegalArgumentException:    #dim < 1
 #                surf = self.scale(surf, (int(math.ceil(surface.getWidth()*size)), int(math.ceil(surface.getHeight()*size))))
         return surf
 
-    def scale(self, surface, size, dest=None):      ###
+    def scale(self, surface, size, dest=None):
         """
         Return Surface resized by the given size.
         An optional destination surface can be provided.
@@ -78,7 +78,7 @@ class Transform(object):
         """
         return self.scale(surface, size)
 
-    def scale2x(self, surface, dest=None):      ###
+    def scale2x(self, surface, dest=None):
         """
         Return Surface resized to twice its size.
         An optional destination surface can be provided.

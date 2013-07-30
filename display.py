@@ -177,6 +177,10 @@ class Display(object):
         return self.surface
 
     def setup(self, loop, images=None):
+        """
+        Initialize Canvas for script execution.
+        Argument include loop function to run and optional images list to preload.
+        """
         self.canvas.set_loop(loop)
         self.canvas.load_images(images)
 
@@ -213,8 +217,8 @@ class Display(object):
 
     def set_caption(self, caption):
         """
-        Set display caption.
-        Argument: caption for Canvas.
+        Set Display.caption.
+        Argument: caption text.
         """
         self.caption = caption
         return None
@@ -240,7 +244,7 @@ class Display(object):
         self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)   ###pyjs0.8 problem
 #        self.canvas.drawImage(self.canvas.surface, 0, 0)
 
-    def update(self, rect_list=None):   ###0.14
+    def update(self, rect_list=None):
         """
         Repaint display.
         An optional rect_list to specify regions to repaint.

@@ -31,9 +31,12 @@ Pyjsdl Version History
 -updated Surface.fill color argument.
 -modified pyjs0.8+ git-130513build (pyjs_changes.zip) i. IE9+ compatibility: edited pyjs/src/pyjs/boilerplate/home.nocache.html and pyjs/src/pyjs/browser.py, and added <!DOCTYPE html> to top of main program html in pyjs output. ii. HTML5canvas usage: renamed library/pyjamas/Canvas/HTML5Canvas.ie6.py.
 
-git development (https://github.com/jggatc/pyjsdl)
--adding Mask using Pyjsarray and Pyjsbitset.
+0.15    July 30, 2013
+-added Mask using Pyjsarray and Pyjsbitset.
+-added Pyjsarray and Pyjsbitset based on JavaScript TypedArray object.
 -added Surface get_at/set_at using Canvas getImageData and putImageData.
+-updated Surface.subarray.
 -updated Canvas and Surface to use pyjamas.Canvas.HTML5Canvas.
 -updated Rect.createIntersection.
+-updated pyjs_changes.zip - Pyjs git updated for HTML5canvas usage.
 

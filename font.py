@@ -52,7 +52,7 @@ def get_init():
     """
     **pyjsdl.font.get_init**
     
-    Check if font module is intialized.
+    Check if font module is initialized.
     """
     return _initialized
 
@@ -147,11 +147,7 @@ class Font(object):     ###0.14
     def render(self, text, antialias=True, color=(0,0,0), background=None, surface=None):      #optional surface for text rendering
         """
         Render text onto surface.
-        Arguments:
-        text to render (string)
-        antialias of text (bool)
-        color of text (R,G,B)
-        background color (R,G,B)
+        Arguments are text to render, and optional antialias, RGB color of text, RGB color of background, and surface for text rendering.
         """
         if not surface:
             w,h = self.size(text)
@@ -205,7 +201,7 @@ class Font(object):     ###0.14
     def set_underline(self, setting=True):
         """
         Set font underline style.
-        Optional setting, default to True.
+        Optional setting argument, default to True.
         """
         self.underline = setting
 
@@ -218,7 +214,7 @@ class Font(object):     ###0.14
     def set_bold(self, setting=True):
         """
         Set font bold style.
-        Optional setting, default to True.
+        Optional setting argument, default to True.
         """
         self.bold = {True:'bold', False:''}[setting]
         self.fontstyle = self.bold + ' ' + self.italic
@@ -235,7 +231,7 @@ class Font(object):     ###0.14
     def set_italic(self, setting=True):
         """
         Set font italic style.
-        Optional setting, default to True.
+        Optional setting argument, default to True.
         """
         self.italic = {True:'italic', False:''}[setting]
         self.fontstyle = self.bold + ' ' + self.italic

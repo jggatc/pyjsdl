@@ -2,7 +2,7 @@
 
 #from __future__ import division
 import env
-import pyjsdl.event    ###0.13
+import pyjsdl.event
 from pyjamas import DOM
 
 __docformat__ = 'restructuredtext'
@@ -17,7 +17,7 @@ class Mouse(object):
     * pyjsdl.mouse.get_rel
     """
 
-    def __init__(self):  ###0.13
+    def __init__(self):
         """
         Provides methods to access the mouse function.
         
@@ -29,20 +29,20 @@ class Mouse(object):
         self.mouseCursor = pyjsdl.event.mouseCursor
         self._nonimplemented_methods()
 
-    def get_pressed(self):     ###0.13
+    def get_pressed(self):
         """
         Return state of mouse buttons as a tuple of bool for button1,2,3.
         """
         return (self.mousePress[0], self.mousePress[1], self.mousePress[2])
 
-    def get_pos(self):     ###0.13
+    def get_pos(self):
         """
         Return x,y of mouse pointer.
         If the pointer is not in canvas, returns -1,-1
         """
         return (self.mouseMove['x'],  self.mouseMove['y'])
 
-    def get_rel(self):     ###0.13
+    def get_rel(self):
         """
         Return relative x,y change of mouse position since last call.
         """
@@ -55,7 +55,7 @@ class Mouse(object):
                 self.mouseMoveRel['x'], self.mouseMoveRel['y'] = self.mouseMove['x'], self.mouseMove['y']
         return rel
 
-    def set_visible(self, visible):     ###0.13
+    def set_visible(self, visible):
         """
         Set visibility of mouse cursor. Return bool of previous state.
         """
