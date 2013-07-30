@@ -22,7 +22,7 @@ class Surface(HTML5Canvas):      ###0.15
     * Surface.get_rect
     * Surface.copy
     * Surface.subsurface
-    * Surface.subarea
+    * Surface.getSubimage
     * Surface.blit
     * Surface.blits
     * Surface.set_colorkey
@@ -88,38 +88,46 @@ class Surface(HTML5Canvas):      ###0.15
 #        surface.drawImage(self, 0, 0)
         return surface
 
-    def subsurface(self, *rect):
+    def subsurface(self, *rect):    ###0.15
         """
         Return Surface that represents a subsurface.
         The rect argument is the area of the subsurface.
+        Argument can be 't'/'f' for data sync to/from subsurface.
         """
-        surface, rect = self.subarea(*rect)     ###subarea copied, data not shared
+        if rect[0] in ('t', 'f'):
+            if not self._super_surface:
+                return
+            if rect[0] == 't':
+                self.drawImage(self._super_surface.canvas, self._offset[0], self._offset[1], self.width, self.height, 0, 0, self.width, self.height)
+            else:
+                self._super_surface.drawImage(self.canvas, self._offset[0], self._offset[1])
+            return
+        if isinstance(rect[0], Rect):
+            x,y,w,h = rect[0].x, rect[0].y, rect[0].width, rect[0].height
+        else:
+            if not isinstance(rect[0][0], tuple):
+                x,y,w,h = rect[0]
+            else:
+                x,y = rect[0][0]
+                w,h = rect[0][1]
+        surf_rect = self.get_rect()
+        if not surf_rect.contains(x,y) or not surf_rect.contains(x+w,y+h):
+            raise ValueError, 'subsurface outside surface area'
+        surface = self.getSubimage(x, y, w, h)
+        surface._super_surface = self
+        surface._offset = (x,y)
+        surface._colorkey = self._colorkey
         return surface
 
-    def subarea(self, *rect):
+    def getSubimage(self, x, y, width, height):     ###0.15
         """
-        Return Surface and Rect that represents a subsurface.
-        The rect argument is the area of the subsurface.
+        Return subimage of Surface.
+        Arguments include x, y, width, and height of the subimage.
         """
-        try:
-            x,y,w,h = rect[0].x, rect[0].y, rect[0].width, rect[0].height
-        except:
-#        except AttributeError:
-            try:
-                x,y,w,h = rect[0]
-            except:
-#            except ValueError:
-                x,y = rect[0]
-                w,h = rect[1]
-        rect = Rect(x, y, w, h)
-        subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)     #bounding 
-        return subsurf, rect
-
-    def getSubImage(self, x, y, width, height):
-        surf = Surface((width,height))
-        surf.drawImage(self.canvas, x, y, width, height, 0, 0, width, height)    ###pyjs0.8 *.canvas
-#        surf.drawImage(self, x, y, width, height, 0, 0, width, height)
-        return surf
+        surface = Surface((width,height))
+        surface.drawImage(self.canvas, x, y, width, height, 0, 0, width, height)    ###pyjs0.8 *.canvas
+#        surface.drawImage(self, x, y, width, height, 0, 0, width, height)
+        return surface
 
     def blit(self, surface, position, area=None):
         """
