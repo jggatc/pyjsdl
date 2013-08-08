@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#Pyjsdl version 0.15
+#Pyjsdl version 0.16
 #Download Site: http://gatc.ca
 
 from display import Display
@@ -25,7 +25,7 @@ from event import Event
 from key import Key
 from mouse import Mouse
 from transform import Transform
-##from surfarray import Surfarray
+from surfarray import Surfarray     ###0.16
 from time import Time
 import mask     ###0.15
 import font
@@ -37,6 +37,7 @@ display = Display()
 image = Image()
 draw = Draw()
 transform = Transform()
+surfarray = Surfarray()     ###0.16
 event = Event()
 mouse = Mouse()
 key = Key()
@@ -44,6 +45,4 @@ key = Key()
 init = lambda:None
 quit = lambda:None
 error = None
-
-#not implemented: surfarray
 
