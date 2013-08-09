@@ -44,5 +44,7 @@ key = Key()
 
 init = lambda:None
 quit = lambda:None
-error = None
+
+class error(RuntimeError):     ###0.16
+    pass
 

@@ -43,4 +43,5 @@ Pyjsdl Version History
 0.16_git
 -added Surfarray using Pyjsarray.
 -updated Pyjsarray with Ndarray and ImageData objects.
+-updated image.load
 
