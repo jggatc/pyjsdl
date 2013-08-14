@@ -164,7 +164,7 @@ class Surface(HTML5Canvas):      ###0.15
             try:
                 self.drawImage(surface.canvas, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)    ###pyjs0.8 *.canvas
 #                self.drawImage(surface, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)
-            except:     #IndexSizeError (pyjs: unknown exception)
+            except IndexSizeError:      ###0.16
                 rx = surface.get_rect().clip(r)
                 if rx.width and rx.height:
                     self.drawImage(surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    ###pyjs0.8 *.canvas            
@@ -296,4 +296,8 @@ class Surface(HTML5Canvas):      ###0.15
         self.mustlock = lambda *arg: False
         self.get_locked = lambda *arg: False
         self.get_locks = lambda *arg: ()
+
+
+class IndexSizeError(Exception):    ###0.16
+    pass
 

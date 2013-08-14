@@ -44,4 +44,7 @@ Pyjsdl Version History
 -added Surfarray using Pyjsarray.
 -updated Pyjsarray with Ndarray and ImageData objects.
 -updated image.load
+-updated display.update rect processing
+-added display.update_rect method
+-updated display.update/display.update_rect/surface._blit_clear rect clipping
 
