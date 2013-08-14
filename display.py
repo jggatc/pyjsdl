@@ -244,25 +244,34 @@ class Display(object):
         self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)   ###pyjs0.8 problem
 #        self.canvas.drawImage(self.canvas.surface, 0, 0)
 
+    def update_rect(self, rect_list):       ###0.16
+        """
+        Repaint display.
+        Argument rect_list specifies a list of Rect to repaint.
+        """
+        for rect in rect_list:
+            self.canvas.drawImage(self.canvas.surface.canvas, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
+        return None
+
     def update(self, rect_list=None):
         """
         Repaint display.
         An optional rect_list to specify regions to repaint.
         """
+        if not isinstance(rect_list, list):     ###0.16
+            if not rect_list:
+                self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
+#                self.canvas.drawImage(self.canvas.surface, 0, 0) ##pyjs0.8 *.canvas
+                return None
+            else:
+                rect_list = [rect_list]
         for rect in rect_list:
             try:
-                self.canvas.drawImage(self.canvas.surface.canvas, rect[0], rect[1], rect[2], rect[3], rect[0], rect[1], rect[2], rect[3])   ###pyjs -O no attribute checking of Rect obj
-#                self.canvas.drawImage(self.canvas.surface, rect[0], rect[1], rect[2], rect[3], rect[0], rect[1], rect[2], rect[3]) ###pyjs0.8 *.canvas
+                x, y, w, h = rect[0], rect[1], rect[2], rect[3]
+                #pyjs -O no attribute checking of Rect obj
+                self.canvas.drawImage(self.canvas.surface.canvas, x,y,w,h, x,y,w,h)
+#                self.canvas.drawImage(self.canvas.surface, x,y,w,h, x,y,w,h) ###pyjs0.8 *.canvas
             except (TypeError, AttributeError): ###pyjs -O TypeError -S AttributeError
-                if rect is None:
-                    continue
-                elif rect_list:
-                    self.canvas.drawImage(self.canvas.surface.canvas, rect_list[0], rect_list[1], rect_list[2], rect_list[3], rect_list[0], rect_list[1], rect_list[2], rect_list[3])
-#                    self.canvas.drawImage(self.canvas.surface, rect_list[0], rect_list[1], rect_list[2], rect_list[3], rect_list[0], rect_list[1], rect_list[2], rect_list[3]) ###pyjs0.8 *.canvas
-                    break
-                else:
-                    self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
-#                    self.canvas.drawImage(self.canvas.surface, 0, 0) ###pyjs0.8 *.canvas
-                    break
+                continue    #rect is None
         return None
 
