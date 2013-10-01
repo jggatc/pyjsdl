@@ -321,6 +321,70 @@ class PyFloat64Array(PyTypedArray):
         return JS("""@{{self}}['__data'][@{{index}}];""")
 
 
+class PyCanvasPixelArray(PyTypedArray):     ###0.17
+    """
+    Create a PyTypedArray interface to CanvasPixelArray.
+    """
+
+    def __init__(self, data=None, offset=None, length=None):
+        PyTypedArray.__init__(self, data, offset, length)
+        self._superArray = None
+        self._superIndex = (0,0)
+
+    def __iter__(self):
+        """
+        Iterate over PyTypedArray object.
+        """
+        if not self._superArray:
+            PyTypedArray.__iter__(self)
+        else:
+            index = self._superIndex[0]
+            while index < self._superIndex[1]:
+                yield self._superArray[index]
+                index += 1
+
+    def __getitem__(self, index):
+        """
+        Get TypedArray element by index.
+        """
+        if not self._superArray:
+            return PyTypedArray.__getitem__(self, index)
+        else:
+            return self._superArray.__getitem__(index+self._superIndex[0])
+
+    def __setitem__(self, index, value):
+        """
+        Set TypedArray element by index.
+        """
+        if not self._superArray:
+            PyTypedArray.__setitem__(self, index, value)
+        else:
+            self._superArray.__setitem__(index+self._superIndex[0], value)
+        return None
+
+    def set(self, data, offset=0):
+        """
+        Set data to the array. Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
+        """
+        if not self._superArray:
+            for index in xrange(len(data)):
+                self[index+offset] = data[index]
+        else:
+            self._superArray.set(data, offset+self._superIndex[0])
+
+    def subarray(self, begin, end=None):
+        """
+        Retrieve a subarray of the array. The subarray is a view of the derived array. Arguments begin and optional end (defaults to array end) are the index spanning the subarray.
+        """
+        if end is None:
+            end = self.__data.length
+        array = self.__class__()
+        array.__data = self.__data
+        array._superArray = self
+        array._superIndex = (begin,end)
+        return array
+
+
 class Ndarray:
 
     __typedarray = {0: PyUint8ClampedArray,
@@ -1026,10 +1090,10 @@ class PyImageData:
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = imagedata
-        try:
+        if not isUndefined(Uint8ClampedArray):      ###0.17
             self.data = PyUint8ClampedArray()
-        except NotImplementedError:     #CanvasPixelArray
-            self.data = PyTypedArray()
+        else:
+            self.data = PyCanvasPixelArray()
         self.data.__data = imagedata.data
         self.width = imagedata.width
         self.height = imagedata.height
@@ -1049,9 +1113,9 @@ class PyImageMatrix(Ndarray):
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = PyImageData(imagedata)
-        try:
+        if isinstance(self.__imagedata.data, PyUint8ClampedArray):      ###0.17
             Ndarray.__init__(self, self.__imagedata.data, 0)
-        except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
+        else:     #ie10 supports typedarray, not uint8clampedarray
             Ndarray.__init__(self, self.__imagedata.data, 1)
         self.setshape(self.__imagedata.height,self.__imagedata.width,4)
 

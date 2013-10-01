@@ -40,11 +40,14 @@ Pyjsdl Version History
 -updated Rect.createIntersection.
 -updated pyjs_changes.zip - Pyjs git updated for HTML5canvas usage.
 
-0.16_git
+0.16    September 1, 2013
 -added Surfarray using Pyjsarray.
 -updated Pyjsarray with Ndarray and ImageData objects.
 -updated image.load
 -updated display.update rect processing
 -added display.update_rect method
 -updated display.update/display.update_rect/surface._blit_clear rect clipping
+
+0.17_git
+-updated Pyjsarray ImageData object for IE compatibility.
 
