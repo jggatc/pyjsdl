@@ -2,6 +2,7 @@
 
 from time import Time
 from pyjamas import logging
+from __pyjamas__ import JS      ###0.17
 
 
 class Timer(object):
@@ -44,4 +45,13 @@ class Timer(object):
 
     def print_log(self, var):
         self.log.info("Time:%s", var)
+
+
+def call(obj, func, args=()):      ###0.17
+    """
+    Call unbound method.
+    Argument obj is the object, func is the unbound method, and optional args is a tuple of arguments for the method.
+    Returns the method's return value.
+    """
+    return JS("""@{{func}}.apply(@{{obj}}, @{{args}}['getArray']());""")
 

@@ -50,4 +50,5 @@ Pyjsdl Version History
 
 0.17_git
 -updated Pyjsarray ImageData object for IE compatibility.
+-added util.call to call unbound methods.
 

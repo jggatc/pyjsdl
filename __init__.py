@@ -27,6 +27,7 @@ from mouse import Mouse
 from transform import Transform
 from surfarray import Surfarray     ###0.16
 from time import Time
+import util       ###0.17
 import mask     ###0.15
 import font
 import sprite
