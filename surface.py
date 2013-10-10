@@ -134,16 +134,14 @@ class Surface(HTML5Canvas):      ###0.15
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
-        x, y = position[0], position[1]
-        if not area:
-            self.drawImage(surface.canvas, x, y)    ###pyjs0.8 *.canvas
-#            self.drawImage(surface, x, y)
-            rect = Rect(x,y,surface.width,surface.height)
+        if not area:    ###0.17 restructured for position -> int()
+            rect = Rect(position[0],position[1],surface.width,surface.height)
+            self.drawImage(surface.canvas, rect.x, rect.y)    ###pyjs0.8 *.canvas
+#            self.drawImage(surface, rect.x, rect.y)
         else:
-            sx, sy, sw, sh = area
-            self.drawImage(surface.canvas, sx, sy, sw, sh, x, y, sw, sh)    ###pyjs0.8 *.canvas
-#            self.drawImage(surface, sx, sy, sw, sh, x, y, sw, sh)
-            rect = Rect(x,y,sw,sh)
+            rect = Rect(position[0],position[1],area[2], area[3])
+            self.drawImage(surface.canvas, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])    ###pyjs0.8 *.canvas
+#            self.drawImage(surface, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])
         return rect     #clipping?
 
     def blits(self, surfaces):  ###
