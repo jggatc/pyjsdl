@@ -184,20 +184,19 @@ class Rect(object):
             self.setLocation(self.x+int(x), self.y+int(y))
         return None
 
-    def inflate(self, x, y):    #center...
+    def inflate(self, x, y):     ###0.17
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x, self.y, self.width+x, self.height+y)
+        return Rect(self.x-int(x/2), self.y-int(y/2), self.width+x, self.height+y)
 
-    def inflate_ip(self, x, y):     #center...
+    def inflate_ip(self, x, y):     ###0.17
         """
         Change size of this rect offset by x,y.
         """
-        try:
-            self.setSize(self.width+x, self.height+y)
-        except TypeError:
-            self.setSize(self.width+int(x), self.height+int(y))
+        self.setSize(self.width+x, self.height+y)
+        self.x -= int(x/2)
+        self.y -= int(y/2)
         return None
 
     def clip(self, rect):
