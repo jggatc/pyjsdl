@@ -8,12 +8,15 @@ import env
 import pyjsdl.event
 from pyjamas.ui.RootPanel import RootPanel
 from pyjamas.ui.FocusPanel import FocusPanel
+from pyjamas.ui.VerticalPanel import VerticalPanel  ###0.17
 try:    ###0.15
     from pyjamas.Canvas.HTML5Canvas import HTML5Canvas      ###>IE9
 except ImportError:
     from pyjamas.Canvas.GWTCanvas import GWTCanvas as HTML5Canvas
 from pyjamas.Canvas import Color
 from pyjamas.Canvas.ImageLoader import loadImages
+from pyjamas.ui.TextBox import TextBox      ###0.17
+from pyjamas.ui.TextArea import TextArea      ###0.17
 from pyjamas.ui import Event
 from pyjamas import DOM
 import locals as Const
@@ -173,6 +176,11 @@ class Display(object):
         panel = FocusPanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
+        self.vpanel = None      ###0.17
+        self.textbox = None
+        self.textarea = None
+        self.Textbox = Textbox      ###0.17
+        self.Textarea = Textarea
         self.surface = self.canvas.surface
         self.surface._display = self
         return self.surface
@@ -184,6 +192,14 @@ class Display(object):
         """
         self.canvas.set_loop(loop)
         self.canvas.load_images(images)
+
+    def textbox_init(self):     ###0.17
+        """
+        Initiate textbox functionality and creates instances of pyjsdl.display.textbox and pyjsdl.display.textarea that are subclasses of Pyjs TextBox/TextArea, placed in lower VerticalPanel.
+        """
+        if not self.textbox:
+            self.textbox = Textbox()
+            self.textarea = Textarea()
 
     def get_surface(self):
         """
@@ -202,6 +218,15 @@ class Display(object):
         Return Panel.
         """
         return self.panel
+
+    def get_vpanel(self):   ###0.17
+        """
+        Return VerticalPanel positioned under Panel holding Canvas.
+        """
+        if not self.vpanel:
+            self.vpanel = VerticalPanel()
+            RootPanel().add(self.vpanel)
+        return self.vpanel
 
     def quit(self):
         """
@@ -288,6 +313,71 @@ class Display(object):
             except (TypeError, AttributeError): ###pyjs -O TypeError -S AttributeError
                 continue    #rect is None
         return None
+
+
+class Textbox(TextBox):   ###0.17
+    """
+    TextBox object for text input, subclass of Pyjs TextBox class.
+    Optional attribute size (x,y) specifying textbox dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
+    Module initialization provides pyjsdl.display.textbox instance.
+    """
+
+    def __init__(self, size=None, panel=None):
+        TextBox.__init__(self)
+        if size:
+            self.width, self.height = int(size[0]), int(size[1])
+        else:
+            self.width, self.height = env.canvas.width-5, 20
+        self.setSize(str(self.width)+'px', str(self.height)+'px')
+        self.setVisible(False)
+        if panel:
+            panel.add(self)
+        else:
+            try:
+                env.canvas.surface._display.vpanel.add(self)
+            except (TypeError, AttributeError):
+                env.canvas.surface._display.vpanel = VerticalPanel()
+                RootPanel().add(env.canvas.surface._display.vpanel)
+                env.canvas.surface._display.vpanel.add(self)
+
+    def toggle(self, visible=None):
+        if visible:
+            self.setVisible(visible)
+        else:
+            self.setVisible(not self.getVisible())
+
+
+class Textarea(TextArea):   ###0.17
+    """
+    TextArea object for text input/output, subclass of Pyjs TextArea class.
+    Optional attribute size (x,y) specifying textarea dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
+    Module initialization provides pyjsdl.display.textarea instance.
+    """
+
+    def __init__(self, size=None, panel=None):
+        TextArea.__init__(self)
+        if size:
+            self.width, self.height = int(size[0]), int(size[1])
+        else:
+            self.width, self.height = env.canvas.width-5, int(env.canvas.height/5)-5
+        self.setSize(str(self.width)+'px', str(self.height)+'px')
+        self.setStyleAttribute({'resize':'vertical'})
+        self.setVisible(False)
+        if panel:
+            panel.add(self)
+        else:
+            try:
+                env.canvas.surface._display.vpanel.add(self)
+            except (TypeError, AttributeError):
+                env.canvas.surface._display.vpanel = VerticalPanel()
+                RootPanel().add(env.canvas.surface._display.vpanel)
+                env.canvas.surface._display.vpanel.add(self)
+
+    def toggle(self, visible=None):
+        if visible:
+            self.setVisible(visible)
+        else:
+            self.setVisible(not self.getVisible())
 
 
 class IndexSizeError(Exception):    ###0.16
