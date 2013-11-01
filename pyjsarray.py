@@ -321,7 +321,7 @@ class PyFloat64Array(PyTypedArray):
         return JS("""@{{self}}['__data'][@{{index}}];""")
 
 
-class PyCanvasPixelArray(PyTypedArray):     ###0.17
+class PyCanvasPixelArray(PyTypedArray):     ###
     """
     Create a PyTypedArray interface to CanvasPixelArray.
     """
@@ -518,6 +518,15 @@ class Ndarray:
                     if isinstance(value[0], (list,tuple)):
                         value = unpack(value)
                 subarray.set(value)
+        return None
+
+    def __getslice__(self, lower, upper):   ###
+        subarray = self.__data.subarray(lower, upper)
+        return Ndarray(subarray, self._dtype)
+
+    def __setslice__(self, lower, upper, data):     ###
+        subarray = self.__data.subarray(lower, upper)
+        subarray.set(data)
         return None
 
     def __iter__(self):
@@ -1060,18 +1069,12 @@ class Ndarray:
         Arguments are the axis to swap.
         Return view of array with axes changed.
         """
-        subarray = self.__data.subarray(0)
-        array = Ndarray(subarray)
+        array = Ndarray(self.__data, self._dtype)       ###
         shape = list(self._shape)
         shape[axis1], shape[axis2] = shape[axis2], shape[axis1]
         array._shape = tuple(shape)
-        array_size = 1
-        for i in array._shape:
-            array_size *= i
-        indices = []
-        for i in array._shape:
-            array_size /= i
-            indices.append(array_size)
+        indices = list(self._indices)
+        indices[axis1], indices[axis2] = indices[axis2], indices[axis1]
         array._indices = tuple(indices)
         return array
 
@@ -1082,6 +1085,27 @@ class Ndarray:
         return self.__data.getArray()
 
 
+class NP:   ###
+
+    def zeros(self, size, dtype):
+        if dtype == 'i':
+            dtype = 3
+        return Ndarray(size, dtype)
+
+    def swapaxes(self, array, axis1, axis2):
+        return array.swapaxes(axis1, axis2)
+
+    def append(self, array, values):
+        if isinstance(values[0], (list,tuple,PyTypedArray)):
+            values = [value for dat in values for value in dat]
+        newarray = Ndarray(len(array)+len(values), array._dtype)
+        newarray.__data.set(array.__data)
+        newarray.__data.set(values, len(array))
+        return newarray
+
+np = NP()
+
+
 class PyImageData:
 
     def __init__(self, imagedata):
@@ -1090,7 +1114,7 @@ class PyImageData:
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = imagedata
-        if not isUndefined(Uint8ClampedArray):      ###0.17
+        if not isUndefined(Uint8ClampedArray):      ###
             self.data = PyUint8ClampedArray()
         else:
             self.data = PyCanvasPixelArray()
@@ -1113,7 +1137,7 @@ class PyImageMatrix(Ndarray):
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = PyImageData(imagedata)
-        if isinstance(self.__imagedata.data, PyUint8ClampedArray):      ###0.17
+        if isinstance(self.__imagedata.data, PyUint8ClampedArray):      ###
             Ndarray.__init__(self, self.__imagedata.data, 0)
         else:     #ie10 supports typedarray, not uint8clampedarray
             Ndarray.__init__(self, self.__imagedata.data, 1)

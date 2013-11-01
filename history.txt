@@ -48,12 +48,13 @@ Pyjsdl Version History
 -added display.update_rect method
 -updated display.update/display.update_rect/surface._blit_clear rect clipping
 
-0.17_git
+0.17    November 1, 2013
 -updated Pyjsarray ImageData object for IE compatibility.
 -added util.call to call unbound methods.
 -updated Surface.blit to int convert argument.
 -updated Rect.inflate and Rect.inflate_ip for proper positioning.
 -added Textbox/Textarea for text input.
 -updated mouse positioning with page scroll position.
--updated Surfarray.blit_array
+-updated Surfarray.blit_array.
+-added Pyjsarray Ndarray methods.
 
