@@ -55,4 +55,5 @@ Pyjsdl Version History
 -updated Rect.inflate and Rect.inflate_ip for proper positioning.
 -added Textbox/Textarea for text input.
 -updated mouse positioning with page scroll position.
+-updated Surfarray.blit_array
 

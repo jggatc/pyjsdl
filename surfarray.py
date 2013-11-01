@@ -102,7 +102,15 @@ class Surfarray(object):
             imagedata = array.getImageData()
         except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
             imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-            imagedata.data.set(array.getArray())
+            if len(array._shape) == 2:      ###0.17
+                array2d = PyImageMatrix(imagedata)
+                for y in xrange(array2d.getHeight()):
+                    for x in xrange(array2d.getWidth()):
+                        value = array[x,y]
+                        array2d[y,x] = (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, 255)
+                imagedata = array2d.getImageData()
+            else:
+                imagedata.data.set(array.getArray())
         surface.impl.putImageData(imagedata, 0, 0, 0, 0, surface.width, surface.height)
         return None
 
