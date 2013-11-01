@@ -5,4 +5,5 @@ Canvas object.
 """
 
 canvas = None
+frame = None    ###0.17
 

@@ -1,6 +1,7 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
 #from __future__ import division
+import env      ###0.17
 import time
 import locals as Const
 
@@ -322,11 +323,11 @@ class Event(object):
             if event.type in ('mousedown', 'mouseup'):
                 self.type = self.__class__._types[event.type]
                 self.button = event.button + 1
-                self.pos = event.pos
+                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop      ###0.17
             elif event.type == 'mousemove':
                 self.type = self.__class__._types[event.type]
                 self.button = event.button + 1
-                self.pos = event.pos
+                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop      ###0.17
                 self.rel = (self.pos[0]-self.__class__._mouse_pos[0], self.pos[1]-self.__class__._mouse_pos[1])
                 self.__class__._mouse_pos = self.pos
             elif event.type in ('keydown', 'keyup'):

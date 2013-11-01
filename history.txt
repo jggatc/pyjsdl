@@ -54,4 +54,5 @@ Pyjsdl Version History
 -updated Surface.blit to int convert argument.
 -updated Rect.inflate and Rect.inflate_ip for proper positioning.
 -added Textbox/Textarea for text input.
+-updated mouse positioning with page scroll position.
 

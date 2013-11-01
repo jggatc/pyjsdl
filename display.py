@@ -15,6 +15,7 @@ except ImportError:
     from pyjamas.Canvas.GWTCanvas import GWTCanvas as HTML5Canvas
 from pyjamas.Canvas import Color
 from pyjamas.Canvas.ImageLoader import loadImages
+from pyjamas import Window      ###0.17
 from pyjamas.ui.TextBox import TextBox      ###0.17
 from pyjamas.ui.TextArea import TextArea      ###0.17
 from pyjamas.ui import Event
@@ -173,6 +174,7 @@ class Display(object):
         """
         self.canvas = Canvas(size)
         env.canvas = self.canvas
+        env.frame = Window.getDocumentRoot()     ###0.17
         panel = FocusPanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
