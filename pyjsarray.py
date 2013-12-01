@@ -41,30 +41,30 @@ class PyTypedArray:
         """
         The PyTypedArray is instantiated with either the array size, an array of the TypedArray or Python type, or an existing ArrayBuffer to view, which creates a new TypedArray of size and included data as the specified type. Optional arguments include offset index at which ArrayBuffer data is inserted and length of an ArrayBuffer.
         """
-        if data:
+        if data:    ###0.18
             if isinstance(data, int):
                 if pyjs_mode.optimized:
-                    self.__data = typedarray(data)
+                    self.__data = JS("""new @{{typedarray}}(@{{data}})""")
                 else:
-                    self.__data = typedarray(data.valueOf())
+                    self.__data = JS("""new @{{typedarray}}(@{{data}}['valueOf']())""")
             elif isinstance(data, (list,tuple)):
                 if pyjs_mode.optimized:
-                    self.__data = typedarray(data.getArray())
+                    self.__data = JS("""new @{{typedarray}}(@{{data}}['getArray']())""")
                 else:
                     data = [dat.valueOf() for dat in data]
-                    self.__data = typedarray(data.getArray())
+                    self.__data = JS("""new @{{typedarray}}(@{{data}}['getArray']())""")
             elif isinstance(data, PyTypedArray):
-                self.__data = typedarray(data.__data)
+                self.__data = JS("""new @{{typedarray}}(@{{data}}['__data'])""")
             else:   #TypedArray or ArrayBuffer
                 if offset is None and length is None:
-                    self.__data = typedarray(data)
+                    self.__data = JS("""new @{{typedarray}}(@{{data}})""")
                 else:
                     if offset is None:
                         offset = 0
                     if length is None:
-                        self.__data = typedarray(data, offset)
+                        self.__data = JS("""new @{{typedarray}}(@{{data}}, @{{offset}})""")
                     else:
-                        self.__data = typedarray(data, offset, length)
+                        self.__data = JS("""new @{{typedarray}}(@{{data}}, @{{offset}}, @{{length}})""")
         else:
             self.__data = None
 

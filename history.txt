@@ -58,3 +58,6 @@ Pyjsdl Version History
 -updated Surfarray.blit_array.
 -added Pyjsarray Ndarray methods.
 
+0.18_git
+-updated Pyjsarray typedarray constructor for Chrome compatibility.
+
