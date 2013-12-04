@@ -31,19 +31,25 @@ class Transform(object):
         """
         Return Surface rotated by the given angle.
         """
+        if not angle:   ###0.18
+            return surface.copy()
         theta = angle*self.deg_rad
         width_i = surface.get_width()
         height_i = surface.get_height()
         cos_theta = math.fabs( math.cos(theta) )
         sin_theta = math.fabs( math.sin(theta) )
-        width_f = int( (width_i*cos_theta)+(height_i*sin_theta) )
-        height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
+        width_f = math.ceil( (width_i*cos_theta)+(height_i*sin_theta) )
+        height_f = math.ceil( (width_i*sin_theta)+(height_i*cos_theta) )
+        if width_f%2:
+            width_f += 1
+        if height_f%2:
+            height_f += 1
         surf = Surface((width_f,height_f))
-        surf.translate(int(width_f/2), int(height_f/2))   ###0.11
+        surf.translate(width_f/2.0, height_f/2.0)
         surf.rotate(-theta)
-        surf.translate(-int(width_f/2), -int(height_f/2)) ###0.11
-        surf.drawImage(surface.canvas, 0, 0)    ###pyjs0.8 *.canvas
-#        surf.drawImage(surface, 0, 0)
+        surf.translate(-(width_f/2.0), -(height_f/2.0))
+        surf.drawImage(surface.canvas, int((width_f-width_i)/2), int((height_f-height_i)/2))    ###pyjs0.8 *.canvas
+#        surf.drawImage(surface, int((width_f-width_i)/2), int((height_f-height_i)/2))
         return surf
 
     def rotozoom(self, surface, angle, size):
