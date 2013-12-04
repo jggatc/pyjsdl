@@ -35,9 +35,8 @@ class Surface(HTML5Canvas):      ###0.15
     * Surface.get_offset
     """
     def __init__(self, size):   ###pyjs:instance creation seems long
-        HTML5Canvas.__init__(self, size[0], size[1])     ###0.15
-        self.width = size[0]
-        self.height = size[1]
+        self.width, self.height = int(size[0]), int(size[1])    ###0.18
+        HTML5Canvas.__init__(self, self.width, self.height)
         self._display = None    #display surface
         self._super_surface = None
         self._offset = (0,0)
