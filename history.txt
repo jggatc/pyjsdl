@@ -60,4 +60,7 @@ Pyjsdl Version History
 
 0.18_git
 -updated Pyjsarray typedarray constructor for Chrome compatibility.
+-updated Surface constructor to int convert argument.
+-updated Transform.rotate positioning.
+-updated Transform rotate/flip to restore context.
 

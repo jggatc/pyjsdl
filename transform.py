@@ -45,11 +45,13 @@ class Transform(object):
         if height_f%2:
             height_f += 1
         surf = Surface((width_f,height_f))
+        surf.saveContext()
         surf.translate(width_f/2.0, height_f/2.0)
         surf.rotate(-theta)
         surf.translate(-(width_f/2.0), -(height_f/2.0))
         surf.drawImage(surface.canvas, int((width_f-width_i)/2), int((height_f-height_i)/2))    ###pyjs0.8 *.canvas
 #        surf.drawImage(surface, int((width_f-width_i)/2), int((height_f-height_i)/2))
+        surf.restoreContext()
         return surf
 
     def rotozoom(self, surface, angle, size):
@@ -96,6 +98,7 @@ class Transform(object):
         Return Surface that is flipped horizontally, vertically, or both.
         """
         surf = Surface((surface.get_width(),surface.get_height()))
+        surf.saveContext()      ###0.18
         if xbool and ybool:
             surf.translate(surface.get_width(), surface.get_height())
             surf.scale(-1, -1)
@@ -105,9 +108,8 @@ class Transform(object):
         elif ybool:
             surf.translate(0, surface.get_height())
             surf.scale(1, -1)
-        else:
-            return surface
         surf.drawImage(surface.canvas, 0, 0)    ###pyjs0.8 *.canvas
 #        surf.drawImage(surface, 0, 0)
+        surf.restoreContext()      ###0.18
         return surf
 
