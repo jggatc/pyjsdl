@@ -38,8 +38,8 @@ class Transform(object):
         height_i = surface.get_height()
         cos_theta = math.fabs( math.cos(theta) )
         sin_theta = math.fabs( math.sin(theta) )
-        width_f = math.ceil( (width_i*cos_theta)+(height_i*sin_theta) )
-        height_f = math.ceil( (width_i*sin_theta)+(height_i*cos_theta) )
+        width_f = int( (width_i*cos_theta)+(height_i*sin_theta) )
+        height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
         if width_f%2:
             width_f += 1
         if height_f%2:
@@ -48,9 +48,8 @@ class Transform(object):
         surf.saveContext()
         surf.translate(width_f/2.0, height_f/2.0)
         surf.rotate(-theta)
-        surf.translate(-(width_f/2.0), -(height_f/2.0))
-        surf.drawImage(surface.canvas, int((width_f-width_i)/2), int((height_f-height_i)/2))    ###pyjs0.8 *.canvas
-#        surf.drawImage(surface, int((width_f-width_i)/2), int((height_f-height_i)/2))
+        surf.drawImage(surface.canvas, -width_i/2, -height_i/2)    ###pyjs0.8 *.canvas
+#        surf.drawImage(surface, -width_i/2, -height_i/2)
         surf.restoreContext()
         return surf
 
