@@ -29,10 +29,8 @@ class Canvas(HTML5Canvas):    ###0.15
 
     def __init__(self, size):
         HTML5Canvas.__init__(self, size[0], size[1])      ###0.15
-        self.width = size[0]
-        self.height = size[1]
+        HTML5Canvas.resize(self, size[0], size[1])     ###0.18
         self.surface = Surface(size)
-        self.resize(self.width, self.height)
         self.images = {}
         self.image_list = None
         self.loop = None
@@ -93,6 +91,18 @@ class Canvas(HTML5Canvas):    ###0.15
         if keycode in self.modKey:
             self.event.keyPress[keycode] = False
         self.event._updateQueue(event)
+
+    def resize(self, width, height):    ###0.18
+        HTML5Canvas.resize(self, width, height)
+        self.surface.resize(width, height)
+        try:
+            self.surface._display.textbox.resize()
+        except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
+            pass
+        try:
+            self.surface._display.textarea.resize()
+        except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
+            pass
 
     def set_loop(self, loop):
         self.loop = loop
@@ -326,10 +336,10 @@ class Textbox(TextBox):   ###0.17
 
     def __init__(self, size=None, panel=None):
         TextBox.__init__(self)
-        if size:
-            self.width, self.height = int(size[0]), int(size[1])
+        if not size:    ###0.18
+            self.width, self.height = env.canvas.surface.width-5, 20
         else:
-            self.width, self.height = env.canvas.width-5, 20
+            self.width, self.height = int(size[0]), int(size[1])
         self.setSize(str(self.width)+'px', str(self.height)+'px')
         self.setVisible(False)
         if panel:
@@ -341,6 +351,16 @@ class Textbox(TextBox):   ###0.17
                 env.canvas.surface._display.vpanel = VerticalPanel()
                 RootPanel().add(env.canvas.surface._display.vpanel)
                 env.canvas.surface._display.vpanel.add(self)
+
+    def resize(self, width=None, height=None):   ###0.18
+        if not (width or height):
+            self.width, self.height = env.canvas.surface.width-5, 20
+        else:
+            if width:
+                self.width = int(width)
+            if height:
+                self.height = int(height)
+        self.setSize(str(self.width)+'px', str(self.height)+'px')
 
     def toggle(self, visible=None):
         if visible:
@@ -358,10 +378,10 @@ class Textarea(TextArea):   ###0.17
 
     def __init__(self, size=None, panel=None):
         TextArea.__init__(self)
-        if size:
-            self.width, self.height = int(size[0]), int(size[1])
+        if not size:    ###0.18
+            self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
         else:
-            self.width, self.height = env.canvas.width-5, int(env.canvas.height/5)-5
+            self.width, self.height = int(size[0]), int(size[1])
         self.setSize(str(self.width)+'px', str(self.height)+'px')
         self.setStyleAttribute({'resize':'vertical'})
         self.setVisible(False)
@@ -374,6 +394,16 @@ class Textarea(TextArea):   ###0.17
                 env.canvas.surface._display.vpanel = VerticalPanel()
                 RootPanel().add(env.canvas.surface._display.vpanel)
                 env.canvas.surface._display.vpanel.add(self)
+
+    def resize(self, width=None, height=None):   ###0.18
+        if not (width or height):
+            self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
+        else:
+            if width:
+                self.width = int(width)
+            if height:
+                self.height = int(height)
+        self.setSize(str(self.width)+'px', str(self.height)+'px')
 
     def toggle(self, visible=None):
         if visible:

@@ -67,6 +67,10 @@ class Surface(HTML5Canvas):      ###0.15
         """
         return self.height
 
+    def resize(self, width, height):    ###0.18
+        HTML5Canvas.resize(self, width, height)
+        self.width, self.height = int(width), int(height)
+
     def get_rect(self, **attr):
         """
         Return rect of the surface.
