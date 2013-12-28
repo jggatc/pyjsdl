@@ -30,6 +30,12 @@ class Canvas(Surface):   ###0.18
             self._bufferedimage = buffered
         else:
             self._bufferedimage = True
+        try:
+            if self.impl.canvasContext:
+                self._isCanvas = True
+        except:
+            self._isCanvas = False
+            self._bufferedimage = False
         if self._bufferedimage:
             self.surface = Surface(size)
         else:
@@ -219,6 +225,12 @@ class Display(object):
         if not self.textbox:
             self.textbox = Textbox()
             self.textarea = Textarea()
+
+    def is_canvas(self):    ###0.18
+        """
+        Check whether browser has HTML5 canvas.
+        """
+        return self.canvas._isCanvas
 
     def get_surface(self):
         """
