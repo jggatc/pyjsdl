@@ -23,10 +23,17 @@ __docformat__ = 'restructuredtext'
 
 class Canvas(Surface):   ###0.18
 
-    def __init__(self, size):
+    def __init__(self, size, buffered):   ###0.18
         Surface.__init__(self, size)
         Surface.resize(self, size[0], size[1])
-        self.surface = Surface(size)
+        if isinstance(buffered, bool):
+            self._bufferedimage = buffered
+        else:
+            self._bufferedimage = True
+        if self._bufferedimage:
+            self.surface = Surface(size)
+        else:
+            self.surface = self
         self.images = {}
         self.image_list = None
         self.loop = None
@@ -173,12 +180,12 @@ class Display(object):
             self._nonimplemented_methods()
             self._initialized = True
 
-    def set_mode(self, size):
+    def set_mode(self, size, buffered=True, *args, **kwargs):   ###0.18
         """
         Return a display Surface.
-        Argument: size (x,y) of surface.
+        Argument: size (x,y) of surface and optional buffered surface.
         """
-        self.canvas = Canvas(size)
+        self.canvas = Canvas(size, buffered)      ###0.18
         env.canvas = self.canvas
         env.frame = Window.getDocumentRoot()     ###0.17
         panel = FocusPanel(Widget=self.canvas)
@@ -191,6 +198,10 @@ class Display(object):
         self.Textarea = Textarea
         self.surface = self.canvas.surface
         self.surface._display = self
+        if not self.canvas._bufferedimage:      ###0.18
+            self.flip = lambda: None
+            self.update = lambda *arg: None
+            self.update_rect = lambda *arg: None
         return self.surface
 
     def setup(self, loop, images=None):
