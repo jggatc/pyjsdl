@@ -9,10 +9,6 @@ import pyjsdl.event
 from pyjamas.ui.RootPanel import RootPanel
 from pyjamas.ui.FocusPanel import FocusPanel
 from pyjamas.ui.VerticalPanel import VerticalPanel  ###0.17
-try:    ###0.15
-    from pyjamas.Canvas.HTML5Canvas import HTML5Canvas      ###>IE9
-except ImportError:
-    from pyjamas.Canvas.GWTCanvas import GWTCanvas as HTML5Canvas
 from pyjamas.Canvas import Color
 from pyjamas.Canvas.ImageLoader import loadImages
 from pyjamas import Window      ###0.17
@@ -25,11 +21,11 @@ import locals as Const
 __docformat__ = 'restructuredtext'
 
 
-class Canvas(HTML5Canvas):    ###0.15
+class Canvas(Surface):   ###0.18
 
     def __init__(self, size):
-        HTML5Canvas.__init__(self, size[0], size[1])      ###0.15
-        HTML5Canvas.resize(self, size[0], size[1])     ###0.18
+        Surface.__init__(self, size)
+        Surface.resize(self, size[0], size[1])
         self.surface = Surface(size)
         self.images = {}
         self.image_list = None
@@ -93,7 +89,7 @@ class Canvas(HTML5Canvas):    ###0.15
         self.event._updateQueue(event)
 
     def resize(self, width, height):    ###0.18
-        HTML5Canvas.resize(self, width, height)
+        Surface.resize(self, width, height)
         self.surface.resize(width, height)
         try:
             self.surface._display.textbox.resize()
