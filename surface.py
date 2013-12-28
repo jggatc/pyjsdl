@@ -17,6 +17,7 @@ class Surface(HTML5Canvas):      ###0.15
     * Surface.get_width
     * Surface.get_height
     * Surface.get_rect
+    * Surface.resize
     * Surface.copy
     * Surface.subsurface
     * Surface.getSubimage

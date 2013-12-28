@@ -15,6 +15,7 @@ class Mouse(object):
     * pyjsdl.mouse.get_pressed
     * pyjsdl.mouse.get_pos
     * pyjsdl.mouse.get_rel
+    * pyjsdl.mouse.set_visible
     """
 
     def __init__(self):

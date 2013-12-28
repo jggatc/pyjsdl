@@ -53,7 +53,7 @@ Pyjsdl Version History
 -added util.call to call unbound methods.
 -updated Surface.blit to int convert argument.
 -updated Rect.inflate and Rect.inflate_ip for proper positioning.
--added Textbox/Textarea for text input.
+-added Textbox/Textarea and display.textbox_init for text input.
 -updated mouse positioning with page scroll position.
 -updated Surfarray.blit_array.
 -added Pyjsarray Ndarray methods.
@@ -63,4 +63,11 @@ Pyjsdl Version History
 -updated Surface constructor to int convert argument.
 -updated Transform.rotate positioning.
 -updated Transform rotate/flip to restore context.
+-added Textbox/Textarea resize method.
+-updated Surface.resize for width/height attributes.
+-updated Canvas.resize to align elements.
+-updated Canvas to subclass Surface.
+-updated Canvas with buffered surface optional.
+-added display.is_canvas and updated Canvas blit not buffered/image load not converted to canvas surface in IE8; Pyjs VML-Canvas requires IE8 quirk mode - no <!DOCTYPE html>.
+-updated Surface constructor to take optional arguments.
 

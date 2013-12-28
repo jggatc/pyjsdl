@@ -156,14 +156,19 @@ class Display(object):
 
     * pyjsdl.display.init
     * pyjsdl.display.set_mode
+    * pyjsdl.display.setup
+    * pyjsdl.display.textbox_init
+    * pyjsdl.display.is_canvas
     * pyjsdl.display.get_surface
     * pyjsdl.display.get_canvas
     * pyjsdl.display.get_panel
+    * pyjsdl.display.get_vpanel
     * pyjsdl.display.quit
     * pyjsdl.display.get_init
     * pyjsdl.display.set_caption
     * pyjsdl.display.clear
     * pyjsdl.display.flip
+    * pyjsdl.display.update_rect
     * pyjsdl.display.update
     """
 

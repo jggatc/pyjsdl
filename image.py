@@ -14,6 +14,8 @@ class Image(object):
     **pyjsdl.image**
     
     * pyjsdl.image.load
+    * pyjsdl.image.get_image
+    * pyjsdl.image.convert_image
     """
 
     def __init__(self):
