@@ -2,10 +2,7 @@
 
 #from __future__ import division
 from rect import Rect
-try:    ###0.15
-    from pyjamas.Canvas.HTML5Canvas import HTML5Canvas      ###>IE9
-except ImportError:
-    from pyjamas.Canvas.GWTCanvas import GWTCanvas as HTML5Canvas
+from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
 from pyjamas.Canvas import Color
 from __pyjamas__ import JS      ###0.15
 
@@ -68,8 +65,8 @@ class Surface(HTML5Canvas):      ###0.15
         return self.height
 
     def resize(self, width, height):    ###0.18
-        HTML5Canvas.resize(self, width, height)
         self.width, self.height = int(width), int(height)
+        HTML5Canvas.resize(self, self.width, self.height)
 
     def get_rect(self, **attr):
         """
