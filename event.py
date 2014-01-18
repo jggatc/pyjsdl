@@ -135,7 +135,7 @@ class Event(object):
 
     def poll(self):
         """
-        Return an event from the queue, or NOEVENT if none present.
+        Return an event from the queue, or event type NOEVENT if none present.
         """
         self._lock()
         if self.eventNum:
@@ -143,7 +143,7 @@ class Event(object):
             self.eventNum -= 1
             self.eventQueue.append(None)
         else:
-            evt = Const.NOEVENT
+            evt = self.Event(Const.NOEVENT)     ###0.18
         self._unlock()
         return evt
 

@@ -70,4 +70,5 @@ Pyjsdl Version History
 -updated Canvas with buffered surface optional.
 -added display.is_canvas and updated Canvas blit not buffered/image load not converted to canvas surface in IE8; Pyjs VML-Canvas requires IE8 quirk mode - no <!DOCTYPE html>.
 -updated Surface constructor to take optional arguments.
+-updated Event.poll noevent return.
 
