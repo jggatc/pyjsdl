@@ -72,4 +72,6 @@ Pyjsdl Version History
 -updated Surface constructor to take optional arguments.
 -updated Event.poll noevent return.
 -updated Surface.get_at to return color tuple.
+-updated Rect attribute positioning.
+-added Rect equality and nonzero methods.
 
