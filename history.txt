@@ -74,4 +74,5 @@ Pyjsdl Version History
 -updated Surface.get_at to return color tuple.
 -updated Rect attribute positioning.
 -added Rect equality and nonzero methods.
+-added util.Pyjs_Mode to check Pyjs compilation mode.
 

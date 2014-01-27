@@ -47,6 +47,26 @@ class Timer(object):
         self.log.info("Time:%s", var)
 
 
+class Pyjs_Mode:    #0.18
+    """
+    Check Pyjs mode used to compile application.
+    Attributes included strict or optimized to specifying mode.
+    """
+
+    def __init__(self):
+        self.strict, self.optimized = self._setmode()
+
+    def __getattr__(self, attr):
+        if attr == '__strict_mode':
+            return True
+
+    def _setmode(self):
+        if self.__strict_mode == True:
+            return True, False
+        else:
+            return False, True
+
+
 def call(obj, func, args=()):      ###0.17
     """
     Call unbound method.
