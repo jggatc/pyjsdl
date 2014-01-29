@@ -2,8 +2,8 @@
 
 #from __future__ import division
 from rect import Rect
+from color import Color     #0.18
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
-from pyjamas.Canvas import Color
 from __pyjamas__ import JS      ###0.15
 
 __docformat__ = 'restructuredtext'
@@ -174,13 +174,14 @@ class Surface(HTML5Canvas):      ###0.15
         Set surface colorkey.
         """
         if self._colorkey:
-            r,g,b = self._colorkey
+            r,g,b = self._colorkey.r,self._colorkey.g,self._colorkey.b      #0.18
             self.replace_color((r,g,b,0),(r,g,b,255))
             self._colorkey = None
         if color:
             try:
-                self.replace_color(color)
+                color = Color(color)    #0.18
                 self._colorkey = color
+                self.replace_color((color.r,color.g,color.b))
             except:
                 pass
         return None
@@ -189,7 +190,10 @@ class Surface(HTML5Canvas):      ###0.15
         """
         Return surface colorkey.
         """
-        return self._colorkey
+        try:    #0.18
+            return self._colorkey.r, self._colorkey.g, self._colorkey.b, 255
+        except (TypeError,AttributeError):      #-O/-S TypeError/AttributeError
+            return None
 
     def _getPixel(self, imagedata, index):     ###0.15
         return JS("""imagedata.data[@{{index}}];""")
@@ -205,20 +209,17 @@ class Surface(HTML5Canvas):      ###0.15
         """
         pixels = self.impl.getImageData(0, 0, self.width, self.height)
 #        pixels = self.getImageData(0, 0, self.width, self.height)
-        color = list(color)
+        color1 = Color(color)    #0.18
         if new_color:
-            new_color = list(new_color)
+            color2 = Color(new_color)
         else:
-            new_color = [color[0], color[1], color[2], 0]
-        c_len = len(color)
-        nc_len = len(new_color)
+            color2 = Color(color1.r,color1.g,color1.b,0)
+        col1 = (color1.r, color1.g, color1.b, color1.a)
+        col2 = (color2.r, color2.g, color2.b, color2.a)
         for i in xrange(0,len(pixels.data),4):
-            col = []
-            for j in range(4):
-                col.append( self._getPixel(pixels, i+j) )
-            if col[0:c_len] == color:
-                for j in range(nc_len):
-                    self._setPixel(pixels, i+j, new_color[j])
+            if (self._getPixel(pixels, i), self._getPixel(pixels, i+1), self._getPixel(pixels, i+2), self._getPixel(pixels, i+3)) == col1:
+                for j in range(4):
+                    self._setPixel(pixels, i+j, col2[j])
         self.impl.putImageData(pixels, 0, 0, 0, 0, self.width, self.height)
 #        self.putImageData(pixels, 0, 0)
         return None
@@ -237,7 +238,8 @@ class Surface(HTML5Canvas):      ###0.15
         The arguments represent position x,y and color of pixel.
         """
         pixel = self.impl.getImageData(pos[0], pos[1], 1, 1)
-        for i in range(len(color)):
+        color = Color(color)    #0.18
+        for i in range(4):
             self._setPixel(pixel, i, color[i])
         self.impl.putImageData(pixel, pos[0], pos[1], 0, 0, 1, 1)
         return None
@@ -251,10 +253,7 @@ class Surface(HTML5Canvas):      ###0.15
             return
         self.beginPath()
         if color:
-            if len(color) == 3:
-                self.setFillStyle(Color.Color(color[0],color[1],color[2]))  ###0.15
-            elif len(color) == 4:
-                self.setFillStyle(Color.Color(color[0],color[1],color[2],color[3])) ###0.15
+            self.setFillStyle(Color(color))     #0.18
             if not rect:
                 rect = Rect(0, 0, self.width, self.height)
             else:

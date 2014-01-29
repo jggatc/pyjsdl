@@ -2,6 +2,7 @@
 
 #from __future__ import division
 from pyjsbitset import BitSet
+from color import Color     #0.18
 
 __docformat__ = 'restructuredtext'
 
@@ -17,10 +18,12 @@ def from_surface(surface, threshold=127):
     if not mask.bit:
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
-    for y in xrange(0, surface.height):
+    width, height = surface.width*4, surface.height
+    for y in xrange(0, height):
         xpix = 0
-        for x in xrange(0, surface.width*4, 4):
-            if surface._getPixel(pixels, (y*(surface.width*4)+x+3)) > threshold:
+        i = (y*width)+3
+        for x in xrange(0, width, 4):
+            if surface._getPixel(pixels, i+x) > threshold:
                 mask.set_at((xpix,y))
             xpix += 1
     return mask
@@ -38,27 +41,35 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
     if threshold == (0,0,0,255):
-        for y in xrange(0, surface.height):
+        color = Color(color)    #0.18
+        color = (color.r,color.g,color.b)
+        width, height = surface.width*4, surface.height
+        for y in xrange(0, height):
             xpix = 0
-            for x in xrange(0, surface.width*4, 4):
-                if surface._getPixel(pixels, (y*(surface.width*4)+x)) == color[0] and surface._getPixel(pixels, (y*(surface.width*4)+x+1)) == color[1] and surface._getPixel(pixels, (y*(surface.width*4)+x+2)) == color[2] and surface._getPixel(pixels, (y*(surface.width*4)+x+3)) == threshold[3]:
+            i = y*width
+            for x in xrange(0, width, 4):
+                ix = i+x
+                if surface._getPixel(pixels, ix) == color[0] and surface._getPixel(pixels, ix+1) == color[1] and surface._getPixel(pixels, ix+2) == color[2] and surface._getPixel(pixels, ix+3) >= threshold[3]:
                     mask.set_at((xpix,y))
                 xpix += 1
     else:
-        col = []
-        for i in range(len(color)):
+        color = Color(color)    #0.18
+        col = {}
+        for i, c in enumerate(('r','g','b')):
             if threshold[i]:
-                l = color[i] - threshold[i]
-                if l < 0: l = 0
-                h = color[i] + threshold[i]
-                if h > 255: h = 255
-                col.append( (l,h) )
+                col[c+'1'] = color[i] - threshold[i] - 1
+                col[c+'2'] = color[i] + threshold[i] + 1
             else:
-                col[i].append( (color[i],color[i]) )
-        for y in xrange(0, surface.height):
+                col[c+'1'] = color[i] - 1
+                col[c+'2'] = color[i] + 1
+        col['a'] = threshold[3] - 1
+        width, height = surface.width*4, surface.height
+        for y in xrange(0, height):
             xpix = 0
-            for x in xrange(0, surface.width*4, 4):
-                if (col[0][0] <= surface._getPixel(pixels, (y*(surface.width*4)+x)) <= col[0][1]) and (col[1][0] <= surface._getPixel(pixels, (y*(surface.width*4)+x+1)) <= col[1][1]) and (col[2][0] <= surface._getPixel(pixels, (y*(surface.width*4)+x+2)) <= col[2][1]) and (surface._getPixel(pixels, (y*(surface.width*4)+x+3)) == threshold[3]):
+            i = y*width
+            for x in xrange(0, width, 4):
+                ix = i+x
+                if (col['r1'] < surface._getPixel(pixels, ix) < col['r2']) and (col['g1'] < surface._getPixel(pixels, ix+1) < col['g2']) and (col['b1'] < surface._getPixel(pixels, ix+2) < col['b2']) and (surface._getPixel(pixels, ix+3) > col['a']):
                     mask.set_at((xpix,y))
                 xpix += 1
     return mask

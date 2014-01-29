@@ -3,7 +3,7 @@
 #from __future__ import division
 from surface import Surface
 import math     ###
-from pyjamas.Canvas import Color
+from color import Color     #0.18
 try:
     from pyjamas.Canvas.HTML5Canvas import HTML5Canvas      ###>IE9
 except ImportError:
@@ -157,16 +157,15 @@ class Font(object):     ###0.14
             surf = surface
             w,h = surface.width, surface.height
         if background:
-            R,G,B = background
-            surf.setFillStyle(Color.Color('rgb(%d,%d,%d)' % (R,G,B)))
+            surf.setFillStyle(Color(background))    #0.18
             surf.fillRect(0,0,w,h)
         surf.setFont('%s %dpx %s' % (self.fontstyle, self.fontsize, self.fontname))
 #        if antialias: pass
-        surf.setFillStyle(Color.Color('rgb(%d,%d,%d)' % (color[0],color[1],color[2])))
+        surf.setFillStyle(Color(color))  #0.18
         surf.fillText(text,0,self.fontsize)
         if self.underline:
             surf.setLineWidth(1)
-            surf.setStrokeStyle(Color.Color('rgb(%d,%d,%d)' % (color[0],color[1],color[2])))
+            surf.setStrokeStyle(Color(color))   #0.18
             surf.setStroke(BasicStroke(1))
             surf.moveTo(0, h-1)
             surf.lineTo(w-1, h-1)

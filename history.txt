@@ -75,4 +75,6 @@ Pyjsdl Version History
 -updated Rect attribute positioning.
 -added Rect equality and nonzero methods.
 -added util.Pyjs_Mode to check Pyjs compilation mode.
+-added Color object.
+-updated to use Color object.
 

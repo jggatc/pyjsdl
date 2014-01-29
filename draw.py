@@ -4,7 +4,7 @@
 from math import pi
 from rect import Rect
 from surface import Surface
-from pyjamas.Canvas import Color
+from color import Color     #0.18
 
 __docformat__ = 'restructuredtext'
 
@@ -61,15 +61,15 @@ class Draw(object):
         surface.beginPath()
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+            surface.setStrokeStyle(Color(color))     #0.18
             surface.rect(x,y,w,h)
             surface.stroke()
         else:
-            surface.setFillStyle(Color.Color(color[0],color[1],color[2]))   ###0.15
+            surface.setFillStyle(Color(color))   #0.18
             surface.fillRect(x,y,w,h)
         return rect
 
-    def circle(self, surface, color, position, radius, width=0):    ###
+    def circle(self, surface, color, position, radius, width=0):
         """
         Draw circular shape, and returns bounding Rect.
         Argument include surface to draw, color, position and radius.
@@ -79,10 +79,10 @@ class Draw(object):
         surface.arc(position[0], position[1], radius, 0, 2*pi, False)
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+            surface.setStrokeStyle(Color(color))     #0.18
             surface.stroke()
         else:
-            surface.setFillStyle(Color.Color(color[0],color[1],color[2]))   ###0.15
+            surface.setFillStyle(Color(color))   #0.18
             surface.fill()
         return Rect(position[0],position[1],2*radius,2*radius)
 
@@ -118,11 +118,11 @@ class Draw(object):
             surface.arc(x+int(w/2), y+int(h/2), int(w/2), -start_angle, -stop_angle, True)
             if width:
                 surface.setLineWidth(width)
-                surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+                surface.setStrokeStyle(Color(color))     #0.18
                 surface.stroke()
             else:
                 surface.closePath()
-                surface.setFillStyle(Color.Color(color[0],color[1],color[2]))   ###0.15
+                surface.setFillStyle(Color(color))   #0.18
                 surface.fill()
         else:
             if w < h:
@@ -135,11 +135,11 @@ class Draw(object):
             surf.arc(xdim, xdim, xdim, -start_angle, -stop_angle, True)
             if width:
                 surf.setLineWidth(width)
-                surf.setStrokeStyle(Color.Color(color[0],color[1],color[2]))    ###0.15
+                surf.setStrokeStyle(Color(color))    #0.18
                 surf.stroke()
             else:
                 surface.closePath()
-                surf.setFillStyle(Color.Color(color[0],color[1],color[2]))  ###0.15
+                surf.setFillStyle(Color(color))  #0.18
                 surf.fill()
             surface.drawImage(surf.canvas, 0, 0, dim, dim, x, y, w, h)    ###pyjs0.8 *.canvas
 #            surface.drawImage(surf, 0, 0, dim, dim, x, y, w, h)
@@ -158,10 +158,10 @@ class Draw(object):
         surface.closePath()
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+            surface.setStrokeStyle(Color(color))     #0.18
             surface.stroke()
         else:
-            surface.setFillStyle(Color.Color(color[0],color[1],color[2]))   ###0.15
+            surface.setFillStyle(Color(color))   #0.18
             surface.fill()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
@@ -179,7 +179,7 @@ class Draw(object):
         surface.moveTo(*point1)
         surface.lineTo(*point2)
         surface.setLineWidth(width)
-        surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+        surface.setStrokeStyle(Color(color))     #0.18
         surface.stroke()
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
@@ -200,7 +200,7 @@ class Draw(object):
         if closed:
             surface.closePath()
         surface.setLineWidth(width)
-        surface.setStrokeStyle(Color.Color(color[0],color[1],color[2]))     ###0.15
+        surface.setStrokeStyle(Color(color))     #0.18
         surface.stroke()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
