@@ -77,4 +77,6 @@ Pyjsdl Version History
 -added util.Pyjs_Mode to check Pyjs compilation mode.
 -added Color object.
 -updated to use Color object.
+-updated Rect constructor.
+-updated draw methods with minor adjustments.
 

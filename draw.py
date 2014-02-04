@@ -67,7 +67,7 @@ class Draw(object):
         else:
             surface.setFillStyle(Color(color))   #0.18
             surface.fillRect(x,y,w,h)
-        return rect
+        return surface.get_rect().clip(rect)   #0.18
 
     def circle(self, surface, color, position, radius, width=0):
         """
@@ -84,7 +84,7 @@ class Draw(object):
         else:
             surface.setFillStyle(Color(color))   #0.18
             surface.fill()
-        return Rect(position[0],position[1],2*radius,2*radius)
+        return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius,2*radius) )   #0.18
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
         """
@@ -143,7 +143,7 @@ class Draw(object):
                 surf.fill()
             surface.drawImage(surf.canvas, 0, 0, dim, dim, x, y, w, h)    ###pyjs0.8 *.canvas
 #            surface.drawImage(surf, 0, 0, dim, dim, x, y, w, h)
-        return rect
+        return surface.get_rect().clip(rect)   #0.18
 
     def polygon(self, surface, color, pointlist, width=0):
         """
@@ -167,7 +167,7 @@ class Draw(object):
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1)
+        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )   #0.18
 
     def line(self, surface, color, point1, point2, width=1):
         """
@@ -185,7 +185,7 @@ class Draw(object):
         ypts = [pt[1] for pt in (point1,point2)]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1)
+        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )   #0.18
 
     def lines(self, surface, color, closed, pointlist, width=1):
         """
@@ -206,7 +206,7 @@ class Draw(object):
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1)
+        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )   #0.18
 
     def aaline(self, surface, color, point1, point2, blend=1):
         """
