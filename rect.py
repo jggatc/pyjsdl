@@ -91,17 +91,14 @@ class Rect(object):
         """
         try:
             x,y,w,h = arg[0], arg[1], arg[2], arg[3]
-        except IndexError:
+        except (IndexError, AttributeError):
             try:
-                x,y,w,h = arg[0].rect.x, arg[0].rect.y, arg[0].rect.width, arg[0].rect.height
-            except (AttributeError, TypeError):     ###TypeError with pyjs -O compile
+                x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
+            except (IndexError, TypeError, AttributeError):
                 try:
-                    x,y,w,h = arg[0].x, arg[0].y, arg[0].width, arg[0].height
-                except AttributeError:
-                    try:    ###last 2 options problem with pyjs -O compile
-                        x,y,w,h = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
-                    except IndexError:
-                        x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
+                    x,y,w,h = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
+                except (IndexError, TypeError, AttributeError):
+                    x,y,w,h = arg[0].rect[0], arg[0].rect[1], arg[0].rect[2], arg[0].rect[3]
         super(Rect, self).__setattr__('x', int(x))
         super(Rect, self).__setattr__('y', int(y))
         super(Rect, self).__setattr__('width', int(w))
