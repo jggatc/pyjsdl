@@ -134,6 +134,21 @@ class BitSet:
 #            self.__data[ int(index/self.__bit) ] &= ~(self.__bitmask[ index%self.__bit ])     #pyjs -O: &= not processed
         return None
 
+    def fill(self, index=None, toIndex=None):
+        """
+        Set the bit. If no argument provided, all bits are set.
+        Optional argument index is bit index to set, and toIndex to set a range of bits.
+        """
+        if index is None and toIndex is None:
+            for i in xrange(0, self.__width):
+                self.set(i, 1)
+        else:
+            if toIndex is None:
+                self.set(index, 1)
+            else:
+                for i in xrange(index, toIndex):
+                    self.set(i, 1)
+
     def clear(self, index=None, toIndex=None):
         """
         Clear the bit. If no argument provided, all bits are cleared.
