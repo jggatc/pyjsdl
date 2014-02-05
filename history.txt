@@ -79,4 +79,5 @@ Pyjsdl Version History
 -updated to use Color object.
 -updated Rect constructor.
 -updated draw methods with minor adjustments.
+-updated Mask.fill method.
 

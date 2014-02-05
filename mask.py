@@ -132,7 +132,7 @@ class Mask(object):
         Fill mask.
         """
         for bitset in self.bit:
-            bitset.set(0,self.width)
+            bitset.fill()   #0.18
         return None
 
     def clear(self):
