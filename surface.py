@@ -89,34 +89,27 @@ class Surface(HTML5Canvas):      ###0.15
 #        surface.drawImage(self, 0, 0)
         return surface
 
-    def subsurface(self, *rect):    ###0.15
+    def subsurface(self, rect):    ###0.18
         """
         Return Surface that represents a subsurface.
         The rect argument is the area of the subsurface.
         Argument can be 't'/'f' for data sync to/from subsurface.
         """
-        if rect[0] in ('t', 'f'):
+        if rect in ('t', 'f'):
             if not self._super_surface:
                 return
-            if rect[0] == 't':
+            if rect == 't':
                 self.drawImage(self._super_surface.canvas, self._offset[0], self._offset[1], self.width, self.height, 0, 0, self.width, self.height)
             else:
                 self._super_surface.drawImage(self.canvas, self._offset[0], self._offset[1])
             return
-        if isinstance(rect[0], Rect):
-            x,y,w,h = rect[0].x, rect[0].y, rect[0].width, rect[0].height
-        else:
-            if not isinstance(rect[0][0], tuple):
-                x,y,w,h = rect[0]
-            else:
-                x,y = rect[0][0]
-                w,h = rect[0][1]
+        rect = Rect(rect)   #0.18
         surf_rect = self.get_rect()
-        if not surf_rect.contains(x,y) or not surf_rect.contains(x+w,y+h):
+        if not surf_rect.contains(rect.x,rect.y) or not surf_rect.contains(rect.x+rect.width,rect.y+rect.height):
             raise ValueError, 'subsurface outside surface area'
-        surface = self.getSubimage(x, y, w, h)
+        surface = self.getSubimage(rect.x, rect.y, rect.width, height)
         surface._super_surface = self
-        surface._offset = (x,y)
+        surface._offset = (rect.x,rect.y)
         surface._colorkey = self._colorkey
         return surface
 

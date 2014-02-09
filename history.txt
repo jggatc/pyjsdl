@@ -80,4 +80,5 @@ Pyjsdl Version History
 -updated Rect constructor.
 -updated draw methods with minor adjustments.
 -updated Mask.fill method.
+-updated to use Rect object.
 

@@ -32,7 +32,7 @@ class Sprite(object):
         """
         self._identity = Sprite._identity
         Sprite._identity += 1
-        self._rect_pre = None
+        self._rect_pre = Rect(0,0,0,0)  #0.18
         self.x = None
         self.y = None
         self.image = None
@@ -230,22 +230,18 @@ class Group(object):
         The background argument can be a callback function.
         """
         self._clear_active = True
-        clr_rect = []
-        if not callable(background):
-            clr = lambda surf, rect: clr_rect.append(rect)
-            surf = background
+        if hasattr(background, 'width'):    #0.18
+            clr_rect = []
+            for group in (self._removed_sprite, self._sprites.itervalues()):
+                for sprite in group:
+                    clr_rect.append(sprite._rect_pre)
+                    sprite._rect_pre = Rect(sprite.rect)
+            surface._blit_clear(background, clr_rect)
         else:
-            clr = background
-            surf = surface
-        for group in (self._removed_sprite, self._sprites.itervalues()):
-            for sprite in group:
-                if sprite._rect_pre is None:
-                    sprite._rect_pre = sprite.rect.copy()
-                    continue
-                clr(surf, sprite._rect_pre)
-                sprite._rect_pre = sprite.rect.copy()
-        if clr_rect:
-            surface._blit_clear(surf, clr_rect)
+            for group in (self._removed_sprite, self._sprites.itervalues()):
+                for sprite in group:
+                    background(surface, sprite._rect_pre)
+                    sprite._rect_pre = Rect(sprite.rect)
         self._removed_sprite = []
 
     def empty(self):
@@ -261,7 +257,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.itervalues():
+        for sprite in self._sprites.values():   #0.18
             sprite.update(*args)
         return None
 
@@ -347,7 +343,7 @@ class RenderUpdates(Group):
         """
         if surface._display:
             for group in (self._removed_sprite, self._sprites.itervalues()):
-                self.changed_areas.extend([sprite._rect_pre for sprite in group if sprite._rect_pre])
+                self.changed_areas.extend([sprite._rect_pre for sprite in group])   #0.18
         Group.clear(self, surface, background)
         return None
 

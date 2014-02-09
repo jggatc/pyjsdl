@@ -37,36 +37,16 @@ class Draw(object):
         Argument include surface to draw, color, Rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        if isinstance(rect, (tuple,list)):      ###changed to work with pyjs -O compile
-            if not isinstance(rect[0], (tuple,list)):
-                x,y,w,h = rect
-            else:
-                x,y = rect[0]
-                w,h = rect[1]
-            rect = Rect(x,y,w,h)
-        elif isinstance(rect, Rect):
-            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-        else:
-            print "Error with draw rect augument"
-            raise
-#        try:   ###
-#            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-#        except AttributeError:
-#            try:
-#                x,y,w,h = rect
-#            except ValueError:
-#                x,y = rect[0]
-#                w,h = rect[1]
-#            rect = Rect(x,y,w,h)
+        rect = Rect(rect)   #0.18
         surface.beginPath()
         if width:
             surface.setLineWidth(width)
             surface.setStrokeStyle(Color(color))     #0.18
-            surface.rect(x,y,w,h)
+            surface.rect(rect.x, rect.y, rect.width, rect.height)
             surface.stroke()
         else:
             surface.setFillStyle(Color(color))   #0.18
-            surface.fillRect(x,y,w,h)
+            surface.fillRect(rect.x, rect.y, rect.width, rect.height)
         return surface.get_rect().clip(rect)   #0.18
 
     def circle(self, surface, color, position, radius, width=0):
@@ -92,30 +72,10 @@ class Draw(object):
         Argument include surface to draw, color, rect, start_angle, stop_angle.
         Optional width argument of outline.
         """
-        if isinstance(rect, (tuple,list)):      ###changed to work with pyjs -O compile
-            if not isinstance(rect[0], (tuple,list)):
-                x,y,w,h = rect
-            else:
-                x,y = rect[0]
-                w,h = rect[1]
-            rect = Rect(x,y,w,h)
-        elif isinstance(rect, Rect):
-            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-        else:
-            print "Error with draw rect augument"
-            raise
-#        try:   ###
-#            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-#        except AttributeError:
-#            try:
-#                x,y,w,h = rect
-#            except ValueError:
-#                x,y = rect[0]
-#                w,h = rect[1]
-#            rect = Rect(x,y,w,h)
-        if w == h:
+        rect = Rect(rect)   #0.18
+        if rect.width == rect.height:
             surface.beginPath()
-            surface.arc(x+int(w/2), y+int(h/2), int(w/2), -start_angle, -stop_angle, True)
+            surface.arc(rect.x+int(rect.width/2), rect.y+int(rect.height/2), int(rect.width/2), -start_angle, -stop_angle, True)
             if width:
                 surface.setLineWidth(width)
                 surface.setStrokeStyle(Color(color))     #0.18
@@ -125,10 +85,10 @@ class Draw(object):
                 surface.setFillStyle(Color(color))   #0.18
                 surface.fill()
         else:
-            if w < h:
-                dim = h
+            if rect.width < rect.height:
+                dim = rect.height
             else:
-                dim = w
+                dim = rect.width
             surf = Surface((dim,dim))
             surf.beginPath()
             xdim = int(dim/2)
@@ -141,8 +101,8 @@ class Draw(object):
                 surface.closePath()
                 surf.setFillStyle(Color(color))  #0.18
                 surf.fill()
-            surface.drawImage(surf.canvas, 0, 0, dim, dim, x, y, w, h)    ###pyjs0.8 *.canvas
-#            surface.drawImage(surf, 0, 0, dim, dim, x, y, w, h)
+            surface.drawImage(surf.canvas, 0, 0, dim, dim, rect.x, rect.y, rect.width, rect.height)    ###pyjs0.8 *.canvas
+#            surface.drawImage(surf, 0, 0, dim, dim, rect.x, rect.y, rect.width, rect.height)
         return surface.get_rect().clip(rect)   #0.18
 
     def polygon(self, surface, color, pointlist, width=0):
