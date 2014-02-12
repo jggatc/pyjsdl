@@ -65,7 +65,7 @@ class Rect(object):
         'h': lambda self: self.height
           }    ###// > /    #int
 
-    def __init__(self, *arg):
+    def __init__(self, *arg):   #0.18
         """
         Return Rect object.
         
@@ -89,16 +89,26 @@ class Rect(object):
         
         Module initialization places pyjsdl.Rect in module's namespace.
         """
+        def unpack(arg, lst=[]):
+            for x in arg:
+                if not isinstance(x, tuple):
+                    lst.append(x)
+                else:
+                    lst = unpack(x, lst)
+            return lst
         try:
             x,y,w,h = arg[0], arg[1], arg[2], arg[3]
-        except (IndexError, AttributeError):
+        except IndexError:
             try:
                 x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
             except (IndexError, TypeError, AttributeError):
+                arg = unpack(arg)
                 try:
-                    x,y,w,h = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
-                except (IndexError, TypeError, AttributeError):
-                    x,y,w,h = arg[0].rect[0], arg[0].rect[1], arg[0].rect[2], arg[0].rect[3]
+                    x,y,w,h = arg[0], arg[1], arg[2], arg[3]
+                except IndexError:
+                    if hasattr(arg[0], 'rect'):
+                        arg[0] = arg[0].rect
+                    x,y,w,h = arg[0].x, arg[0].y, arg[0].width, arg[0].height
         super(Rect, self).__setattr__('x', int(x))
         super(Rect, self).__setattr__('y', int(y))
         super(Rect, self).__setattr__('width', int(w))
