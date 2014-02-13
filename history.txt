@@ -81,4 +81,6 @@ Pyjsdl Version History
 -updated draw methods with minor adjustments.
 -updated Mask.fill method.
 -updated to use Rect object.
+-updated Sprite group update to account for member changes.
+-updated util.Timer for output to textarea rather than console logger.
 
