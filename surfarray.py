@@ -84,13 +84,8 @@ class Surfarray(object):
         Argument array containing image data.
         Return Surface generated from array.
         """
-        surface = Surface((array._shape[0],array._shape[1]))
-        try:
-            imagedata = array.getImageData()
-        except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
-            imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-            imagedata.data.set(array.getArray())
-        surface.impl.putImageData(imagedata, 0, 0, 0, 0, surface.width, surface.height)
+        surface = Surface((array.__imagedata.width,array.__imagedata.height))     #0.18
+        self.blit_array(surface, array)
         return surface
 
     def blit_array(self, surface, array):

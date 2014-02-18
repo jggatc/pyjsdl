@@ -83,4 +83,6 @@ Pyjsdl Version History
 -updated to use Rect object.
 -updated Sprite group update to account for member changes.
 -updated util.Timer for output to textarea rather than console logger.
+-updated Surfarray array2d PyImageInteger processing.
+-updated Surfarray make_surface method.
 
