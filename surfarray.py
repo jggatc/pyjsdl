@@ -256,11 +256,11 @@ class PyImageInteger(Ndarray):
         Ndarray.__init__(self, data, 3)
         self.setshape(self.__imagedata.width,self.__imagedata.height)
 
-    def getImageData(self):
+    def getImageData(self):     #0.18
         index = 0
         for x in xrange(self.__imagedata.height):
             for y in xrange(self.__imagedata.width):
-                self.__imagedata.data[index], self.__imagedata.data[index+1], self.__imagedata.data[index+2], self.__imagedata.data[index+3] = self[y,x,0]>>16 & 0xff, self[y,x,1]>>8 & 0xff, self[y,x,2] & 0xff, self[y,x,3]>>24 & 0xff
+                self.__imagedata.data[index], self.__imagedata.data[index+1], self.__imagedata.data[index+2], self.__imagedata.data[index+3] = self[y,x]>>16 & 0xff, self[y,x]>>8 & 0xff, self[y,x] & 0xff, self[y,x]>>24 & 0xff
                 index += 4
         return self.__imagedata.getImageData()
 
