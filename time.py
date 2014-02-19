@@ -120,7 +120,7 @@ class Time(object):
         Pause for given time (in ms). Return ms paused.
         """
         start = self.time()
-        while self.time() - start < time:   ###Use Timer
+        while self.time() - start < time:   #Use Timer
             pass
         return self.time() - start
 
@@ -146,7 +146,7 @@ class Time(object):
         return ctime.getTime()
 
     def timeout(self, time=None, obj=None):
-        ###Timer.schedule with callback Canvas self.run - 'TypeError: self is undefined'
+        #Timer.schedule with callback Canvas self.run - 'TypeError: self is undefined'
         """
         Timeout time (in ms) before triggering obj.run method.
         Code modified from pyjs.

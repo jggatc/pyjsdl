@@ -2,18 +2,18 @@
 
 #from __future__ import division
 from surface import Surface
-from rect import Rect   ###0.16
+from rect import Rect
 from time import Time
 import env
 import pyjsdl.event
 from pyjamas.ui.RootPanel import RootPanel
 from pyjamas.ui.FocusPanel import FocusPanel
-from pyjamas.ui.VerticalPanel import VerticalPanel  ###0.17
+from pyjamas.ui.VerticalPanel import VerticalPanel
 from pyjamas.Canvas import Color
 from pyjamas.Canvas.ImageLoader import loadImages
-from pyjamas import Window      ###0.17
-from pyjamas.ui.TextBox import TextBox      ###0.17
-from pyjamas.ui.TextArea import TextArea      ###0.17
+from pyjamas import Window
+from pyjamas.ui.TextBox import TextBox
+from pyjamas.ui.TextArea import TextArea
 from pyjamas.ui import Event
 from pyjamas import DOM
 import locals as Const
@@ -21,9 +21,9 @@ import locals as Const
 __docformat__ = 'restructuredtext'
 
 
-class Canvas(Surface):   ###0.18
+class Canvas(Surface):
 
-    def __init__(self, size, buffered):   ###0.18
+    def __init__(self, size, buffered):
         Surface.__init__(self, size)
         Surface.resize(self, size[0], size[1])
         if isinstance(buffered, bool):
@@ -59,13 +59,13 @@ class Canvas(Surface):   ###0.18
         event.pos = (x, y)
         self.event.mouseMove['x'], self.event.mouseMove['y'] = x, y
         self.event._updateQueue(event)
-      	
+
     def onMouseDown(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
         event.pos = (x, y)
         self.event.mousePress[event.button] = True
         self.event._updateQueue(event)
-      	
+
     def onMouseUp(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
         event.pos = (x, y)
@@ -101,7 +101,7 @@ class Canvas(Surface):   ###0.18
             self.event.keyPress[keycode] = False
         self.event._updateQueue(event)
 
-    def resize(self, width, height):    ###0.18
+    def resize(self, width, height):
         Surface.resize(self, width, height)
         self.surface.resize(width, height)
         try:
@@ -176,7 +176,7 @@ class Display(object):
         """
         Initialize Display module.
 
-        Module initialization creates pyjsdl.display instance.        
+        Module initialization creates pyjsdl.display instance.
         """
         self._initialized = False
         self.init()
@@ -191,25 +191,25 @@ class Display(object):
             self._nonimplemented_methods()
             self._initialized = True
 
-    def set_mode(self, size, buffered=True, *args, **kwargs):   ###0.18
+    def set_mode(self, size, buffered=True, *args, **kwargs):
         """
         Return a display Surface.
         Argument: size (x,y) of surface and optional buffered surface.
         """
-        self.canvas = Canvas(size, buffered)      ###0.18
+        self.canvas = Canvas(size, buffered)
         env.canvas = self.canvas
-        env.frame = Window.getDocumentRoot()     ###0.17
+        env.frame = Window.getDocumentRoot()
         panel = FocusPanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
-        self.vpanel = None      ###0.17
+        self.vpanel = None
         self.textbox = None
         self.textarea = None
-        self.Textbox = Textbox      ###0.17
+        self.Textbox = Textbox
         self.Textarea = Textarea
         self.surface = self.canvas.surface
         self.surface._display = self
-        if not self.canvas._bufferedimage:      ###0.18
+        if not self.canvas._bufferedimage:
             self.flip = lambda: None
             self.update = lambda *arg: None
             self.update_rect = lambda *arg: None
@@ -223,7 +223,7 @@ class Display(object):
         self.canvas.set_loop(loop)
         self.canvas.load_images(images)
 
-    def textbox_init(self):     ###0.17
+    def textbox_init(self):
         """
         Initiate textbox functionality and creates instances of pyjsdl.display.textbox and pyjsdl.display.textarea that are subclasses of Pyjs TextBox/TextArea, placed in lower VerticalPanel.
         """
@@ -231,7 +231,7 @@ class Display(object):
             self.textbox = Textbox()
             self.textarea = Textarea()
 
-    def is_canvas(self):    ###0.18
+    def is_canvas(self):
         """
         Check whether browser has HTML5 canvas.
         """
@@ -255,7 +255,7 @@ class Display(object):
         """
         return self.panel
 
-    def get_vpanel(self):   ###0.17
+    def get_vpanel(self):
         """
         Return VerticalPanel positioned under Panel holding Canvas.
         """
@@ -290,7 +290,7 @@ class Display(object):
         Clear display surface.
         """
         self.surface.beginPath()
-        self.surface.setFillStyle(Color.Color(0,0,0))   ###0.15
+        self.surface.setFillStyle(Color.Color(0,0,0))
         self.surface.fillRect(0, 0, self.surface.width, self.surface.height)
 
     def _nonimplemented_methods(self):
@@ -303,10 +303,10 @@ class Display(object):
         """
         Repaint display.
         """
-        self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)   ###pyjs0.8 problem
-#        self.canvas.drawImage(self.canvas.surface, 0, 0)
+        self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
+#        self.canvas.drawImage(self.canvas.surface, 0, 0) #pyjs0.8 *.canvas
 
-    def update_rect(self, rect_list):       ###0.16
+    def update_rect(self, rect_list):
         """
         Repaint display.
         Argument rect_list specifies a list of Rect to repaint.
@@ -325,10 +325,10 @@ class Display(object):
         Repaint display.
         An optional rect_list to specify regions to repaint.
         """
-        if not isinstance(rect_list, list):     ###0.16
+        if not isinstance(rect_list, list):
             if not rect_list:
                 self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
-#                self.canvas.drawImage(self.canvas.surface, 0, 0) ##pyjs0.8 *.canvas
+#                self.canvas.drawImage(self.canvas.surface, 0, 0) #pyjs0.8 *.canvas
                 return None
             else:
                 rect_list = [rect_list]
@@ -338,20 +338,20 @@ class Display(object):
                 #pyjs -O no attribute checking of Rect obj
                 try:
                     self.canvas.drawImage(self.canvas.surface.canvas, x,y,w,h, x,y,w,h)
-    #                self.canvas.drawImage(self.canvas.surface, x,y,w,h, x,y,w,h) ###pyjs0.8 *.canvas
-                except IndexSizeError:     ###0.16
+#                    self.canvas.drawImage(self.canvas.surface, x,y,w,h, x,y,w,h) #pyjs0.8 *.canvas
+                except IndexSizeError:
                     if isinstance(rect, Rect):
                         rx = self.canvas.surface.get_rect().clip(rect)
                     else:
                         rx = self.canvas.surface.get_rect().clip(Rect(x,y,w,h))
                     if rx.width and rx.height:
-                        self.canvas.drawImage(self.canvas.surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    ###pyjs0.8 *.canvas
-            except (TypeError, AttributeError): ###pyjs -O TypeError -S AttributeError
+                        self.canvas.drawImage(self.canvas.surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    #pyjs0.8 *.canvas
+            except (TypeError, AttributeError):     #pyjs -O TypeError -S AttributeError
                 continue    #rect is None
         return None
 
 
-class Textbox(TextBox):   ###0.17
+class Textbox(TextBox):
     """
     TextBox object for text input, subclass of Pyjs TextBox class.
     Optional attribute size (x,y) specifying textbox dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
@@ -360,7 +360,7 @@ class Textbox(TextBox):   ###0.17
 
     def __init__(self, size=None, panel=None):
         TextBox.__init__(self)
-        if not size:    ###0.18
+        if not size:
             self.width, self.height = env.canvas.surface.width-5, 20
         else:
             self.width, self.height = int(size[0]), int(size[1])
@@ -376,7 +376,7 @@ class Textbox(TextBox):   ###0.17
                 RootPanel().add(env.canvas.surface._display.vpanel)
                 env.canvas.surface._display.vpanel.add(self)
 
-    def resize(self, width=None, height=None):   ###0.18
+    def resize(self, width=None, height=None):
         if not (width or height):
             self.width, self.height = env.canvas.surface.width-5, 20
         else:
@@ -393,7 +393,7 @@ class Textbox(TextBox):   ###0.17
             self.setVisible(not self.getVisible())
 
 
-class Textarea(TextArea):   ###0.17
+class Textarea(TextArea):
     """
     TextArea object for text input/output, subclass of Pyjs TextArea class.
     Optional attribute size (x,y) specifying textarea dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
@@ -402,7 +402,7 @@ class Textarea(TextArea):   ###0.17
 
     def __init__(self, size=None, panel=None):
         TextArea.__init__(self)
-        if not size:    ###0.18
+        if not size:
             self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
         else:
             self.width, self.height = int(size[0]), int(size[1])
@@ -419,7 +419,7 @@ class Textarea(TextArea):   ###0.17
                 RootPanel().add(env.canvas.surface._display.vpanel)
                 env.canvas.surface._display.vpanel.add(self)
 
-    def resize(self, width=None, height=None):   ###0.18
+    def resize(self, width=None, height=None):
         if not (width or height):
             self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
         else:
@@ -436,6 +436,6 @@ class Textarea(TextArea):   ###0.17
             self.setVisible(not self.getVisible())
 
 
-class IndexSizeError(Exception):    ###0.16
+class IndexSizeError(Exception):
     pass
 

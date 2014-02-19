@@ -1,7 +1,7 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
 from rect import Rect
-import mask    ###0.15
+import mask
 
 __docformat__ = 'restructuredtext'
 
@@ -32,7 +32,7 @@ class Sprite(object):
         """
         self._identity = Sprite._identity
         Sprite._identity += 1
-        self._rect_pre = Rect(0,0,0,0)  #0.18
+        self._rect_pre = Rect(0,0,0,0)
         self.x = None
         self.y = None
         self.image = None
@@ -159,7 +159,7 @@ class Group(object):
         Provides check if sprite is in Group.
         """
         return id(sprite) in self._sprites
-#        return id(sprite) in self._sprites.iterkeys()   ###pyjs: iterkeys - AttributeError __contain__ is not a function
+#        return id(sprite) in self._sprites.iterkeys()   #pyjs: iterkeys - AttributeError __contain__ is not a function
 
     def __len__(self):
         """
@@ -230,7 +230,7 @@ class Group(object):
         The background argument can be a callback function.
         """
         self._clear_active = True
-        if hasattr(background, 'width'):    #0.18
+        if hasattr(background, 'width'):
             clr_rect = []
             for group in (self._removed_sprite, self._sprites.itervalues()):
                 for sprite in group:
@@ -257,7 +257,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.values():   #0.18
+        for sprite in self._sprites.values():
             sprite.update(*args)
         return None
 
@@ -343,7 +343,7 @@ class RenderUpdates(Group):
         """
         if surface._display:
             for group in (self._removed_sprite, self._sprites.itervalues()):
-                self.changed_areas.extend([sprite._rect_pre for sprite in group])   #0.18
+                self.changed_areas.extend([sprite._rect_pre for sprite in group])
         Group.clear(self, surface, background)
         return None
 
@@ -582,7 +582,7 @@ def spritecollideany(sprite, group):
     return False
 
 
-def collide_mask(sprite1, sprite2):     ###0.15
+def collide_mask(sprite1, sprite2):
     """
     **pyjsdl.sprite.collide_mask**
     

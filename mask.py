@@ -2,7 +2,7 @@
 
 #from __future__ import division
 from pyjsbitset import BitSet
-from color import Color     #0.18
+from color import Color
 
 __docformat__ = 'restructuredtext'
 
@@ -41,7 +41,7 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
     if threshold == (0,0,0,255):
-        color = Color(color)    #0.18
+        color = Color(color)
         color = (color.r,color.g,color.b)
         width, height = surface.width*4, surface.height
         for y in xrange(0, height):
@@ -53,7 +53,7 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
                     mask.set_at((xpix,y))
                 xpix += 1
     else:
-        color = Color(color)    #0.18
+        color = Color(color)
         col = {}
         for i, c in enumerate(('r','g','b')):
             if threshold[i]:
@@ -132,7 +132,7 @@ class Mask(object):
         Fill mask.
         """
         for bitset in self.bit:
-            bitset.fill()   #0.18
+            bitset.fill()
         return None
 
     def clear(self):

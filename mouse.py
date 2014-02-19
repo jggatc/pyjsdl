@@ -41,7 +41,7 @@ class Mouse(object):
         Return x,y of mouse pointer.
         If the pointer is not in canvas, returns -1,-1
         """
-        if self.mouseMove['x'] != -1:   ###0.17
+        if self.mouseMove['x'] != -1:
             return (self.mouseMove['x']+env.frame.scrollLeft, self.mouseMove['y']+env.frame.scrollTop)
         else:
             return (self.mouseMove['x'],  self.mouseMove['y'])

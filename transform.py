@@ -25,13 +25,13 @@ class Transform(object):
 
         Module initialization creates pyjsdl.transform instance.
         """
-        self.deg_rad = math.pi/180.0  ###180>180.0
+        self.deg_rad = math.pi/180.0    #180>180.0
 
     def rotate(self, surface, angle):
         """
         Return Surface rotated by the given angle.
         """
-        if not angle:   ###0.18
+        if not angle:
             return surface.copy()
         theta = angle*self.deg_rad
         width_i = surface.get_width()
@@ -48,7 +48,7 @@ class Transform(object):
         surf.saveContext()
         surf.translate(width_f/2.0, height_f/2.0)
         surf.rotate(-theta)
-        surf.drawImage(surface.canvas, -width_i/2, -height_i/2)    ###pyjs0.8 *.canvas
+        surf.drawImage(surface.canvas, -width_i/2, -height_i/2)    #pyjs0.8 *.canvas
 #        surf.drawImage(surface, -width_i/2, -height_i/2)
         surf.restoreContext()
         return surf
@@ -59,7 +59,7 @@ class Transform(object):
         """
         surf = self.rotate(surface, angle)
         if size != 1.0:
-#            try:   ###exception check
+#            try:   #exception check
             surf = self.scale(surf, (int(surface.get_width()*size), int(surface.get_height()*size)))
 #            except IllegalArgumentException:    #dim < 1
 #                surf = self.scale(surf, (int(math.ceil(surface.getWidth()*size)), int(math.ceil(surface.getHeight()*size))))
@@ -74,7 +74,7 @@ class Transform(object):
             surf = Surface(size)
         else:
             surf = dest
-        surf.drawImage(surface.canvas, 0, 0, surface.get_width(), surface.get_height(), 0, 0, size[0], size[1])    ###pyjs0.8 *.canvas
+        surf.drawImage(surface.canvas, 0, 0, surface.get_width(), surface.get_height(), 0, 0, size[0], size[1])    #pyjs0.8 *.canvas
 #        surf.drawImage(surface, 0, 0, surface.get_width(), surface.get_height(), 0, 0, size[0], size[1])
         return surf
 
@@ -97,7 +97,7 @@ class Transform(object):
         Return Surface that is flipped horizontally, vertically, or both.
         """
         surf = Surface((surface.get_width(),surface.get_height()))
-        surf.saveContext()      ###0.18
+        surf.saveContext()
         if xbool and ybool:
             surf.translate(surface.get_width(), surface.get_height())
             surf.scale(-1, -1)
@@ -107,8 +107,8 @@ class Transform(object):
         elif ybool:
             surf.translate(0, surface.get_height())
             surf.scale(1, -1)
-        surf.drawImage(surface.canvas, 0, 0)    ###pyjs0.8 *.canvas
+        surf.drawImage(surface.canvas, 0, 0)    #pyjs0.8 *.canvas
 #        surf.drawImage(surface, 0, 0)
-        surf.restoreContext()      ###0.18
+        surf.restoreContext()
         return surf
 

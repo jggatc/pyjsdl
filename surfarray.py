@@ -84,7 +84,7 @@ class Surfarray(object):
         Argument array containing image data.
         Return Surface generated from array.
         """
-        surface = Surface((array.__imagedata.width,array.__imagedata.height))     #0.18
+        surface = Surface((array.__imagedata.width,array.__imagedata.height))
         self.blit_array(surface, array)
         return surface
 
@@ -97,7 +97,7 @@ class Surfarray(object):
             imagedata = array.getImageData()
         except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
             imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-            if len(array._shape) == 2:      ###0.17
+            if len(array._shape) == 2:
                 array2d = PyImageMatrix(imagedata)
                 for y in xrange(array2d.getHeight()):
                     for x in xrange(array2d.getWidth()):
@@ -251,7 +251,7 @@ class PyImageInteger(Ndarray):
         Ndarray.__init__(self, data, 3)
         self.setshape(self.__imagedata.width,self.__imagedata.height)
 
-    def getImageData(self):     #0.18
+    def getImageData(self):
         index = 0
         for x in xrange(self.__imagedata.height):
             for y in xrange(self.__imagedata.width):

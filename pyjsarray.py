@@ -41,7 +41,7 @@ class PyTypedArray:
         """
         The PyTypedArray is instantiated with either the array size, an array of the TypedArray or Python type, or an existing ArrayBuffer to view, which creates a new TypedArray of size and included data as the specified type. Optional arguments include offset index at which ArrayBuffer data is inserted and length of an ArrayBuffer.
         """
-        if data:    ###0.18
+        if data:
             if isinstance(data, int):
                 if pyjs_mode.optimized:
                     self.__data = JS("""new @{{typedarray}}(@{{data}})""")
@@ -321,7 +321,7 @@ class PyFloat64Array(PyTypedArray):
         return JS("""@{{self}}['__data'][@{{index}}];""")
 
 
-class PyCanvasPixelArray(PyTypedArray):     ###
+class PyCanvasPixelArray(PyTypedArray):
     """
     Create a PyTypedArray interface to CanvasPixelArray.
     """
@@ -520,11 +520,11 @@ class Ndarray:
                 subarray.set(value)
         return None
 
-    def __getslice__(self, lower, upper):   ###
+    def __getslice__(self, lower, upper):
         subarray = self.__data.subarray(lower, upper)
         return Ndarray(subarray, self._dtype)
 
-    def __setslice__(self, lower, upper, data):     ###
+    def __setslice__(self, lower, upper, data):
         subarray = self.__data.subarray(lower, upper)
         subarray.set(data)
         return None
@@ -1069,7 +1069,7 @@ class Ndarray:
         Arguments are the axis to swap.
         Return view of array with axes changed.
         """
-        array = Ndarray(self.__data, self._dtype)       ###
+        array = Ndarray(self.__data, self._dtype)
         shape = list(self._shape)
         shape[axis1], shape[axis2] = shape[axis2], shape[axis1]
         array._shape = tuple(shape)
@@ -1085,7 +1085,7 @@ class Ndarray:
         return self.__data.getArray()
 
 
-class NP:   ###
+class NP:
 
     def zeros(self, size, dtype):
         if dtype == 'i':
@@ -1114,7 +1114,7 @@ class PyImageData:
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = imagedata
-        if not isUndefined(Uint8ClampedArray):      ###
+        if not isUndefined(Uint8ClampedArray):
             self.data = PyUint8ClampedArray()
         else:
             self.data = PyCanvasPixelArray()
@@ -1137,7 +1137,7 @@ class PyImageMatrix(Ndarray):
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = PyImageData(imagedata)
-        if isinstance(self.__imagedata.data, PyUint8ClampedArray):      ###
+        if isinstance(self.__imagedata.data, PyUint8ClampedArray):
             Ndarray.__init__(self, self.__imagedata.data, 0)
         else:     #ie10 supports typedarray, not uint8clampedarray
             Ndarray.__init__(self, self.__imagedata.data, 1)

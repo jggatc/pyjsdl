@@ -1,7 +1,7 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
 #from __future__ import division
-import env      ###0.17
+import env
 import time
 import locals as Const
 
@@ -33,10 +33,10 @@ class Event(object):
         Module initialization creates pyjsdl.event instance.
         """
         self.eventQueue = [None for i in range(256)]      #max 256: Error: Event queue full
-#        self.eventQueue = [None] * 256      ###pyjs -O TypeError
+#        self.eventQueue = [None] * 256      #pyjs -O TypeError
         self.eventNum = 0
         self.eventQueueTmp = [None for i in range(256)]   #used when main queue is locked
-#        self.eventQueueTmp = [None] * 256   ###pyjs -O TypeError
+#        self.eventQueueTmp = [None] * 256   #pyjs -O TypeError
         self.eventNumTmp = 0
         self.eventAllowed = []
         self.eventBlocked = []
@@ -55,7 +55,7 @@ class Event(object):
         self.events = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
         self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
         self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
-        self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])   ###0.14
+        self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
 #Const.K_F1, Const.K_F2, Const.K_F3, Const.K_F4, Const.K_F5, Const.K_F6, Const.K_F7, Const.K_F8, Const.K_F9, Const.K_F10, Const.K_F11, Const.K_F12, Const.K_F13, Const.K_F14, Const.K_F15   #IE keypress keycode: id same as alpha keys
         self._nonimplemented_methods()
 
@@ -143,11 +143,11 @@ class Event(object):
             self.eventNum -= 1
             self.eventQueue.append(None)
         else:
-            evt = self.Event(Const.NOEVENT)     ###0.18
+            evt = self.Event(Const.NOEVENT)
         self._unlock()
         return evt
 
-    def wait(self):     ###not implemented in js
+    def wait(self):     #not implemented in js
         """
         Return an event from the queue.
         """
@@ -319,15 +319,15 @@ class Event(object):
             * pos: mouse position (x,y)
             * rel: mouse relative position change (x,y)
             """
-            self.event = event      ###__getattr__ not implemented in pyjs -O
+            self.event = event      #__getattr__ not implemented in pyjs -O
             if event.type in ('mousedown', 'mouseup'):
                 self.type = self.__class__._types[event.type]
                 self.button = event.button + 1
-                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop      ###0.17
+                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
             elif event.type == 'mousemove':
                 self.type = self.__class__._types[event.type]
                 self.button = event.button + 1
-                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop      ###0.17
+                self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
                 self.rel = (self.pos[0]-self.__class__._mouse_pos[0], self.pos[1]-self.__class__._mouse_pos[1])
                 self.__class__._mouse_pos = self.pos
             elif event.type in ('keydown', 'keyup'):
@@ -335,7 +335,7 @@ class Event(object):
                 self.key = event.keyCode
             elif event.type == 'keypress':
                 self.type = self.__class__._types[event.type]
-                if event.keyCode:   ###0.14
+                if event.keyCode:
                     code = event.keyCode
                 else:
                     code = event.which

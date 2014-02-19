@@ -1,7 +1,7 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
 from time import Time
-from __pyjamas__ import JS      ###0.17
+from __pyjamas__ import JS
 import env
 
 
@@ -104,7 +104,7 @@ class Timer(object):
                 self.log.setCursorPos(len(text))
 
 
-class Pyjs_Mode:    #0.18
+class Pyjs_Mode:
     """
     Check Pyjs mode used to compile application.
     Attributes included strict or optimized to specifying mode.
@@ -124,7 +124,7 @@ class Pyjs_Mode:    #0.18
             return False, True
 
 
-def call(obj, func, args=()):      ###0.17
+def call(obj, func, args=()):
     """
     Call unbound method.
     Argument obj is the object, func is the unbound method, and optional args is a tuple of arguments for the method.

@@ -43,7 +43,7 @@ class Rect(object):
         'h': lambda self,val: self.setSize( self.width, val ),
         'x': lambda self,val: self.setLocation( val, self.y ),
         'y': lambda self,val: self.setLocation( self.x, val )
-          }    ###// > /    #int
+          }    #// > /    #int
     _at = {
         'center': lambda self: (self.x+int(self.width/2), self.y+int(self.height/2)),
         'centerx': lambda self: self.x+int(self.width/2),
@@ -63,9 +63,9 @@ class Rect(object):
         'size': lambda self: (self.width, self.height),
         'w': lambda self: self.width,
         'h': lambda self: self.height
-          }    ###// > /    #int
+          }    #// > /    #int
 
-    def __init__(self, *arg):   #0.18
+    def __init__(self, *arg):
         """
         Return Rect object.
         
@@ -120,7 +120,7 @@ class Rect(object):
         """
         return "%s(%d,%d,%d,%d)" % (self.__class__, self.x, self.y, self.width, self.height)
 
-    def __getattr__(self, attr):   ###not implemented in pyjs -O
+    def __getattr__(self, attr):   #not implemented in pyjs -O
         """
         Get Rect attributes.
         """
@@ -129,7 +129,7 @@ class Rect(object):
         except KeyError:
             raise AttributeError
 
-    def __setattr__(self, attr, val):   ###not implemented in pyjs -O
+    def __setattr__(self, attr, val):   #not implemented in pyjs -O
         """
         Set Rect attributes.
         """
@@ -155,7 +155,7 @@ class Rect(object):
         val = int(val)
         [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
 
-    def __nonzero__(self):      #0.18
+    def __nonzero__(self):
         """
         Rect nonzero check.
         """
@@ -164,7 +164,7 @@ class Rect(object):
         else:
             return False
 
-    def __eq__(self, other):    #0.18
+    def __eq__(self, other):
         """
         Rects equality check.
         """
@@ -173,7 +173,7 @@ class Rect(object):
         except AttributeError:  #pyjs compares rect==tuple not __eq__
             return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
 
-    def __ne__(self, other):    #0.18
+    def __ne__(self, other):
         """
         Rects equality check.
         """
@@ -218,13 +218,13 @@ class Rect(object):
             self.setLocation(self.x+int(x), self.y+int(y))
         return None
 
-    def inflate(self, x, y):     ###0.17
+    def inflate(self, x, y):
         """
         Return Rect at same position but size offset by x,y.
         """
         return Rect(self.x-int(x/2), self.y-int(y/2), self.width+x, self.height+y)
 
-    def inflate_ip(self, x, y):     ###0.17
+    def inflate_ip(self, x, y):
         """
         Change size of this rect offset by x,y.
         """
@@ -243,7 +243,7 @@ class Rect(object):
             h = min(self.y+self.height, rect.y+rect.height) - y
             return Rect(x, y, w, h)
 
-    def createIntersection(self, rect):     ###0.15
+    def createIntersection(self, rect):
         return self.clip(rect)
 
     def contains(self, x, y):

@@ -251,7 +251,7 @@ class BitSet:
             if self.__width <= len(self.__data) * self.__bit - self.__bit:
                 array = self.__typedarray( math.ceil(self.__width/(self.__bit*1.0)) )
                 array.set(self.__data.subarray(0,math.ceil(self.__width/(self.__bit*1.0))))
-                self.__data = array            
+                self.__data = array
 
     def size(self):
         """
@@ -287,7 +287,7 @@ class BitSet16(BitSet):
     __bit = 16
     __bitmask = None
     __typedarray = PyUint16Array
-    
+
     def __init__(self, width=None):
         BitSet.__init__(self, width)
 
@@ -299,7 +299,7 @@ class BitSet32(BitSet):
     __bit = 32
     __bitmask = None
     __typedarray = PyUint32Array
-    
+
     def __init__(self, width=None):
         BitSet.__init__(self, width)
 

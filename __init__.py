@@ -25,11 +25,11 @@ from event import Event
 from key import Key
 from mouse import Mouse
 from transform import Transform
-from surfarray import Surfarray     ###0.16
-from color import Color     ###0.18
+from surfarray import Surfarray
+from color import Color
 from time import Time
-import util       ###0.17
-import mask     ###0.15
+import util
+import mask
 import font
 import sprite
 from locals import *
@@ -39,7 +39,7 @@ display = Display()
 image = Image()
 draw = Draw()
 transform = Transform()
-surfarray = Surfarray()     ###0.16
+surfarray = Surfarray()
 event = Event()
 mouse = Mouse()
 key = Key()
@@ -47,6 +47,6 @@ key = Key()
 init = lambda:None
 quit = lambda:None
 
-class error(RuntimeError):     ###0.16
+class error(RuntimeError):
     pass
 

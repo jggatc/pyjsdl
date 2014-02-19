@@ -1,10 +1,10 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
 #from __future__ import division
-from surface import Surface, Surf   ###0.18
+from surface import Surface, Surf
 import env
-import pyjsdl       ###0.16
-import os.path      ###0.16
+import pyjsdl
+import os.path
 
 __docformat__ = 'restructuredtext'
 
@@ -24,18 +24,18 @@ class Image(object):
         
         Module initialization creates pyjsdl.image instance.
         """
-        self.images = None         ###0.16
+        self.images = None
 
-    def load(self, img_file, namehint=None):    ###0.16
+    def load(self, img_file, namehint=None):
         """
         Load image from file.
         Return the image as a Surface.
         """
-        image = self.get_image(img_file)    ###0.18
+        image = self.get_image(img_file)
         surface = self.convert_image(image)
         return surface
 
-    def get_image(self, img_file):      ###0.18
+    def get_image(self, img_file):
         """
         Return the original image.
         """
@@ -50,7 +50,7 @@ class Image(object):
             raise pyjsdl.error("Failed to retrieve image file %s" % img_file)
         return image
 
-    def convert_image(self, image):      ###0.18
+    def convert_image(self, image):
         """
         Return the image as a Surface.
         """
