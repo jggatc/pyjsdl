@@ -8,6 +8,24 @@ __docformat__ = 'restructuredtext'
 class Color(_Color):
 
     def __init__(self, *color):
+        """
+        Return Color object.
+        
+        Alternative arguments:
+        
+        * r,g,b,a
+        * r,g,b
+        * (r,g,b,a)
+        * (r,g,b)
+        * integer rgba
+        * Color
+
+        Color has the attributes::
+        
+            r, g, b, a
+
+        Module initialization places pyjsdl.Color in module's namespace.
+        """
         if isinstance(color[0],tuple):
             color = color[0]
         try:
