@@ -85,4 +85,5 @@ Pyjsdl Version History
 -updated util.Timer for output to textarea rather than console logger.
 -updated Surfarray array2d PyImageInteger processing.
 -updated Surfarray make_surface method.
+-added draw.ellipse method.
 

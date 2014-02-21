@@ -15,6 +15,7 @@ class Draw(object):
     
     * pyjsdl.draw.rect
     * pyjsdl.draw.circle
+    * pyjsdl.draw.ellipse
     * pyjsdl.draw.arc
     * pyjsdl.draw.polygon
     * pyjsdl.draw.line
@@ -65,6 +66,33 @@ class Draw(object):
             surface.setFillStyle(Color(color))
             surface.fill()
         return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius,2*radius) )
+
+    def ellipse(self, surface, color, rect, width=0):
+        """
+        Draw ellipse shape, and returns bounding Rect.
+        Argument include surface to draw, color, and rect.
+        Optional width argument of outline, which defaults to 0 for filled shape.
+        """
+        rect = Rect(rect)
+        surface.saveContext()
+        surface.translate(rect.x+int(rect.width/2), rect.y+int(rect.height/2))
+        if rect.width >= rect.height:
+            surface.scale(rect.width/rect.height, 1)
+            radius = rect.height/2
+        else:
+            surface.scale(1, rect.height/rect.width)
+            radius = rect.width/2
+        surface.beginPath()
+        surface.arc(0, 0, radius, 0, 2*pi, False)
+        if width:
+            surface.setLineWidth(width)
+            surface.setStrokeStyle(Color(color))
+            surface.stroke()
+        else:
+            surface.setFillStyle(Color(color))
+            surface.fill()
+        surface.restoreContext()
+        return surface.get_rect().clip(rect)
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
         """
