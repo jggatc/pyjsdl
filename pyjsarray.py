@@ -182,7 +182,7 @@ class PyUint8ClampedArray(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Uint8ClampedArray)
-        except AttributeError:
+        except (TypeError, AttributeError):     #-O/-S:TypeError/AttributeError
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -197,7 +197,7 @@ class PyUint8Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Uint8Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -212,7 +212,7 @@ class PyUint16Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Uint16Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -227,7 +227,7 @@ class PyUint32Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Uint32Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -242,7 +242,7 @@ class PyInt8Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Int8Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -257,7 +257,7 @@ class PyInt16Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Int16Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -272,7 +272,7 @@ class PyInt32Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Int32Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -287,7 +287,7 @@ class PyFloat32Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Float32Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -308,7 +308,7 @@ class PyFloat64Array(PyTypedArray):
     def __init__(self, data=None, offset=None, length=None):
         try:
             PyTypedArray.__init__(self, data, offset, length, typedarray=Float64Array)
-        except AttributeError:
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:

@@ -86,4 +86,5 @@ Pyjsdl Version History
 -updated Surfarray array2d PyImageInteger processing.
 -updated Surfarray make_surface method.
 -added draw.ellipse method.
+-update Pyjsarray Typedarray constructor when type not implemented.
 
