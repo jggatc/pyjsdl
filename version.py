@@ -1,4 +1,4 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-ver =   '0.17'
+ver =   '0.18'
 

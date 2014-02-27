@@ -58,7 +58,7 @@ Pyjsdl Version History
 -updated Surfarray.blit_array.
 -added Pyjsarray Ndarray methods.
 
-0.18_git
+0.18    February 27, 2014
 -updated Pyjsarray typedarray constructor for Chrome compatibility.
 -updated Surface constructor to int convert argument.
 -updated Transform.rotate positioning.
@@ -86,5 +86,6 @@ Pyjsdl Version History
 -updated Surfarray array2d PyImageInteger processing.
 -updated Surfarray make_surface method.
 -added draw.ellipse method.
--update Pyjsarray Typedarray constructor when type not implemented.
+-updated Pyjsarray Typedarray constructor when type not implemented.
+-changed license from GPL to LGPL.
 
