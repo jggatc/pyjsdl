@@ -89,3 +89,6 @@ Pyjsdl Version History
 -updated Pyjsarray Typedarray constructor when type not implemented.
 -changed license from GPL to LGPL.
 
+0.19_git:
+-updated bitset array to avoid js reserved work.
+

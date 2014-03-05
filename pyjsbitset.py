@@ -14,7 +14,7 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with this library; if not, see http://www.gnu.org/licenses/.
 #
-#PyjsBitset version 0.51
+#PyjsBitset version 0.52
 #Project Site: http://gatc.ca
 
 import math
@@ -163,8 +163,8 @@ class BitSet:
                 self.set(index, 0)
             else:
                 if index == 0 and toIndex == self.__width:
-                    for byte in xrange(len(self.__data)):
-                        self.__data[byte] = 0
+                    for dat in xrange(len(self.__data)):
+                        self.__data[dat] = 0
                 else:
                     for i in xrange(index, toIndex):
                         self.set(i, 0)
@@ -181,8 +181,8 @@ class BitSet:
                 self.resize(toIndex)
                 toIndex = self.__width
             if index == 0 and toIndex == self.__width:
-                for byte in xrange(len(self.__data)):
-                    self.__data[byte] = ~self.__data[byte]
+                for dat in xrange(len(self.__data)):
+                    self.__data[dat] = ~self.__data[dat]
             else:
                 for i in xrange(index, toIndex):
                     self.set(i, not self.get(i))
@@ -202,8 +202,8 @@ class BitSet:
         Check if set bits in this BitSet are also set in the bitset argument.
         Return True if bitsets intersect, otherwise return False.
         """
-        for byte in xrange(len(bitset.__data)):
-            if bitset.__data[byte] & self.__data[byte]:
+        for dat in xrange(len(bitset.__data)):
+            if bitset.__data[dat] & self.__data[dat]:
                 return True
         return False
 
@@ -211,29 +211,29 @@ class BitSet:
         """
         BitSet and BitSet.
         """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] = self.__data[byte] & bitset.__data[byte]
-#            self.__data[byte] &= bitset.__data[byte]     #pyjs -O: &= not processed
+        data = min(len(self.__data), len(bitset.__data))
+        for dat in xrange(data):
+            self.__data[dat] = self.__data[dat] & bitset.__data[dat]
+#            self.__data[dat] &= bitset.__data[dat]     #pyjs -O: &= not processed
 #        pyjs -S: &= calls __and__ instead of __iand__, -O: no call to operator methods
 
     def orSet(self, bitset):
         """
         BitSet or BitSet.
         """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] = self.__data[byte] | bitset.__data[byte]
-#            self.__data[byte] |= bitset.__data[byte]    #pyjs -O: |= not processed
+        data = min(len(self.__data), len(bitset.__data))
+        for dat in xrange(data):
+            self.__data[dat] = self.__data[dat] | bitset.__data[dat]
+#            self.__data[dat] |= bitset.__data[dat]    #pyjs -O: |= not processed
 
     def xorSet(self, bitset):
         """
         BitSet xor BitSet.
         """
-        bytes = min(len(self.__data), len(bitset.__data))
-        for byte in xrange(bytes):
-            self.__data[byte] = self.__data[byte] ^ bitset.__data[byte]
-#            self.__data[byte] ^= bitset.__data[byte]    #pyjs -O: |= not processed
+        data = min(len(self.__data), len(bitset.__data))
+        for dat in xrange(data):
+            self.__data[dat] = self.__data[dat] ^ bitset.__data[dat]
+#            self.__data[dat] ^= bitset.__data[dat]    #pyjs -O: |= not processed
 
     def resize(self, width):
         """
