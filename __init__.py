@@ -46,7 +46,10 @@ mouse = Mouse()
 key = Key()
 
 init = lambda:None
-quit = lambda:None
+
+def quit():
+    canvas = display.get_canvas()
+    canvas.stop()
 
 class error(RuntimeError):
     pass

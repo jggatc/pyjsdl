@@ -43,7 +43,6 @@ class Canvas(Surface):
         self.images = {}
         self.image_list = None
         self.loop = None
-        self.run = self._run
         self.time_hold = 1
         self.time_wait = 0
         self.time = Time()
@@ -129,7 +128,12 @@ class Canvas(Surface):
             self.time_hold = 1
 
     def start(self):
+        self.run = self._run
         self.time.timeout(self.time_hold, self)
+
+    def stop(self):
+        self.time_wait = 0
+        self.run = lambda: None
 
     def onImagesLoaded(self, images):
         for i, image in enumerate(self.image_list):
@@ -141,9 +145,10 @@ class Canvas(Surface):
             self.time_wait = time
             self.run = lambda: None
         else:
-            self.time_wait = 0
-            self.run = self._run
-            self.run()
+            if self.time_wait:
+                self.time_wait = 0
+                self.run = self._run
+                self.run()
 
     def _run(self):
         self.loop()
