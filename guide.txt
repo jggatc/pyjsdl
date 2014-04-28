@@ -1,0 +1,8 @@
+Pyjsdl Module Guide
+
+Pyjsdl module is modelled on Pygame/SDL commands that wraps JavaScript functionality including HTML5 canvas. To use Pyjsdl module, place pyjsdl folder in the script folder or on the module path. Import pyjsdl into the Python script, or use the statement 'import pyjsdl as pygame' to maintain the Pygame commands. During pyjsdl initiation, use the statement pyjsdl.display.setup(run, images) to provide the canvas the main function to execute at a timed interval and program images to preload, where the 'run' function contains statements derived from the main loop to be repeated each frame and 'images' is a list of image paths in the form ['./images/img.png'].
+
+Python code using Pyjsdl is compiled to a JavaScript application with the Pyjs compiler (http://pyjs.org). Install Pyjs from https://github.com/pyjs/pyjs, check pyjs_changes.zip in module folder for required changes, and compile using pyjsbuild. Some additional changes to the Python script may be necessary for Pyjs compilation. A web application can be deployed following compilation to JavaScript.
+
+Further information is available on the Pyjsdl project page (http://gatc.ca/projects/pyjsdl/) and in the API documentation (http://gatc.ca/projects/pyjsdl/doc/).
+
