@@ -123,6 +123,8 @@ class Pyjs_Mode:
         else:
             return False, True
 
+env.pyjs_mode = Pyjs_Mode()
+
 
 def call(obj, func, args=()):
     """

@@ -4,6 +4,8 @@
 Canvas object.
 """
 
+
 canvas = None
 frame = None
+pyjs_mode = None
 
