@@ -54,8 +54,12 @@ class Event(object):
         self.eventType = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
         self.events = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
         self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
-        self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
-        self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
+        if env.pyjs_mode.optimized:
+            self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
+            self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
+        else:   #pyjs-S onKeyDown keycode 'mod' not in set, due to js/pyjs numeric diff
+            self.modKey = set([keycode.valueOf() for keycode in (Const.K_ALT, Const.K_CTRL, Const.K_SHIFT)])
+            self.specialKey = set([keycode.valueOf() for keycode in (Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE)])
 #Const.K_F1, Const.K_F2, Const.K_F3, Const.K_F4, Const.K_F5, Const.K_F6, Const.K_F7, Const.K_F8, Const.K_F9, Const.K_F10, Const.K_F11, Const.K_F12, Const.K_F13, Const.K_F14, Const.K_F15   #IE keypress keycode: id same as alpha keys
         self._nonimplemented_methods()
 
