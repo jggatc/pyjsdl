@@ -75,7 +75,9 @@ class Canvas(Surface):
         self.event.mousePress[0], self.event.mousePress[1], self.event.mousePress[2] = False, False, False
         self.event.mouseMove['x'], self.event.mouseMove['y'] = -1, -1
         self.event.mouseMoveRel['x'], self.event.mouseMoveRel['y'] = None, None
-        self.event.keyPress['a'], self.event.keyPress['c'], self.event.keyPress['s'] = False, False, False
+        for keycode in self.modKey:
+            if self.event.keyPress[keycode]:
+                self.event.keyPress[keycode] = False
 
     def onKeyDown(self, sender, keycode, modifiers):
         if keycode in self.modKey:

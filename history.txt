@@ -93,4 +93,7 @@ Pyjsdl Version History
 -updated bitset array to avoid js reserved work.
 -updated quit function to terminate program iteration.
 -updated transform.rotozoom for correct scaling.
+-add env.pyjs_mode with strict/optimized bool attributes to check pyjs-S/-O mode.
+-correct modifier keys keyevent detect with pyjs -S compilation (worked in -O) with sets membership testing of onKeyDown keycode that appears due to js/pyjs numeric difference.
+-update display event to properly clear modifier keys held with onMouseLeave event.
 
