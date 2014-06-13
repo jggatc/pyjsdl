@@ -285,6 +285,15 @@ class Display(object):
         """
         return self._initialized
 
+    def get_active(self):
+        """
+        Check if display is visible.
+        """
+        if hasattr(self, 'canvas'):
+            return True
+        else:
+            return False
+
     def set_caption(self, text):
         """
         Set Canvas element id.
