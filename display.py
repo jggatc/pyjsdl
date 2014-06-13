@@ -173,6 +173,7 @@ class Display(object):
     * pyjsdl.display.quit
     * pyjsdl.display.get_init
     * pyjsdl.display.set_caption
+    * pyjsdl.display.get_caption
     * pyjsdl.display.clear
     * pyjsdl.display.flip
     * pyjsdl.display.update_rect
@@ -193,7 +194,7 @@ class Display(object):
         Initialize display.
         """
         if not self._initialized:
-            self.caption = ''
+            self.id = ''
             self.icon = None
             self._nonimplemented_methods()
             self._initialized = True
@@ -284,13 +285,26 @@ class Display(object):
         """
         return self._initialized
 
-    def set_caption(self, caption):
+    def set_caption(self, text):
         """
-        Set Display.caption.
-        Argument: caption text.
+        Set Canvas element id.
+        Argument: id text.
         """
-        self.caption = caption
+        self.id = text
+        try:
+            self.canvas.setID(self.id)
+        except (TypeError, AttributeError):
+            pass
         return None
+
+    def get_caption(self):
+        """
+        Get Canvas element id.
+        """
+        try:
+            return self.canvas.getID()
+        except (TypeError, AttributeError):
+            return self.id
 
     def clear(self):
         """
