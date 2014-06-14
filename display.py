@@ -172,6 +172,7 @@ class Display(object):
     * pyjsdl.display.get_vpanel
     * pyjsdl.display.quit
     * pyjsdl.display.get_init
+    * pyjsdl.display.get_active
     * pyjsdl.display.set_caption
     * pyjsdl.display.get_caption
     * pyjsdl.display.clear
@@ -201,8 +202,9 @@ class Display(object):
 
     def set_mode(self, size, buffered=True, *args, **kwargs):
         """
-        Return a display Surface.
-        Argument: size (x,y) of surface and optional buffered surface.
+        Setup the display Surface.
+        Argument include size (x,y) of surface and optional buffered surface.
+        Return a reference to the display Surface.
         """
         self.canvas = Canvas(size, buffered)
         env.canvas = self.canvas
@@ -241,7 +243,7 @@ class Display(object):
 
     def is_canvas(self):
         """
-        Check whether browser has HTML5 canvas.
+        Check whether browser has HTML5 Canvas.
         """
         return self.canvas._isCanvas
 
@@ -297,7 +299,7 @@ class Display(object):
     def set_caption(self, text):
         """
         Set Canvas element id.
-        Argument: id text.
+        Argument is the id text.
         """
         self.id = text
         try:
