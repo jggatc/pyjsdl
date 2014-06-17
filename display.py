@@ -357,29 +357,19 @@ class Display(object):
         Repaint display.
         An optional rect_list to specify regions to repaint.
         """
-        if not isinstance(rect_list, list):
-            if not rect_list:
-                self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
-#                self.canvas.drawImage(self.canvas.surface, 0, 0) #pyjs0.8 *.canvas
-                return None
-            else:
+        if not hasattr(rect_list, 'append'):
+            if rect_list:
                 rect_list = [rect_list]
+            else:
+                self.flip()
+                return None
+        update_list = []
         for rect in rect_list:
-            try:
-                x, y, w, h = rect[0], rect[1], rect[2], rect[3]
-                #pyjs -O no attribute checking of Rect obj
-                try:
-                    self.canvas.drawImage(self.canvas.surface.canvas, x,y,w,h, x,y,w,h)
-#                    self.canvas.drawImage(self.canvas.surface, x,y,w,h, x,y,w,h) #pyjs0.8 *.canvas
-                except IndexSizeError:
-                    if isinstance(rect, Rect):
-                        rx = self.canvas.surface.get_rect().clip(rect)
-                    else:
-                        rx = self.canvas.surface.get_rect().clip(Rect(x,y,w,h))
-                    if rx.width and rx.height:
-                        self.canvas.drawImage(self.canvas.surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    #pyjs0.8 *.canvas
-            except (TypeError, AttributeError):     #pyjs -O TypeError -S AttributeError
-                continue    #rect is None
+            if hasattr(rect, 'width'):
+                update_list.append(rect)
+            elif rect:
+                update_list.append(Rect(rect))
+        self.update_rect(update_list)
         return None
 
 

@@ -99,4 +99,5 @@ Pyjsdl Version History
 -update display set_caption/get_caption to access Canvas element id.
 -add display.get_active method.
 -restructure event handler to isolate from UserEvent and JEvent objects.
+-update display.update for performance.
 
