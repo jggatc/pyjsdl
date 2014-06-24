@@ -38,8 +38,6 @@ class Event(object):
         self.eventQueueTmp = [None for i in range(256)]   #used when main queue is locked
 #        self.eventQueueTmp = [None] * 256   #pyjs -O TypeError
         self.eventNumTmp = 0
-        self.eventAllowed = []
-        self.eventBlocked = []
         self.queueLock = False
         self.queueAccess = False
         self.queue = []
@@ -52,7 +50,7 @@ class Event(object):
         self.timer = time.Clock()
         self.eventName = {'mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
         self.eventType = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
-        self.events = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
+        self.events = set(self.eventType)
         self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
@@ -231,10 +229,11 @@ class Event(object):
             for evtType in eventType:
                 try:
                     self.events.remove(evtType)
-                except ValueError:
+                except KeyError:
                     pass
         else:
-            self.events = self.eventType[:]
+            for event in self.eventType:
+                self.events.add(event)
         return None
 
     def set_allowed(self, eventType):
@@ -246,10 +245,9 @@ class Event(object):
                 eventType = [eventType]
             eventType = [et for t in eventType for et in self.eventTypes[t]]
             for evtType in eventType:
-                if evtType not in self.events:
-                    self.events.append(evtType)
+                self.events.add(evtType)
         else:
-            self.events = []
+            self.events.clear()
         return None
 
     def get_blocked(self, eventType):
@@ -269,7 +267,6 @@ class Event(object):
         self._lock()
         self._append(event)
         if event.type not in self.events:
-            self.events.append(event.type)
             self.eventTypes[event.type] = [event.type]
         self._unlock()
         return None
