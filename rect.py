@@ -222,15 +222,14 @@ class Rect(object):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x-int(x/2), self.y-int(y/2), self.width+x, self.height+y)
+        return Rect(self.x-int(float(x)/2), self.y-int(float(y)/2), self.width+x, self.height+y)
 
     def inflate_ip(self, x, y):
         """
         Change size of this rect offset by x,y.
         """
         self.setSize(self.width+x, self.height+y)
-        self.x -= int(x/2)
-        self.y -= int(y/2)
+        self.setLocation(self.x-int(float(x)/2), self.y-int(float(y)/2))
         return None
 
     def clip(self, rect):
