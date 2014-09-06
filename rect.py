@@ -14,6 +14,10 @@ class Rect(object):
     * Rect.move_ip
     * Rect.inflate
     * Rect.inflate_ip
+    * Rect.union
+    * Rect.union_ip
+    * Rect.unionall
+    * Rect.unionall_ip
     * Rect.clip
     * Rect.collidepoint
     * Rect.colliderect
@@ -250,6 +254,34 @@ class Rect(object):
 
     def intersects(self, rect):
         return (self.x < (rect.x+rect.width) and rect.x < (self.x+self.width) and self.y < (rect.y+rect.height) and rect.y < (self.y+self.height))
+
+    def union(self, rect):
+        """
+        Return Rect representing the union of rect and this rect.
+        """
+        return Rect(min(self.x,rect.x), min(self.y,rect.y), max(self.x+self.width,rect.x+rect.width), max(self.y+self.height,rect.y+rect.height))
+
+    def union_ip(self, rect):
+        """
+        Change this rect to represent the union of rect and this rect.
+        """
+        self.setSize(max(self.x+self.width,rect.x+rect.width), max(self.y+self.height,rect.y+rect.height))
+        self.setLocation(min(self.x,rect.x), min(self.y,rect.y))
+        return None
+
+    def unionall(self, rect_list):
+        """
+        Return Rect representing the union of rect list and this rect.
+        """
+        return Rect(min(self.x,min(r.x for r in rect_list)), min(self.y,min(r.y for r in rect_list)), max(self.x+self.width,max(r.x+r.width for r in rect_list)), max(self.y+self.height,max(r.y+r.height for r in rect_list)))
+
+    def unionall_ip(self, rect_list):
+        """
+        Change this rect to represent the union of rect list and this rect.
+        """
+        self.setSize(max(self.x+self.width,max(r.x+r.width for r in rect_list)), max(self.y+self.height,max(r.y+r.height for r in rect_list)))
+        self.setLocation(min(self.x,min(r.x for r in rect_list)), min(self.y,min(r.y for r in rect_list)))
+        return None
 
     def collidepoint(self, *point):
         """

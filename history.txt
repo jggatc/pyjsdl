@@ -103,3 +103,6 @@ Pyjsdl Version History
 -update event eventtype list as a set object.
 -update rect inflate/inflate_ip positioning.
 
+0.20_git
+-add rect union methods.
+
