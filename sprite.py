@@ -604,7 +604,7 @@ def collide_mask(sprite1, sprite2):
     
     Check if mask of sprites intersect.
     """
-    clip = sprite1.rect.createIntersection(sprite2.rect)
+    clip = sprite1.rect.intersection(sprite2.rect)
     if clip.width < 1 or clip.height < 1:
         return False
     x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y

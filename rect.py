@@ -246,7 +246,7 @@ class Rect(object):
             h = min(self.y+self.height, rect.y+rect.height) - y
             return Rect(x, y, w, h)
 
-    def createIntersection(self, rect):
+    def intersection(self, rect):
         return self.clip(rect)
 
     def contains(self, x, y):

@@ -105,4 +105,5 @@ Pyjsdl Version History
 
 0.20_git
 -add rect union methods.
+-update methods to use rect intersection.
 
