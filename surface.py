@@ -142,14 +142,9 @@ class Surface(HTML5Canvas):
         """
         Draw list of (surface, rect) on this surface.
         """
-        for surface in surfaces:
-            try:
-                x, y = surface[1].x, surface[1].y
-            except AttributeError:
-                x, y = surface[1][0], surface[1][1]
-            self.drawImage(surface[0].canvas, x, y)    #pyjs0.8 *.canvas
-#            self.drawImage(surface[0], x, y)
-        return None
+        for surface, rect in surfaces:
+            self.drawImage(surface.canvas, rect.x, rect.y)   #pyjs0.8 *.canvas
+#            self.drawImage(surface, rect.x, rect.y)
 
     def _blit_clear(self, surface, rect_list):
         for r in rect_list:

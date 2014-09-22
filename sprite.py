@@ -138,7 +138,6 @@ class Group(object):
         if sprites:
             for sprite in sprites:
                 self._sprites[id(sprite)] = sprite
-        self._surface_blits = []
         self._clear_active = False
         self._sprites_drawn = {}
 
@@ -218,8 +217,7 @@ class Group(object):
         """
         Draw sprite on surface.
         """
-        self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
-        surface.blits(self._surface_blits)
+        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self._sprites_drawn.itervalues())
             self._sprites_drawn.clear()
@@ -318,8 +316,7 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
-        surface.blits(self._surface_blits)
+        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
@@ -472,8 +469,7 @@ class OrderedUpdates(RenderUpdates):
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = iter(self.sort)
-        self._surface_blits = [(sprite.image,sprite.rect) for sprite in order_sprite]
-        surface.blits(self._surface_blits)
+        surface.blits([(sprite.image,sprite.rect) for sprite in order_sprite])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []

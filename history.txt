@@ -108,4 +108,5 @@ Pyjsdl Version History
 -update methods to use rect intersection.
 -correct surface subsurface rect access.
 -add rect rectPool to utilize a rect pool.
+-update sprite draw for performance.
 
