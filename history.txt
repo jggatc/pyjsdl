@@ -107,4 +107,5 @@ Pyjsdl Version History
 -add rect union methods.
 -update methods to use rect intersection.
 -correct surface subsurface rect access.
+-add rect rectPool to utilize a rect pool.
 
