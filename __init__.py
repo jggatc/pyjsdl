@@ -28,6 +28,7 @@ from mouse import Mouse
 from transform import Transform
 from surfarray import Surfarray
 from color import Color
+from mixer import Mixer
 from time import Time
 import util
 import mask
@@ -41,6 +42,7 @@ image = Image()
 draw = Draw()
 transform = Transform()
 surfarray = Surfarray()
+mixer = Mixer()
 event = Event()
 mouse = Mouse()
 key = Key()
