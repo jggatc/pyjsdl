@@ -527,7 +527,7 @@ def spritecollide(sprite, group, dokill, collided=None):
     **pyjsdl.sprite.spritecollide**
     
     Return list of sprites in group that intersect with sprite.
-    The dokill argument is bool, True removes sprite from group.
+    The dokill argument is a bool, True removes sprites that collide from all groups.
     An optional collided argument is a callback function (ie. collide_mask).
     """
     collide = []
@@ -537,8 +537,9 @@ def spritecollide(sprite, group, dokill, collided=None):
                 if not collided(sprite,sprites):
                     continue
             collide.append(sprites)
-            if dokill:
-                group.remove(sprites)
+    if collide and dokill:
+        for sprite in collide:
+            sprite.kill()
     return collide
 
 
@@ -555,22 +556,25 @@ def groupcollide(group1, group2, dokill1, dokill2):
     """
     **pyjsdl.sprite.groupcollide**
     
-    Return list of sprites in group that intersect with sprite.
-    The dokill argument is bool, True removes sprite from group.
+    Return dictionary of sprites in group1 with list of sprites in group2 that intersect.
+    The dokill argument is a bool, True removes sprites that collide from all groups.
     """
     collide = {}
     for sprite1 in group1:
-        collide[sprite1] = []
         for sprite2 in group2:
             if sprite1.rect.intersects(sprite2.rect):
+                if sprite1 not in collide:
+                    collide[sprite1] = []
                 collide[sprite1].append(sprite2)
-    for sprite1 in collide:
-        if collide[sprite1]:
-            if dokill1:
-                group1.remove(sprite1)
-            if dokill2:
+    if collide:
+        if dokill1:
+            for sprite1 in collide:
+                sprite1.kill()
+        if dokill2:
+            for sprite1 in collide:
                 for sprite2 in collide[sprite1]:
-                    group2.remove(sprite2)
+                    sprite2.kill()
+    return collide
 
 
 def spritecollideany(sprite, group):

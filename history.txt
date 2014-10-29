@@ -109,5 +109,6 @@ Pyjsdl Version History
 -correct surface subsurface rect access.
 -add rect rectPool to utilize a rect pool.
 -update sprite draw for performance.
+-update sprite collide methods processing.
 -add mixer.
 
