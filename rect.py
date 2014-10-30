@@ -18,6 +18,8 @@ class Rect(object):
     * Rect.union_ip
     * Rect.unionall
     * Rect.unionall_ip
+    * Rect.clamp
+    * Rect.clamp_ip
     * Rect.clip
     * Rect.collidepoint
     * Rect.colliderect
@@ -287,6 +289,47 @@ class Rect(object):
         """
         self.setSize(max(self.x+self.width,max(r.x+r.width for r in rect_list)), max(self.y+self.height,max(r.y+r.height for r in rect_list)))
         self.setLocation(min(self.x,min(r.x for r in rect_list)), min(self.y,min(r.y for r in rect_list)))
+        return None
+
+    def clamp(self, rect):
+        """
+        Return Rect of same dimension as this rect moved within rect.
+        """
+        newrect = Rect(self.x, self.y, self.width, self.height)
+        if self.width < rect.width:
+            if self.x < rect.x:
+                super(Rect, newrect).__setattr__('x', rect.x)
+            elif self.x+self.width > rect.x+rect.width:
+                super(Rect, newrect).__setattr__('x', rect.x+rect.width-self.width)
+        else:
+            super(Rect, newrect).__setattr__('x', rect.x-int((self.width-rect.width)/2))
+        if self.height < rect.height:
+            if self.y < rect.y:
+                super(Rect, newrect).__setattr__('y', rect.y)
+            elif self.y+self.height > rect.y+rect.height:
+                super(Rect, newrect).__setattr__('y', rect.y+rect.height-self.height)
+        else:
+            super(Rect, newrect).__setattr__('y', rect.y-int((self.height-rect.height)/2))
+        return newrect
+
+    def clamp_ip(self, rect):
+        """
+        Move this rect within rect.
+        """
+        if self.width < rect.width:
+            if self.x < rect.x:
+                super(Rect, self).__setattr__('x', rect.x)
+            elif self.x+self.width > rect.x+rect.width:
+                super(Rect, self).__setattr__('x', rect.x+rect.width-self.width)
+        else:
+            super(Rect, self).__setattr__('x',  rect.x-int((self.width-rect.width)/2))
+        if self.height < rect.height:
+            if self.y < rect.y:
+                super(Rect, self).__setattr__('y', rect.y)
+            elif self.y+self.height > rect.y+rect.height:
+                super(Rect, self).__setattr__('y', rect.y+rect.height-self.height)
+        else:
+            super(Rect, self).__setattr__('y', rect.y-int((self.height-rect.height)/2))
         return None
 
     def collidepoint(self, *point):
