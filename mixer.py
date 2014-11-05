@@ -374,7 +374,6 @@ class Channel:
         if self._sound:
             self._sound._sound_object.pause()
             self._sound._sound_object.setCurrentTime(0)
-            self._sound = None
             self._pause = False
             self._loops = 0
             self._active = False
