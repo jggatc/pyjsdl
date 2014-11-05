@@ -7,6 +7,23 @@ __docformat__ = 'restructuredtext'
 
 
 class Mixer:
+    """
+    **pyjsdl.mixer**
+    
+    * pyjsdl.mixer.init
+    * pyjsdl.mixer.quit
+    * pyjsdl.mixer.get_init
+    * pyjsdl.mixer.stop
+    * pyjsdl.mixer.pause
+    * pyjsdl.mixer.unpause
+    * pyjsdl.mixer.set_num_channels
+    * pyjsdl.mixer.get_num_channels
+    * pyjsdl.mixer.set_reserved
+    * pyjsdl.mixer.find_channel
+    * pyjsdl.mixer.get_busy
+    * pyjsdl.mixer.Sound
+    * pyjsdl.mixer.Channel
+    """
 
     def __init__(self):
         Sound._mixer = self
@@ -210,6 +227,17 @@ class Mixer:
 
 
 class Sound:
+    """
+    **pyjsdl.mixer.Sound**
+    
+    * Sound.play
+    * Sound.stop
+    * Sound.set_volume
+    * Sound.get_volume
+    * Sound.get_num_channels
+    * Sound.get_length
+    """
+
     _id = 0
     _mixer = None
 
@@ -310,6 +338,19 @@ class Sound:
 
 
 class Channel:
+    """
+    **pyjsdl.mixer.Channel**
+    
+    * Channel.play
+    * Channel.stop
+    * Channel.pause
+    * Channel.unpause
+    * Channel.set_volume
+    * Channel.get_volume
+    * Channel.get_busy
+    * Channel.get_sound
+    """
+
     _mixer = None
 
     def __init__(self, id):
