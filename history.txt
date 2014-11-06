@@ -111,5 +111,6 @@ Pyjsdl Version History
 -update sprite draw for performance.
 -update sprite collide methods processing.
 -add rect clamp methods.
+-update display setup callback function.
 -add mixer.
 

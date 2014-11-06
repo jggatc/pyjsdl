@@ -42,7 +42,7 @@ class Canvas(Surface):
             self.surface = self
         self.images = {}
         self.image_list = None
-        self.loop = None
+        self.function = None
         self.time_hold = 1
         self.time_wait = 0
         self.time = Time()
@@ -114,8 +114,8 @@ class Canvas(Surface):
         except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
             pass
 
-    def set_loop(self, loop):
-        self.loop = loop
+    def set_function(self, function):
+        self.function = function
 
     def load_images(self, images):
         if images:
@@ -153,7 +153,7 @@ class Canvas(Surface):
                 self.run()
 
     def _run(self):
-        self.loop()
+        self.function()
         self.time.timeout(self.time_hold, self)
 
 
@@ -225,12 +225,12 @@ class Display(object):
             self.update_rect = lambda *arg: None
         return self.surface
 
-    def setup(self, loop, images=None):
+    def setup(self, function, images=None):
         """
         Initialize Canvas for script execution.
-        Argument include loop function to run and optional images list to preload.
+        Argument include callback function to run and optional images list to preload.
         """
-        self.canvas.set_loop(loop)
+        self.canvas.set_function(function)
         self.canvas.load_images(images)
 
     def textbox_init(self):
