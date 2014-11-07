@@ -376,8 +376,8 @@ class Display(object):
 class Textbox(TextBox):
     """
     TextBox object for text input, subclass of Pyjs TextBox class.
-    Optional attribute size (x,y) specifying textbox dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
-    Module initialization provides pyjsdl.display.textbox instance.
+    Optional attribute size (x,y) of textbox and panel to hold element.
+    Default size derived from Canvas size placed in lower VerticalPanel.
     """
 
     def __init__(self, size=None, panel=None):
@@ -418,8 +418,8 @@ class Textbox(TextBox):
 class Textarea(TextArea):
     """
     TextArea object for text input/output, subclass of Pyjs TextArea class.
-    Optional attribute size (x,y) specifying textarea dimensions and panel to hold element, default size derived from Canvas size placed in lower VerticalPanel.
-    Module initialization provides pyjsdl.display.textarea instance.
+    Optional attribute size (x,y) of textarea and panel to hold element.
+    Default size derived from Canvas size placed in lower VerticalPanel.
     """
 
     def __init__(self, size=None, panel=None):
