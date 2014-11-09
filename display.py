@@ -16,6 +16,7 @@ from pyjamas.ui.TextBox import TextBox
 from pyjamas.ui.TextArea import TextArea
 from pyjamas.ui import Event
 from pyjamas import DOM
+from __pyjamas__ import JS
 import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -43,7 +44,6 @@ class Canvas(Surface):
         self.images = {}
         self.image_list = None
         self.function = None
-        self.time_hold = 1
         self.time_wait = 0
         self.time = Time()
         self.event = pyjsdl.event
@@ -52,6 +52,27 @@ class Canvas(Surface):
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
+        self._rect_list = []
+        _animationFrame = self._initAnimationFrame()
+        if _animationFrame:
+            self.time_hold = 0
+        else:
+            self.time_hold = 1
+        self.paint = lambda ts=0:self._paint(ts)
+
+    def _initAnimationFrame(self):
+        JS("""
+            $wnd['requestAnimationFrame'] = $wnd['requestAnimationFrame'] ||
+                                            $wnd['mozRequestAnimationFrame'] ||
+                                            $wnd['webkitRequestAnimationFrame'] ||
+                                            $wnd['oRequestAnimationFrame'];
+           """)
+        if JS("""$wnd['requestAnimationFrame'] != undefined"""):
+            _animationFrame = True
+        else:
+            JS("""$wnd['requestAnimationFrame'] = function(cb){cb()};""")
+            _animationFrame = False
+        return _animationFrame
 
     def onMouseMove(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
@@ -152,9 +173,21 @@ class Canvas(Surface):
                 self.run = self._run
                 self.run()
 
+    def render(self):
+        for rect in self._rect_list:
+            self.drawImage(self.surface.canvas, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
+        self._rect_list[:] = []
+
     def _run(self):
         self.function()
-        self.time.timeout(self.time_hold, self)
+        self.render()
+        JS("""$wnd['requestAnimationFrame'](@{{self}}['paint']);""")
+
+    def _paint(self, ts=0):
+        if not self.time_hold:
+            self.run()
+        else:
+            self.time.timeout(self.time_hold, self)
 
 
 class Display(object):
@@ -219,6 +252,7 @@ class Display(object):
         self.Textarea = Textarea
         self.surface = self.canvas.surface
         self.surface._display = self
+        self._surface_rect = self.surface.get_rect()
         if not self.canvas._bufferedimage:
             self.flip = lambda: None
             self.update = lambda *arg: None
@@ -331,26 +365,32 @@ class Display(object):
         """
         self.set_icon = lambda *arg: None
 
+    def _clip(self, rect_list):
+        for rect in rect_list:
+            if rect.x < 0:
+                rect.width += rect.x
+                rect.x = 0
+            if rect.y < 0:
+                rect.height += rect.y
+                rect.y = 0
+            if rect.x+rect.width > self._surface_rect.width:
+                rect.width = self._surface_rect.width - rect.x
+            if rect.y+rect.height > self._surface_rect.height:
+                rect.height = self._surface_rect.height - rect.y
+        return rect_list
+
     def flip(self):
         """
         Repaint display.
         """
-        self.canvas.drawImage(self.canvas.surface.canvas, 0, 0)
-#        self.canvas.drawImage(self.canvas.surface, 0, 0) #pyjs0.8 *.canvas
+        self.canvas._rect_list.append(self._surface_rect)
 
     def update_rect(self, rect_list):
         """
         Repaint display.
         Argument rect_list specifies a list of Rect to repaint.
         """
-        for rect in rect_list:
-            try:
-                self.canvas.drawImage(self.canvas.surface.canvas, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
-            except IndexSizeError:
-                rx = self.canvas.surface.get_rect().clip(rect)
-                if rx.width and rx.height:
-                    self.canvas.drawImage(self.canvas.surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)
-        return None
+        self.canvas._rect_list.extend(self._clip(rect_list))
 
     def update(self, rect_list=None):
         """
@@ -363,13 +403,13 @@ class Display(object):
             else:
                 self.flip()
                 return None
-        update_list = []
-        for rect in rect_list:
-            if hasattr(rect, 'width'):
-                update_list.append(rect)
-            elif rect:
-                update_list.append(Rect(rect))
-        self.update_rect(update_list)
+        for i, rect in enumerate(rect_list):
+            if not hasattr(rect, 'width'):
+                if rect:
+                    rect_list[i] = Rect(rect)
+                else:
+                    rect_list[i] = Rect(0,0,0,0)
+        self.canvas._rect_list.extend(self._clip(rect_list))
         return None
 
 
@@ -456,8 +496,4 @@ class Textarea(TextArea):
             self.setVisible(visible)
         else:
             self.setVisible(not self.getVisible())
-
-
-class IndexSizeError(Exception):
-    pass
 
