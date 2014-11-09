@@ -14,7 +14,7 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with this library; if not, see http://www.gnu.org/licenses/.
 #
-#Pyjsdl version 0.19
+#Pyjsdl version 0.20
 #Download Site: http://gatc.ca
 
 from display import Display

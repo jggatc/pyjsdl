@@ -103,7 +103,7 @@ Pyjsdl Version History
 -update event eventtype list as a set object.
 -update rect inflate/inflate_ip positioning.
 
-0.20_git
+0.20    November 9, 2014
 -add rect union methods.
 -update methods to use rect intersection.
 -correct surface subsurface rect access.
@@ -112,5 +112,6 @@ Pyjsdl Version History
 -update sprite collide methods processing.
 -add rect clamp methods.
 -update display setup callback function.
+-update display repaint process.
 -add mixer.
 
