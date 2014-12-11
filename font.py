@@ -63,7 +63,7 @@ def get_default_font():
     
     Return default font.
     """
-    return 'arial'
+    return Font._font[0]
 
 
 def get_fonts():
@@ -74,19 +74,25 @@ def get_fonts():
     """
     return Font._font
 
+
 def match_font(name):
     """
     **pyjsdl.font.match_font**
     
-    Argument name is a font name, or comma-delimited string of font names. Does not check availability, fallback fonts provided.
-    Return font string.
+    Argument name is a font name, or comma-delimited string of font names.
+    Return font string in compliant format.
     """
-    font = [fn.strip() for fn in name.split(',')]
-    fallback = None
-    for fn in font:
+    fallback = False
+    font = [fn.strip().lower() for fn in name.split(',')]
+    for i, fn in enumerate(font):
         if fn in Font._font:
-            fallback = fn
-            break
+            fallback = True
+            continue
+        else:
+            f = ''.join(c for c in fn if c.isalnum())
+            if f in Font._font_alt:
+                font[i] = Font._font[Font._font_alt[f]]
+                fallback = True
     if not fallback:
         font.append(Font._font[0])
     font = ','.join(font)
@@ -107,36 +113,46 @@ class Font(object):
     * Font.get_italic
     * Font.get_linesize
     """
+
     _font = ['arial', 'bitstream vera sans', 'bitstream vera serif', 'book antiqua', 'comic sans ms', 'courier new', 'courier', 'dejavu sans', 'dejavu sans mono', 'dejavu serif', 'freesans', 'garamond', 'georgia', 'helvetica', 'impact', 'liberation sans', 'liberation serif', 'lucida console', 'lucida serif', 'nimbus mono l', 'nimbus roman no9 l', 'nimbus sans l', 'palatino', 'times new roman', 'times', 'tahoma', 'verdana', 'cursive', 'monospace', 'sans-serif', 'serif']
+
+    _font_alt = {'arial':0, 'bitstreamverasans':1, 'bitstreamveraserif':2, 'bookantiqua':3, 'comicsansms':4, 'couriernew':5, 'courier':6, 'dejavusans':7, 'dejavusansmono':8, 'dejavuserif':9, 'freesans':10, 'garamond':11, 'georgia':12, 'helvetica':13, 'impact':14, 'liberationsans':15, 'liberationserif':16, 'lucidaconsole':17, 'lucidaserif':18, 'nimbusmonol':19, 'nimbusromanno9l':20, 'nimbussansl':21, 'palatino':22, 'timesnewroman':23, 'times':24, 'tahoma':25, 'verdana':26, 'cursive':27, 'monospace':28, 'sansserif':29, 'serif':30}
     
     _font_family = [['arial', 'helvetica', 'liberation sans',  'nimbus sans l', 'freesans', 'tahoma', 'sans-serif'], ['verdana', 'bitstream vera sans', 'dejavu sans', 'sans-serif'], ['impact', 'sans-serif'], ['comic sans ms', 'cursive', 'sans-serif'], ['courier new', 'courier', 'lucida console', 'dejavu sans mono', 'monospace'], ['times new roman', 'times', 'liberation serif', 'nimbus roman no9 l', 'serif'], ['garamond',  'book antiqua', 'palatino', 'liberation serif', 'nimbus roman no9 l', 'serif'], ['georgia', 'bitstream vera serif', 'lucida serif', 'liberation serif', 'dejavu serif', 'serif']]
 
     def __init__(self, name, size):
         """
         Return Font object.
-        Arguments include name and size of font. The name argument can be a string of comma-delimited names to specify fallbacks.
+        Arguments include name of a system font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
         """
         if not name:
             name = Font._font[0]
-        name = [fn.strip() for fn in name.split(',')]
+        font = [fn.strip().lower() for fn in name.split(',')]
         fallback = None
-        for fn in name:
+        for i, fn in enumerate(font):
             if fn in Font._font:
-                fallback = [fonts for fonts in Font._font_family if fn in fonts]
-                break
+                if not fallback:
+                    fallback = fn
+            else:
+                f = ''.join(c for c in fn if c.isalnum())
+                if f in Font._font_alt:
+                    font[i] = Font._font[Font._font_alt[f]]
+                    if not fallback:
+                        fallback = font[i]
         if fallback:
-            name.extend(fn for fn in fallback[0] if fn not in name)
+            for ff in Font._font_family:
+                if fallback in ff:
+                    font.extend(f for f in ff if f not in font)
+                    break
         else:
-            name.extend(fn for fn in Font._font_family[0])
-        self.fontname = ','.join(name)
+            font.extend(Font._font_family[0])
+        self.fontname = ','.join(font)
         self.fontsize = size
         self.bold = ''
         self.italic = ''
         self.fontstyle = self.bold + ' ' + self.italic
         self.underline = False
-        self._jfont = True
-        if not _surf:
-            self.char_size = self._get_char_size()
+        self.char_size = None
         self._nonimplemented_methods()
 
     def __repr__(self):
@@ -187,6 +203,8 @@ class Font(object):
         return (x, y)
 
     def _size_estimate(self, text=None):   #for browsers HTML5Canvas not implemented
+        if not self.char_size:
+            self.char_size = self._get_char_size()
         self.fontname = ','.join(Font._font_family[0])
         self.fontstyle = ''
         size = []
@@ -282,7 +300,7 @@ class SysFont(Font):
     def __init__(self, name, size, bold=False, italic=False):
         """
         Return SysFont subclassed of Font.
-        Arguments include name and size of font, with optional bold and italic style.
+        Arguments include name of a system font and size of font, with optional bold and italic style. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
         """
         Font.__init__(self,name,size)
         self.bold = {True:'bold', False:''}[bold]

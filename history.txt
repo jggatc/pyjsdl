@@ -115,3 +115,6 @@ Pyjsdl Version History
 -update display repaint process.
 -add mixer.
 
+0.21_git
+-update font to improve fonts access.
+
