@@ -212,6 +212,7 @@ class Display(object):
     * pyjsdl.display.init
     * pyjsdl.display.set_mode
     * pyjsdl.display.setup
+    * pyjsdl.display.setup_images
     * pyjsdl.display.textbox_init
     * pyjsdl.display.is_canvas
     * pyjsdl.display.get_surface
@@ -245,6 +246,7 @@ class Display(object):
         if not self._initialized:
             self.id = ''
             self.icon = None
+            self._image_list = []
             self._nonimplemented_methods()
             self._initialized = True
 
@@ -281,7 +283,23 @@ class Display(object):
         The images can be image URL, or file-like object or base64 data in format (name.ext,data).
         """
         self.canvas.set_function(function)
-        self.canvas.load_images(images)
+        image_list = []
+        if self._image_list:
+            image_list.extend(self._image_list)
+            self._image_list[:] = []
+        if images:
+            image_list.extend(images)
+        self.canvas.load_images(image_list)
+
+    def setup_images(self, images):
+        """
+        Add images to image preload list.
+        The argument is an image or list of images representing an image URL, or file-like object or base64 data in format (name.ext,data).
+        Image preloading occurs at display.setup call.
+        """
+        if isinstance(images, str):
+            images = [images]
+        self._image_list.extend(images)
 
     def textbox_init(self):
         """
