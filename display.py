@@ -18,6 +18,7 @@ from pyjamas.ui import Event
 from pyjamas import DOM
 from __pyjamas__ import JS
 import locals as Const
+import base64
 
 __docformat__ = 'restructuredtext'
 
@@ -42,7 +43,7 @@ class Canvas(Surface):
         else:
             self.surface = self
         self.images = {}
-        self.image_list = None
+        self.image_list = []
         self.function = None
         self.time_wait = 0
         self.time = Time()
@@ -140,7 +141,21 @@ class Canvas(Surface):
 
     def load_images(self, images):
         if images:
-            self.image_list = images
+            for i, image in enumerate(images):
+                if isinstance(image, str):
+                    self.image_list.append(image)
+                else:
+                    name = image[0]
+                    if isinstance(image[1], str):
+                        data = image[1]
+                    else:
+                        data = base64.b64encode(image[1].getvalue())
+                    if not data.startswith('data:'):
+                        ext = name.strip().split('.')[-1]
+                        data = "data:%s;base64,%s" %(ext, data)
+                        #data:[<mediatype>][;base64],<data>
+                    images[i] = data
+                    self.image_list.append(name)
             loadImages(images, self)
         else:
             self.start()
@@ -263,6 +278,7 @@ class Display(object):
         """
         Initialize Canvas for script execution.
         Argument include callback function to run and optional images list to preload.
+        The images can be image URL, or file-like object or base64 data in format (name.ext,data).
         """
         self.canvas.set_function(function)
         self.canvas.load_images(images)

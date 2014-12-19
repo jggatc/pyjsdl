@@ -28,10 +28,14 @@ class Image(object):
 
     def load(self, img_file, namehint=None):
         """
-        Load image from file.
+        Retrieve image from preloaded images.
+        The img_file argument is an image URL, or an image data object whereby namehint argument is used to retrieve the image.
         Return the image as a Surface.
         """
-        image = self.get_image(img_file)
+        if not namehint:
+            image = self.get_image(img_file)
+        else:
+            image = self.get_image(namehint)
         surface = self.convert_image(image)
         return surface
 
