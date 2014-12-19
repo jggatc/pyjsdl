@@ -105,7 +105,7 @@ class Surface(HTML5Canvas):
             return
         rect = Rect(rect)
         surf_rect = self.get_rect()
-        if not surf_rect.contains(rect.x,rect.y) or not surf_rect.contains(rect.x+rect.width,rect.y+rect.height):
+        if not surf_rect.contains(rect):
             raise ValueError, 'subsurface outside surface area'
         surface = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
         surface._super_surface = self

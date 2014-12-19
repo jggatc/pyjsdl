@@ -14,6 +14,7 @@ class Rect(object):
     * Rect.move_ip
     * Rect.inflate
     * Rect.inflate_ip
+    * Rect.contains
     * Rect.union
     * Rect.union_ip
     * Rect.unionall
@@ -257,8 +258,11 @@ class Rect(object):
     def intersection(self, rect):
         return self.clip(rect)
 
-    def contains(self, x, y):
-        return (self.x < x and x < (self.x+self.width) and self.y < y and y < (self.y+self.height))
+    def contains(self, rect):
+        """
+        Check if rect is in this rect.
+        """
+        return (self.x <= rect.x and (self.x+self.width) >= (rect.x+rect.width) and self.y <= rect.y and (self.y+self.height) >= (rect.y+rect.height))
 
     def intersects(self, rect):
         return (self.x < (rect.x+rect.width) and rect.x < (self.x+self.width) and self.y < (rect.y+rect.height) and rect.y < (self.y+self.height))
@@ -340,7 +344,7 @@ class Rect(object):
             x, y = point[0], point[1]
         except IndexError:
             x, y = point[0]
-        return self.contains(x,y)
+        return (self.x <= x and x < (self.x+self.width) and self.y <= y and y < (self.y+self.height))
 
     def colliderect(self, rect):
         """

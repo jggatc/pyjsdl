@@ -117,4 +117,5 @@ Pyjsdl Version History
 
 0.21_git
 -update font to improve fonts access.
+-add rect.contains method.
 
