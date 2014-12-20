@@ -2,7 +2,6 @@
 
 import pyjsdl.event
 import locals as Const
-from pyjamas.ui import KeyboardListener
 
 __docformat__ = 'restructuredtext'
 
@@ -11,6 +10,7 @@ class Key(object):
     """
     **pyjsdl.key**
     
+    * pyjsdl.key.name
     * pyjsdl.key.get_mods
     """
 
@@ -25,7 +25,21 @@ class Key(object):
         self.alt = Const.K_ALT
         self.ctrl = Const.K_CTRL
         self.shift = Const.K_SHIFT
+        self._keys = {}
         self._nonimplemented_methods()
+
+    def name(self, keycode):
+        """
+        Return name of key of a keycode.
+        """
+        if not self._keys:
+            for keyname in dir(Const):
+                if keyname.startswith('K_'):
+                    self._keys[getattr(Const, keyname)] = keyname.split('_')[-1].lower()
+            self._keys[0] = 'unknown key'
+        if keycode not in self._keys:
+            keycode = 0
+        return self._keys[keycode]
 
     def get_mods(self):
         """
@@ -39,7 +53,6 @@ class Key(object):
         """
         self.get_focused = lambda *arg: None
         self.get_pressed = lambda *arg: None
-        self.name = lambda *arg: ''
         self.set_mods = lambda *arg: None
         self.set_repeat = lambda *arg: None
         self.get_repeat = lambda *arg: True
