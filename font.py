@@ -4,10 +4,7 @@
 from surface import Surface
 import math
 from color import Color
-try:
-    from pyjamas.Canvas.HTML5Canvas import HTML5Canvas      #>IE9
-except ImportError:
-    pass
+from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
 
 __docformat__ = 'restructuredtext'
 
@@ -27,10 +24,7 @@ def init():
         return
     try:
         _surf = HTML5Canvas(1,1)
-        try:
-            _surf.measureText('x')
-        except:
-            _surf = None
+        _surf.measureText('x')
     except:
         _surf = None
     _initialized = True
