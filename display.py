@@ -4,12 +4,12 @@
 from surface import Surface
 from rect import Rect
 from time import Time
+from color import Color
 import env
 import pyjsdl.event
 from pyjamas.ui.RootPanel import RootPanel
 from pyjamas.ui.FocusPanel import FocusPanel
 from pyjamas.ui.VerticalPanel import VerticalPanel
-from pyjamas.Canvas import Color
 from pyjamas.Canvas.ImageLoader import loadImages
 from pyjamas import Window
 from pyjamas.ui.TextBox import TextBox
@@ -390,7 +390,7 @@ class Display(object):
         Clear display surface.
         """
         self.surface.beginPath()
-        self.surface.setFillStyle(Color.Color(0,0,0))
+        self.surface.setFillStyle(Color(0,0,0))
         self.surface.fillRect(0, 0, self.surface.width, self.surface.height)
 
     def _nonimplemented_methods(self):
