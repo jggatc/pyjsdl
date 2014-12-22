@@ -86,7 +86,7 @@ class Mask(object):
     * Mask.clear
     * Mask.invert
     * Mask.count
-    * Mask.print_mask
+    * Mask.toString
     """
 
     def __init__(self, width, height):
@@ -160,31 +160,16 @@ class Mask(object):
             true_bits += bitset.cardinality()
         return true_bits
 
-    def print_mask(self, onchar=None, offchar=None):
+    def toString(self, bit=('1','0')):
         """
-        Print mask.
+        Return string representation of mask.
+        Optional bit argument specify bit character.
         """
-        def prt(char):
-            print char,
-        if not onchar:
-            onbit = lambda bit: prt(int(bit))
-        else:
-            onbit = lambda bit: prt(onchar)
-        if not offchar:
-            offbit = lambda bit: prt(int(bit))
-        else:
-            offbit = lambda bit: prt(offchar)
-        print
-        i = 0
+        cbit = {True:bit[0], False:bit[1]}
+        cbitset = []
         for bitset in self.bit:
-            print str(i)[-1],
-            for bit in range(self.width):
-                b = bitset.get(bit)
-                if b:
-                    onbit(b)
-                else:
-                    offbit(b)
-            i += 1
-            print
-        print
+            cbitset.append('\n')
+            cbitset.extend([cbit[bitset.get(bit)] for bit in range(self.width)])
+        bitstr = ''.join(cbitset)
+        return bitstr
 
