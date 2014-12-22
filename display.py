@@ -449,8 +449,8 @@ class Display(object):
 
 class Textbox(TextBox):
     """
-    TextBox object for text input, subclass of Pyjs TextBox class.
-    Optional attribute size (x,y) of textbox and panel to hold element.
+    TextBox object for text input.
+    Optional argument size (x,y) of textbox and panel to hold element.
     Default size derived from Canvas size placed in lower VerticalPanel.
     """
 
@@ -491,8 +491,8 @@ class Textbox(TextBox):
 
 class Textarea(TextArea):
     """
-    TextArea object for text input/output, subclass of Pyjs TextArea class.
-    Optional attribute size (x,y) of textarea and panel to hold element.
+    TextArea object for text input/output.
+    Optional argument size (x,y) of textarea and panel to hold element.
     Default size derived from Canvas size placed in lower VerticalPanel.
     """
 
