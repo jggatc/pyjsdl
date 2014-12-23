@@ -302,6 +302,12 @@ class UserEvent(object):
         """
         return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
 
+    def __getattr__(self, attr):
+        try:
+            return self.attr[attr]
+        except KeyError:
+            raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+
     def __setattr__(self, attr, value):
         raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
