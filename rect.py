@@ -25,6 +25,9 @@ class Rect(object):
     * Rect.collidepoint
     * Rect.colliderect
     * Rect.collidelist
+    * Rect.collidelistall
+    * Rect.collidedict
+    * Rect.collidedictall
     """
 
     _xy = {
