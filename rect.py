@@ -168,6 +168,12 @@ class Rect(object):
         val = int(val)
         [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
 
+    def __iter__(self):
+        """
+        Provides iterator to Rect.
+        """
+        return iter([self.x, self.y, self.width, self.height])
+
     def __nonzero__(self):
         """
         Rect nonzero check.
