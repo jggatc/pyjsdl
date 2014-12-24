@@ -122,4 +122,5 @@ Pyjsdl Version History
 -add display.setup_images method.
 -add key.name method.
 -add mask.toString method.
+-updated display.update to properly handle clipping.
 

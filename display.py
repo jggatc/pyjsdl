@@ -443,7 +443,7 @@ class Display(object):
                     rect_list[i] = Rect(rect)
                 else:
                     rect_list[i] = Rect(0,0,0,0)
-        self.canvas._rect_list.extend(self._clip(rect_list))
+        self.canvas._rect_list.extend(r for r in self._clip(rect_list) if r.width>0 and r.height>0)
         return None
 
 
