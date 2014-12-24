@@ -172,10 +172,7 @@ class Rect(object):
         """
         Rect nonzero check.
         """
-        if self.width and self.height:
-            return True
-        else:
-            return False
+        return self.width and self.height
 
     def __eq__(self, other):
         """
