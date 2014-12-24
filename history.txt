@@ -123,4 +123,6 @@ Pyjsdl Version History
 -add key.name method.
 -add mask.toString method.
 -updated display.update to properly handle clipping.
+-add rect iter method.
+-add additional rect collide methods.
 

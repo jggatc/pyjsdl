@@ -364,6 +364,35 @@ class Rect(object):
                 return i
         return -1
 
+    def collidelistall(self, rects):
+        """
+        Return list of indices of rects list that collide with this rect.
+        """
+        collided = []
+        for i, rect in enumerate(rects):
+            if self.colliderect(rect):
+                collided.append(i)
+        return collided
+
+    def collidedict(self, rects):
+        """
+        Return (key,value) of first rect from rects dict that collide with this rect, otherwise returns None.
+        """
+        for rect in rects:
+            if self.colliderect(rects[rect]):
+                return (rect,rects[rect])
+        return None
+
+    def collidedictall(self, rects):
+        """
+        Return list of (key,value) from rects dict that collide with this rect.
+        """
+        collided = []
+        for rect in rects:
+            if self.colliderect(rects[rect]):
+                collided.append((rect,rects[rect]))
+        return collided
+
 
 class RectPool(list):
     """
