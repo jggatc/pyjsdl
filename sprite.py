@@ -1,6 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-from rect import Rect, rectPool
+from rect import rectPool
 import mask
 
 __docformat__ = 'restructuredtext'
@@ -32,7 +32,6 @@ class Sprite(object):
         """
         self._identity = Sprite._identity
         Sprite._identity += 1
-        self._rect_pre = Rect(0,0,0,0)
         self.x = None
         self.y = None
         self.image = None
