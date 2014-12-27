@@ -124,5 +124,6 @@ Pyjsdl Version History
 -add mask.toString method.
 -updated display.update to properly handle clipping.
 -add rect iter method.
--add additional rect collide methods.
+-add rect collide methods - collidelistall, collidedict, and collidedictall.
+-add sprite collide methods - collide_rect_ratio, collide_circle, and collide_circle_ratio.
 

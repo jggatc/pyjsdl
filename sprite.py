@@ -527,7 +527,7 @@ def spritecollide(sprite, group, dokill, collided=None):
     
     Return list of sprites in group that intersect with sprite.
     The dokill argument is a bool, True removes sprites that collide from all groups.
-    An optional collided argument is a callback function (ie. collide_mask).
+    An optional collided is a callback function taking two sprites and return bool collision.
     """
     collide = []
     for sprites in group:
@@ -547,8 +547,128 @@ def collide_rect(sprite1, sprite2):
     **pyjsdl.sprite.collide_rect**
     
     Check if the rects of the two sprites intersect.
+    Can be used as spritecollide callback function.
     """
     return sprite1.rect.intersects(sprite2.rect)
+
+
+def collide_rect_ratio(ratio):
+    """
+    **pyjsdl.sprite.collide_rect_ratio**
+    
+    Return a callable that checks if the rects of the two sprites intersect.
+    The ratio attribute will determine scaling of the rect, where 1.0 is same size.
+    Can be used as spritecollide callback function.
+    """
+    obj = _collide_rect_ratio(ratio)
+    return lambda sprite1,sprite2: obj.__call__(sprite1,sprite2)
+
+
+class _collide_rect_ratio(object):
+
+    __slots__ = ['ratio']
+
+    def __init__(self, ratio):
+        self.ratio = ratio
+
+    def __call__(self, sprite1, sprite2):   #__call__ not implemented in pyjs
+        r = sprite1.rect
+        x = (r.width*self.ratio)-r.width
+        y = (r.height*self.ratio)-r.height
+        r1 = rectPool.get(r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
+        r = sprite2.rect
+        x = (r.width*self.ratio)-r.width
+        y = (r.height*self.ratio)-r.height
+        r2 = rectPool.get(r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
+        collide = r1.intersects(r2)
+        rectPool.extend((r1,r2))
+        return collide
+
+
+def collide_circle(sprite1, sprite2):
+    """
+    **pyjsdl.sprite.collide_circle**
+    
+    Check two sprites intersect by checking by intersection of circle around their centers.
+    Will use sprite radius attribute or circle will encompass rect attribute.
+    Can be used as spritecollide callback function.
+    """
+    if hasattr(sprite1, 'radius'):
+        radius1 = sprite1.radius
+    else:
+        radius1 = ( (((sprite1.rect.width)**2) + ((sprite1.rect.height)**2))**0.5 ) * 0.5
+    if hasattr(sprite2, 'radius'):
+        radius2 = sprite2.radius
+    else:
+        radius2 = ( (((sprite2.rect.width)**2) + ((sprite2.rect.height)**2))**0.5 ) * 0.5
+    sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
+    sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
+    sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
+    sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
+    return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+
+
+def collide_circle_ratio(ratio):
+    """
+    **pyjsdl.sprite.collide_circle_ratio**
+    
+    Return a callable that checks two sprites intersect by checking by intersection of circle around their centers.
+    The ratio attribute will determine scaling of the circle, where 1.0 is same size.
+    Will use sprite radius attribute or circle will encompass rect attribute.
+    Can be used as spritecollide callback function.
+    """
+    obj = _collide_circle_ratio(ratio)
+    return lambda sprite1,sprite2: obj.__call__(sprite1,sprite2)
+
+
+class _collide_circle_ratio(object):
+
+    __slots__ = ['ratio']
+
+    def __init__(self, ratio):
+        self.ratio = ratio
+
+    def __call__(self, sprite1, sprite2):   #__call__ not implemented in pyjs
+        if hasattr(sprite1, 'radius'):
+            radius1 = sprite1.radius * self.ratio
+        else:
+            radius1 = ( (((sprite1.rect.width)**2) + ((sprite1.rect.height)**2))**0.5 ) * 0.5 * self.ratio
+        if hasattr(sprite2, 'radius'):
+            radius2 = sprite2.radius * self.ratio
+        else:
+            radius2 = ( (((sprite2.rect.width)**2) + ((sprite2.rect.height)**2))**0.5 ) * 0.5 * self.ratio
+        sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
+        sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
+        sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
+        sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
+        return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+
+
+def collide_mask(sprite1, sprite2):
+    """
+    **pyjsdl.sprite.collide_mask**
+    
+    Check if mask of sprites intersect.
+    Can be used as spritecollide callback function.
+    """
+    clip = sprite1.rect.intersection(sprite2.rect)
+    if clip.width < 1 or clip.height < 1:
+        return False
+    x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y
+    x2,y2 = clip.x-sprite2.rect.x, clip.y-sprite2.rect.y
+    masks = []
+    for sprite in (sprite1, sprite2):
+        try:
+            masks.append(sprite.mask)
+        except AttributeError:
+            masks.append(mask.from_surface(sprite.image))
+    for y in range(clip.height):
+        try:
+            if masks[0].bit[y1+y].get(x1, x1+clip.width).intersects(masks[1].bit[y2+y].get(x2, x2+clip.width)):
+                return True
+        except IndexError:
+            continue
+    return False
 
 
 def groupcollide(group1, group2, dokill1, dokill2):
@@ -585,31 +705,5 @@ def spritecollideany(sprite, group):
     for sprites in group:
         if sprite.rect.intersects(sprites.rect):
             return True
-    return False
-
-
-def collide_mask(sprite1, sprite2):
-    """
-    **pyjsdl.sprite.collide_mask**
-    
-    Check if mask of sprites intersect.
-    """
-    clip = sprite1.rect.intersection(sprite2.rect)
-    if clip.width < 1 or clip.height < 1:
-        return False
-    x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y
-    x2,y2 = clip.x-sprite2.rect.x, clip.y-sprite2.rect.y
-    masks = []
-    for sprite in (sprite1, sprite2):
-        try:
-            masks.append(sprite.mask)
-        except AttributeError:
-            masks.append(mask.from_surface(sprite.image))
-    for y in range(clip.height):
-        try:
-            if masks[0].bit[y1+y].get(x1, x1+clip.width).intersects(masks[1].bit[y2+y].get(x2, x2+clip.width)):
-                return True
-        except IndexError:
-            continue
     return False
 
