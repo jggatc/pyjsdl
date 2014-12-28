@@ -34,7 +34,7 @@ class Surfarray(object):
         """
         Return data array of the Surface argument.
         Array consists of pixel data arranged by [y,x] in RGBA format.
-        Data format most consistent to JavaScript ImageData, as a PyImageMatrix object.
+        Data array most consistent to ImageData format.
         """
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
         return PyImageMatrix(imagedata)

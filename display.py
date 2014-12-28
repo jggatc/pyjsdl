@@ -303,7 +303,7 @@ class Display(object):
 
     def textbox_init(self):
         """
-        Initiate textbox functionality and creates instances of pyjsdl.display.textbox and pyjsdl.display.textarea that are subclasses of Pyjs TextBox/TextArea, placed in lower VerticalPanel.
+        Initiate textbox functionality and creates instances of pyjsdl.display.textbox and pyjsdl.display.textarea placed in lower VerticalPanel.
         """
         if not self.textbox:
             self.textbox = Textbox()

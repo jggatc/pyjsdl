@@ -1,6 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#Module constants defined as in Pygame/SDL and Javascript events.
+#Module constants defined as in Pygame/SDL and Web browser events.
 
 
 KMOD_ALT = 4

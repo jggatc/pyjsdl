@@ -28,7 +28,7 @@ class Event(object):
 
     def __init__(self):
         """
-        Maintain events received from JVM.
+        Maintain events received from browser.
         
         Module initialization creates pyjsdl.event instance.
         """
@@ -320,7 +320,7 @@ class JEvent(object):
 
     def __init__(self, event):
         """
-        Event object wraps JavaScript event, created when retrieving events from queue.
+        Event object wraps browser event.
         
         Event object attributes:
         
@@ -328,6 +328,7 @@ class JEvent(object):
         * button: mouse button pressed (1/2/3)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
+        * key: keycode of key pressed (K_a-K_z...)
         """
         self.event = event      #__getattr__ not implemented in pyjs -O
         if event.type in ('mousedown', 'mouseup'):
@@ -369,7 +370,7 @@ class JEvent(object):
 
     def getEvent(self):
         """
-        Return JavaScript event.
+        Return browser event.
         """
         return self.event
 

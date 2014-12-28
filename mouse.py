@@ -22,7 +22,7 @@ class Mouse(object):
         """
         Provides methods to access the mouse function.
         
-        Module initialization creates pyjs2d.mouse instance.
+        Module initialization creates pyjsdl.mouse instance.
         """
         self.mousePress = pyjsdl.event.mousePress
         self.mouseMove = pyjsdl.event.mouseMove
