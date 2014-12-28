@@ -53,7 +53,8 @@ class Timer(object):
             if print_result:
                 if self.log_type == 'console':
                     self.log_num += 1
-                    print "Time %d: %s" % (self.log_num, t_ave)
+                    entry = "Time %d: %s" % (self.log_num, t_ave)
+                    print(entry)
                 else:
                     self.log_num += 1
                     entry = "Time %d: %s" % (self.log_num, t_ave)
@@ -94,7 +95,7 @@ class Timer(object):
         Print text to output.
         """
         if self.log_type == 'console':
-            print text
+            print(text)
         else:
             self.log_list.pop(0)
             self.log_list.append(text+'\n')

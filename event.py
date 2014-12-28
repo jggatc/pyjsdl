@@ -306,10 +306,10 @@ class UserEvent(object):
         try:
             return self.attr[attr]
         except KeyError:
-            raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+            raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
-        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+        raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
 
 class JEvent(object):
