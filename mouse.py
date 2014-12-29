@@ -3,7 +3,7 @@
 #from __future__ import division
 import env
 import pyjsdl.event
-from pyjamas import DOM
+from pyjsobj import DOM
 
 __docformat__ = 'restructuredtext'
 

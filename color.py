@@ -1,6 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-from pyjamas.Canvas.Color import Color as _Color
+from pyjsobj import Color as _Color
 
 __docformat__ = 'restructuredtext'
 

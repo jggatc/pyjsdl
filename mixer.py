@@ -1,6 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-from pyjamas.media.Audio import Audio
+from pyjsobj import Audio
 from time import Time
 
 __docformat__ = 'restructuredtext'

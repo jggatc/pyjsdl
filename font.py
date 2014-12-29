@@ -4,7 +4,7 @@
 from surface import Surface
 import math
 from color import Color
-from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
+from pyjsobj import HTML5Canvas
 
 __docformat__ = 'restructuredtext'
 

@@ -126,4 +126,5 @@ Pyjsdl Version History
 -add rect iter method.
 -add rect collide methods - collidelistall, collidedict, and collidedictall.
 -add sprite collide methods - collide_rect_ratio, collide_circle, and collide_circle_ratio.
+-refactoring to isolate pyjs.
 

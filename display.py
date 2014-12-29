@@ -7,15 +7,7 @@ from time import Time
 from color import Color
 import env
 import pyjsdl.event
-from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.FocusPanel import FocusPanel
-from pyjamas.ui.VerticalPanel import VerticalPanel
-from pyjamas.Canvas.ImageLoader import loadImages
-from pyjamas import Window
-from pyjamas.ui.TextBox import TextBox
-from pyjamas.ui.TextArea import TextArea
-from pyjamas.ui import Event
-from pyjamas import DOM
+from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, Event
 from __pyjamas__ import JS
 import locals as Const
 import base64
