@@ -1,7 +1,5 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
-
 __docformat__ = 'restructuredtext'
 
 
@@ -53,7 +51,7 @@ class Rect(object):
         'h': lambda self,val: self.setSize( self.width, val ),
         'x': lambda self,val: self.setLocation( val, self.y ),
         'y': lambda self,val: self.setLocation( self.x, val )
-          }    #// > /    #int
+          }
     _at = {
         'center': lambda self: (self.x+int(self.width/2), self.y+int(self.height/2)),
         'centerx': lambda self: self.x+int(self.width/2),
@@ -73,9 +71,9 @@ class Rect(object):
         'size': lambda self: (self.width, self.height),
         'w': lambda self: self.width,
         'h': lambda self: self.height
-          }    #// > /    #int
+          }
 
-    def __init__(self, *arg):
+    def __init__(self, *args):
         """
         Return Rect object.
         
@@ -99,30 +97,28 @@ class Rect(object):
         
         Module initialization places pyjsdl.Rect in module's namespace.
         """
-        def unpack(arg, lst=[]):
-            for x in arg:
-                if not isinstance(x, tuple):
-                    lst.append(x)
-                else:
-                    lst = unpack(x, lst)
-            return lst
-        try:
-            x,y,w,h = arg[0], arg[1], arg[2], arg[3]
-        except IndexError:
-            try:
-                x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
-            except (IndexError, TypeError, AttributeError):
-                arg = unpack(arg)
-                try:
-                    x,y,w,h = arg[0], arg[1], arg[2], arg[3]
-                except IndexError:
-                    if hasattr(arg[0], 'rect'):
-                        arg[0] = arg[0].rect
-                    x,y,w,h = arg[0].x, arg[0].y, arg[0].width, arg[0].height
-        super(Rect, self).__setattr__('x', int(x))
-        super(Rect, self).__setattr__('y', int(y))
-        super(Rect, self).__setattr__('width', int(w))
-        super(Rect, self).__setattr__('height', int(h))
+        if len(args) == 1:
+            arg = args[0]
+        else:
+            arg = args
+        ln = len(arg)
+        if ln == 4:
+            super(Rect, self).__setattr__('x', int(arg[0]))
+            super(Rect, self).__setattr__('y', int(arg[1]))
+            super(Rect, self).__setattr__('width', int(arg[2]))
+            super(Rect, self).__setattr__('height', int(arg[3]))
+        elif ln == 2:
+            super(Rect, self).__setattr__('x', int(arg[0][0]))
+            super(Rect, self).__setattr__('y', int(arg[0][1]))
+            super(Rect, self).__setattr__('width', int(arg[1][0]))
+            super(Rect, self).__setattr__('height', int(arg[1][1]))
+        else:
+            if hasattr(arg, 'rect'):
+                arg = arg.rect
+            super(Rect, self).__setattr__('x', arg.x)
+            super(Rect, self).__setattr__('y', arg.y)
+            super(Rect, self).__setattr__('width', arg.width)
+            super(Rect, self).__setattr__('height', arg.height)
 
     def __str__(self):
         """
@@ -140,22 +136,19 @@ class Rect(object):
         """
         Get Rect attributes.
         """
-        try:
+        if attr in Rect._at:
             return Rect._at[attr](self)
-        except KeyError:
+        else:
             raise AttributeError
 
     def __setattr__(self, attr, val):   #not implemented in pyjs -O
         """
         Set Rect attributes.
         """
-        try:
+        if attr in Rect._xy:
             Rect._xy[attr](self, val)
-        except TypeError:
-            try:
-                Rect._xy[attr](self, int(val))
-            except TypeError:
-                Rect._xy[attr](self, (int(val[0]), int(val[1])))
+        else:
+            raise AttributeError
         return None
 
     def __getitem__(self, key):
@@ -168,8 +161,8 @@ class Rect(object):
         """
         Set Rect [x,y,width,height] attributes by index.
         """
-        val = int(val)
-        [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
+        value = int(val)
+        [lambda value: self.__setattr__("x", value), lambda value: self.__setattr__("y", value), lambda value: self.__setattr__("width", value), lambda value: self.__setattr__("height", value)][key](value)
 
     def __iter__(self):
         """
@@ -187,19 +180,13 @@ class Rect(object):
         """
         Rects equality check.
         """
-        try:
-            return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height
-        except AttributeError:  #pyjs compares rect==tuple not __eq__
-            return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
+        return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height    #pyjs compares rect==tuple not __eq__
 
     def __ne__(self, other):
         """
         Rects equality check.
         """
-        try:
-            return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height
-        except AttributeError:  #pyjs compares rect==tuple not __eq__
-            return self.x!=other[0] or self.y!=other[1] or self.width!=other[2] or self.height!=other[3]
+        return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height   #pyjs compares rect==tuple not __eq__
 
     def setLocation(self, x, y):
         super(Rect, self).__setattr__('x', int(x))
@@ -227,14 +214,10 @@ class Rect(object):
         """
         Moves this rect to position offset by x,y.
         """
-        try:
-            x, y = pos
-        except ValueError:
-            x, y = pos[0]
-        try:
-            self.setLocation(self.x+x, self.y+y)
-        except TypeError:
-            self.setLocation(self.x+int(x), self.y+int(y))
+        if len(pos) == 2:
+            self.setLocation(self.x+pos[0], self.y+pos[1])
+        else:
+            self.setLocation(self.x+pos[0][0], self.y+pos[0][1])
         return None
 
     def inflate(self, x, y):
@@ -255,10 +238,14 @@ class Rect(object):
         if not self.intersects(rect):
             return Rect(0,0,0,0)
         else:
-            x = max(self.x, rect.x)
-            y = max(self.y, rect.y)
-            w = min(self.x+self.width, rect.x+rect.width) - x
-            h = min(self.y+self.height, rect.y+rect.height) - y
+            x = self.x if self.x > rect.x else rect.x
+            y = self.y if self.y > rect.y else rect.y
+            s = self.x+self.width
+            r = rect.x+rect.width
+            w = (s if s < r else r) - x
+            s = self.y+self.height
+            r = rect.y+rect.height
+            h = (s if s < r else r) - y
             return Rect(x, y, w, h)
 
     def intersection(self, rect):
@@ -277,28 +264,78 @@ class Rect(object):
         """
         Return Rect representing the union of rect and this rect.
         """
-        return Rect(min(self.x,rect.x), min(self.y,rect.y), max(self.x+self.width,rect.x+rect.width), max(self.y+self.height,rect.y+rect.height))
+        x = self.x if self.x < rect.x else rect.x
+        y = self.y if self.y < rect.y else rect.y
+        s = self.x+self.width
+        r = rect.x+rect.width
+        w = (s if s > r else r) - x
+        s = self.y+self.height
+        r = rect.y+rect.height
+        h = (s if s > r else r) - y
+        return Rect(x, y, w, h)
 
     def union_ip(self, rect):
         """
         Change this rect to represent the union of rect and this rect.
         """
-        self.setSize(max(self.x+self.width,rect.x+rect.width), max(self.y+self.height,rect.y+rect.height))
-        self.setLocation(min(self.x,rect.x), min(self.y,rect.y))
+        x = self.x if self.x < rect.x else rect.x
+        y = self.y if self.y < rect.y else rect.y
+        s = self.x+self.width
+        r = rect.x+rect.width
+        w = (s if s > r else r) - x
+        s = self.y+self.height
+        r = rect.y+rect.height
+        h = (s if s > r else r) - y
+        self.x = x
+        self.y = y
+        self.width = w
+        self.height = h
         return None
 
     def unionall(self, rect_list):
         """
         Return Rect representing the union of rect list and this rect.
         """
-        return Rect(min(self.x,min(r.x for r in rect_list)), min(self.y,min(r.y for r in rect_list)), max(self.x+self.width,max(r.x+r.width for r in rect_list)), max(self.y+self.height,max(r.y+r.height for r in rect_list)))
+        x1 = self.x
+        y1 = self.y
+        x2 = self.x+self.width
+        y2 = self.y+self.height
+        for r in rect_list:
+            if r.x < x1:
+                x1 = r.x
+            if r.y < y1:
+                y1 = r.y
+            rx2 = r.x+r.width
+            if rx2 > x2:
+                x2 = rx2
+            ry2 = r.y+r.height
+            if ry2 > y2:
+                y2 = ry2
+        return Rect(x1,y1,x2-x1,y2-y1)
 
     def unionall_ip(self, rect_list):
         """
         Change this rect to represent the union of rect list and this rect.
         """
-        self.setSize(max(self.x+self.width,max(r.x+r.width for r in rect_list)), max(self.y+self.height,max(r.y+r.height for r in rect_list)))
-        self.setLocation(min(self.x,min(r.x for r in rect_list)), min(self.y,min(r.y for r in rect_list)))
+        x1 = self.x
+        y1 = self.y
+        x2 = self.x+self.width
+        y2 = self.y+self.height
+        for r in rect_list:
+            if r.x < x1:
+                x1 = r.x
+            if r.y < y1:
+                y1 = r.y
+            rx2 = r.x+r.width
+            if rx2 > x2:
+                x2 = rx2
+            ry2 = r.y+r.height
+            if ry2 > y2:
+                y2 = ry2
+        self.x = x1
+        self.y = y1
+        self.width = x2-x1
+        self.height = y2-y1
         return None
 
     def clamp(self, rect):
@@ -346,11 +383,10 @@ class Rect(object):
         """
         Return True if point is in this rect.
         """
-        try:
-            x, y = point[0], point[1]
-        except IndexError:
-            x, y = point[0]
-        return (self.x <= x and x < (self.x+self.width) and self.y <= y and y < (self.y+self.height))
+        if len(point) == 2:
+            return (self.x <= point[0] < (self.x+self.width) and self.y <= point[1] < (self.y+self.height))
+        else:
+            return (self.x <= point[0][0] < (self.x+self.width) and self.y <= point[0][1] < (self.y+self.height))
 
     def colliderect(self, rect):
         """
@@ -418,22 +454,28 @@ class RectPool(list):
         """
         Return a Rect with x,y,width,height attributes.
         """
-        try:
+        if self:
             rect = self.pop()
-            rect.x, rect.y, rect.width, rect.height = x, y, width, height
+            rect.x = x
+            rect.y = y
+            rect.width = width
+            rect.height = height
             return rect
-        except IndexError:
+        else:
             return Rect(x,y,width,height)
 
     def copy(self, r):
         """
         Return a Rect with x,y,width,height attributes of the Rect argument.
         """
-        try:
+        if self:
             rect = self.pop()
-            rect.x, rect.y, rect.width, rect.height = r.x, r.y, r.width, r.height
+            rect.x = r.x
+            rect.y = r.y
+            rect.width = r.width
+            rect.height = r.height
             return rect
-        except IndexError:
+        else:
             return Rect(r.x, r.y, r.width, r.height)
 
 rectPool = RectPool()
