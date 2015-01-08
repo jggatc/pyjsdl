@@ -1,7 +1,5 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
-#from pyjamas.Timer import Timer
 from __pyjamas__ import JS
 import env
 
@@ -41,12 +39,12 @@ class Clock(object):
             return
         time_diff = time-self.time_init
         self.time_init = time
-        self.pos += 1
-        try:
+        if self.pos < 9:
+            self.pos += 1
             self.time_diff[self.pos] = time_diff
             if framerate:
                 env.canvas.set_timeout( ( 1000/framerate ) - self.time_diff[self.pos] )
-        except IndexError:
+        else:
             self.pos = 0
             self.time_diff[self.pos] = time_diff
             self.tick = self._tick
@@ -64,10 +62,10 @@ class Clock(object):
             return
         time_diff = time-self.time_init
         self.time_init = time
-        self.pos += 1
-        try:
+        if self.pos < 9:
+            self.pos += 1
             self.time_diff[self.pos] = time_diff
-        except IndexError:
+        else:
             self.pos = 0
             self.time_diff[self.pos] = time_diff
             if framerate:
