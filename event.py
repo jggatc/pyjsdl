@@ -1,6 +1,5 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
 import env
 import time
 import locals as Const
@@ -81,18 +80,14 @@ class Event(object):
         self.queueAccess = False
 
     def _append(self, event):
-        try:
+        if self.eventNum < 255:
             self.eventQueue[self.eventNum] = event
             self.eventNum += 1
-        except IndexError:
-            pass
 
     def _appendTmp(self, event):
-        try:
+        if self.eventNumTmp < 255:
             self.eventQueueTmp[self.eventNumTmp] = event
             self.eventNumTmp += 1
-        except IndexError:
-            pass
 
     def _appendMerge(self):
         for i in range(self.eventNumTmp):
@@ -120,12 +115,13 @@ class Event(object):
             self.eventNum = 0
         else:
             if not isinstance(eventType, (tuple,list)):
-                eventType = [eventType]
-            eventType = [et for t in eventType for et in self.eventTypes[t]]
+                evtType = [et for et in self.eventTypes[eventType]]
+            else:
+                evtType = [et for t in eventType for et in self.eventTypes[t]]
             queue = []
             self.queue = []
             for i in range(self.eventNum):
-                if self.eventQueue[i].type not in eventType:
+                if self.eventQueue[i].type not in evtType:
                     queue.append(self.eventQueue[i])
                 else:
                     self.queue.append( JEvent(self.eventQueue[i]) )
@@ -174,13 +170,14 @@ class Event(object):
         if not self.eventNum:
             return False
         if not isinstance(eventType, (tuple,list)):
-            eventType = [eventType]
-        eventType = [et for t in eventType for et in self.eventTypes[t]]
+            evtType = [et for et in self.eventTypes[eventType]]
+        else:
+            evtType = [et for t in eventType for et in self.eventTypes[t]]
         self._lock()
         evt = [event.type for event in self.eventQueue[0:self.eventNum]]
         self._unlock()
-        for evtType in eventType:
-            if evtType in evt:
+        for et in evtType:
+            if et in evt:
                 return True
         return False
 
@@ -196,11 +193,12 @@ class Event(object):
             self.eventNum = 0
         else:
             if not isinstance(eventType, (tuple,list)):
-                eventType = [eventType]
-            eventType = [et for t in eventType for et in self.eventTypes[t]]
+                evtType = [et for et in self.eventTypes[eventType]]
+            else:
+                evtType = [et for t in eventType for et in self.eventTypes[t]]
             queue = []
             for i in range(self.eventNum):
-                if self.eventQueue[i].type not in eventType:
+                if self.eventQueue[i].type not in evtType:
                     queue.append(self.eventQueue[i])
             if len(queue) != self.eventNum:
                 self.eventNum = len(queue)
@@ -213,9 +211,10 @@ class Event(object):
         """
         Return event name of a event type.
         """
-        try:
-            return self.eventName[self.eventTypes[eventType][0]]
-        except KeyError:
+        evtType = self.eventTypes[eventType][0]
+        if evtType in self.eventName:
+            return self.eventName[evtType]
+        else:
             return None
 
     def set_blocked(self, eventType):
@@ -224,13 +223,12 @@ class Event(object):
         """
         if eventType is not None:
             if not isinstance(eventType, (tuple,list)):
-                eventType = [eventType]
-            eventType = [et for t in eventType for et in self.eventTypes[t]]
-            for evtType in eventType:
-                try:
-                    self.events.remove(evtType)
-                except KeyError:
-                    pass
+                evtType = [et for et in self.eventTypes[eventType]]
+            else:
+                evtType = [et for t in eventType for et in self.eventTypes[t]]
+            for et in evtType:
+                if et in self.events:
+                    self.events.remove(et)
         else:
             for event in self.eventType:
                 self.events.add(event)
@@ -242,10 +240,11 @@ class Event(object):
         """
         if eventType is not None:
             if not isinstance(eventType, (tuple,list)):
-                eventType = [eventType]
-            eventType = [et for t in eventType for et in self.eventTypes[t]]
-            for evtType in eventType:
-                self.events.add(evtType)
+                evtType = [et for et in self.eventTypes[eventType]]
+            else:
+                evtType = [et for t in eventType for et in self.eventTypes[t]]
+            for et in evtType:
+                self.events.add(et)
         else:
             self.events.clear()
         return None
@@ -254,8 +253,8 @@ class Event(object):
         """
         Check if specified event type is blocked from queue.
         """
-        eventType = [et for et in self.eventTypes[eventType]][0]
-        if eventType not in self.events:
+        evtType = [et for et in self.eventTypes[eventType]][0]
+        if evtType not in self.events:
             return True
         else:
             return False
@@ -303,9 +302,9 @@ class UserEvent(object):
         return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
 
     def __getattr__(self, attr):
-        try:
+        if attr in self.attr:
             return self.attr[attr]
-        except KeyError:
+        else:
             raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
@@ -350,9 +349,9 @@ class JEvent(object):
                 code = event.keyCode
             else:
                 code = event.which
-            try:
+            if code in self.__class__._charCode:
                 self.key = self.__class__._charCode[code]
-            except KeyError:
+            else:
                 self.key = code
         else:
             self.type = event.type
@@ -363,9 +362,9 @@ class JEvent(object):
         """
         Return string representation of Event object.
         """
-        try:
+        if hasattr(self.event, 'toString'):
             return "%s(%s)" % (self.__class__, self.event.toString())
-        except AttributeError:      #User Event
+        else:      #User Event
             return self.event.__repr__()
 
     def getEvent(self):

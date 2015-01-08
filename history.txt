@@ -122,9 +122,11 @@ Pyjsdl Version History
 -add display.setup_images method.
 -add key.name method.
 -add mask.toString method.
--updated display.update to properly handle clipping.
+-update display.update to properly handle clipping.
+-update rect union methods to process properly.
 -add rect iter method.
 -add rect collide methods - collidelistall, collidedict, and collidedictall.
 -add sprite collide methods - collide_rect_ratio, collide_circle, and collide_circle_ratio.
 -refactoring to isolate pyjs.
+-refactoring for optimization.
 
