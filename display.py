@@ -1,6 +1,5 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
 from surface import Surface
 from rect import Rect
 from time import Time
@@ -9,7 +8,6 @@ import env
 import pyjsdl.event
 from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, Event
 from __pyjamas__ import JS
-import locals as Const
 import base64
 
 __docformat__ = 'restructuredtext'
@@ -46,12 +44,16 @@ class Canvas(Surface):
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
         self._rect_list = []
+        self._rect_list.append(Rect(0,0,0,0))
+        self._rect_len = 1
+        self._rect_num = 0
+        self._rect_temp = Rect(0,0,0,0)
         _animationFrame = self._initAnimationFrame()
         if _animationFrame:
-            self.time_hold = 0
+            self.time_hold_min = 0
         else:
-            self.time_hold = 1
-        self.paint = lambda ts=0:self._paint(ts)
+            self.time_hold_min = 1
+        self.time_hold = self.time_hold_min
 
     def _initAnimationFrame(self):
         JS("""
@@ -133,8 +135,10 @@ class Canvas(Surface):
 
     def load_images(self, images):
         if images:
-            for i, image in enumerate(images):
+            image_list = []
+            for image in images:
                 if isinstance(image, str):
+                    image_list.append(image)
                     self.image_list.append(image)
                 else:
                     name = image[0]
@@ -146,16 +150,16 @@ class Canvas(Surface):
                         ext = name.strip().split('.')[-1]
                         data = "data:%s;base64,%s" %(ext, data)
                         #data:[<mediatype>][;base64],<data>
-                    images[i] = data
+                    image_list.append(data)
                     self.image_list.append(name)
-            loadImages(images, self)
+            loadImages(image_list, self)
         else:
             self.start()
 
     def set_timeout(self, change):
         self.time_hold += change
-        if self.time_hold < 1:
-            self.time_hold = 1
+        if self.time_hold < self.time_hold_min:
+            self.time_hold = self.time_hold_min
 
     def start(self):
         self.run = self._run
@@ -180,21 +184,35 @@ class Canvas(Surface):
                 self.run = self._run
                 self.run()
 
-    def render(self):
-        for rect in self._rect_list:
-            self.drawImage(self.surface.canvas, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
-        self._rect_list[:] = []
+    def _get_rect(self):
+        if self._rect_num < self._rect_len:
+            return self._rect_list[self._rect_num]
+        else:
+            self._rect_list.append(Rect(0,0,0,0))
+            self._rect_len += 1
+            return self._rect_list[self._rect_num]
 
     def _run(self):
         self.function()
-        self.render()
-        JS("""$wnd['requestAnimationFrame'](@{{self}}['paint']);""")
+        JS("""$wnd['requestAnimationFrame'](@{{paint}});""")
 
-    def _paint(self, ts=0):
+    def rerun(self):
         if not self.time_hold:
             self.run()
         else:
             self.time.timeout(self.time_hold, self)
+
+
+def paint(ts):
+    ctx = env.canvas.impl.canvasContext
+    img = env.canvas.surface.canvas
+    i = 0
+    while i < env.canvas._rect_num:
+        rect = env.canvas._rect_list[i]
+        ctx.drawImage(img, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
+        i += 1
+    env.canvas._rect_num = 0
+    env.canvas.rerun()
 
 
 class Display(object):
@@ -218,7 +236,6 @@ class Display(object):
     * pyjsdl.display.get_caption
     * pyjsdl.display.clear
     * pyjsdl.display.flip
-    * pyjsdl.display.update_rect
     * pyjsdl.display.update
     """
 
@@ -391,52 +408,67 @@ class Display(object):
         """
         self.set_icon = lambda *arg: None
 
-    def _clip(self, rect_list):
-        for rect in rect_list:
-            if rect.x < 0:
-                rect.width += rect.x
-                rect.x = 0
-            if rect.y < 0:
-                rect.height += rect.y
-                rect.y = 0
-            if rect.x+rect.width > self._surface_rect.width:
-                rect.width = self._surface_rect.width - rect.x
-            if rect.y+rect.height > self._surface_rect.height:
-                rect.height = self._surface_rect.height - rect.y
-        return rect_list
-
     def flip(self):
         """
         Repaint display.
         """
-        self.canvas._rect_list.append(self._surface_rect)
-
-    def update_rect(self, rect_list):
-        """
-        Repaint display.
-        Argument rect_list specifies a list of Rect to repaint.
-        """
-        self.canvas._rect_list.extend(self._clip(rect_list))
+        self.canvas._rect_list[0].x = 0
+        self.canvas._rect_list[0].y = 0
+        self.canvas._rect_list[0].width = self._surface_rect.width
+        self.canvas._rect_list[0].height = self._surface_rect.height
+        self.canvas._rect_num = 1
+        return None
 
     def update(self, rect_list=None):
         """
         Repaint display.
         An optional rect_list to specify regions to repaint.
         """
-        if not hasattr(rect_list, 'append'):
+        if hasattr(rect_list, 'append'):
+            _update(self.canvas, rect_list)
+        else:
             if rect_list:
-                rect_list = [rect_list]
+                _update(self.canvas, [rect_list])
             else:
                 self.flip()
-                return None
-        for i, rect in enumerate(rect_list):
-            if not hasattr(rect, 'width'):
-                if rect:
-                    rect_list[i] = Rect(rect)
-                else:
-                    rect_list[i] = Rect(0,0,0,0)
-        self.canvas._rect_list.extend(r for r in self._clip(rect_list) if r.width>0 and r.height>0)
         return None
+
+
+def _update(canvas, rect_list):
+    for r in rect_list:
+        if hasattr(r, 'width'):
+            rect = r
+        else:
+            if r:
+                rect = canvas._rect_temp
+                rect.set(r)
+            else:
+                continue
+        repaint_rect = canvas._get_rect()
+        if rect.x >= 0:
+            repaint_rect.x = rect.x
+        else:
+            repaint_rect.x = 0
+            repaint_rect.width = rect.width + rect.x
+        if rect.y >= 0:
+            repaint_rect.y = rect.y
+        else:
+            repaint_rect.y = 0
+            repaint_rect.height = rect.height + rect.y
+        if rect.x+rect.width <= canvas.surface.width:
+            repaint_rect.width = rect.width
+        else:
+            repaint_rect.width = canvas.surface.width - repaint_rect.x
+            if repaint_rect.width < 1:
+                continue
+        if rect.y+rect.height <= canvas.surface.height:
+            repaint_rect.height = rect.height
+        else:
+            repaint_rect.height = canvas.surface.height - repaint_rect.y
+            if repaint_rect.height < 1:
+                continue
+        canvas._rect_num += 1
+    return None
 
 
 class Textbox(TextBox):
