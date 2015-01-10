@@ -379,6 +379,39 @@ class Rect(object):
             super(Rect, self).__setattr__('y', rect.y-int((self.height-rect.height)/2))
         return None
 
+    def set(self, *args):
+        """
+        Set rect x,y,width,height attributes to argument.
+        Alternative arguments:
+        * x,y,w,h
+        * (x,y),(w,h)
+        * (x,y,w,h)
+        * Rect
+        * Obj with rect attribute
+        """
+        if len(args) == 1:
+            arg = args[0]
+        else:
+            arg = args
+        ln = len(arg)
+        if ln == 4:
+            super(Rect, self).__setattr__('x', int(arg[0]))
+            super(Rect, self).__setattr__('y', int(arg[1]))
+            super(Rect, self).__setattr__('width', int(arg[2]))
+            super(Rect, self).__setattr__('height', int(arg[3]))
+        elif ln == 2:
+            super(Rect, self).__setattr__('x', int(arg[0][0]))
+            super(Rect, self).__setattr__('y', int(arg[0][1]))
+            super(Rect, self).__setattr__('width', int(arg[1][0]))
+            super(Rect, self).__setattr__('height', int(arg[1][1]))
+        else:
+            if hasattr(arg, 'rect'):
+                arg = arg.rect
+            super(Rect, self).__setattr__('x', arg.x)
+            super(Rect, self).__setattr__('y', arg.y)
+            super(Rect, self).__setattr__('width', arg.width)
+            super(Rect, self).__setattr__('height', arg.height)
+
     def collidepoint(self, *point):
         """
         Return True if point is in this rect.
