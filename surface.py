@@ -1,7 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
-from rect import Rect
+from rect import Rect, rectPool
 from color import Color
 from pyjsobj import HTML5Canvas
 from __pyjamas__ import JS
@@ -22,7 +21,6 @@ class Surface(HTML5Canvas):
     * Surface.subsurface
     * Surface.getSubimage
     * Surface.blit
-    * Surface.blits
     * Surface.set_colorkey
     * Surface.get_colorkey
     * Surface.replace_color
@@ -32,8 +30,9 @@ class Surface(HTML5Canvas):
     * Surface.get_parent
     * Surface.get_offset
     """
-    def __init__(self, size, *args, **kwargs):   #pyjs:instance creation seems long
-        self.width, self.height = int(size[0]), int(size[1])
+    def __init__(self, size, *args, **kwargs):
+        self.width = int(size[0])
+        self.height = int(size[1])
         HTML5Canvas.__init__(self, self.width, self.height)
         self._display = None    #display surface
         self._super_surface = None
@@ -66,7 +65,8 @@ class Surface(HTML5Canvas):
         return self.height
 
     def resize(self, width, height):
-        self.width, self.height = int(width), int(height)
+        self.width = int(width)
+        self.height = int(height)
         HTML5Canvas.resize(self, self.width, self.height)
 
     def get_rect(self, **attr):
@@ -83,10 +83,8 @@ class Surface(HTML5Canvas):
         """
         Return Surface that is a copy of this surface.
         """
-        w, h = self.get_width(), self.get_height()
-        surface = Surface((w,h))
+        surface = Surface((self.width,self.height))
         surface.drawImage(self.canvas, 0, 0)    #pyjs0.8 *.canvas
-#        surface.drawImage(self, 0, 0)
         return surface
 
     def subsurface(self, rect):
@@ -103,13 +101,16 @@ class Surface(HTML5Canvas):
             else:
                 self._super_surface.drawImage(self.canvas, self._offset[0], self._offset[1])
             return
-        rect = Rect(rect)
+        if hasattr(rect, 'width'):
+            _rect = rect
+        else:
+            _rect = Rect(rect)
         surf_rect = self.get_rect()
-        if not surf_rect.contains(rect):
+        if not surf_rect.contains(_rect):
             raise ValueError('subsurface outside surface area')
-        surface = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
+        surface = self.getSubimage(_rect.x, _rect.y, _rect.width, _rect.height)
         surface._super_surface = self
-        surface._offset = (rect.x,rect.y)
+        surface._offset = (_rect.x,_rect.y)
         surface._colorkey = self._colorkey
         return surface
 
@@ -120,7 +121,6 @@ class Surface(HTML5Canvas):
         """
         surface = Surface((width,height))
         surface.drawImage(self.canvas, x, y, width, height, 0, 0, width, height)    #pyjs0.8 *.canvas
-#        surface.drawImage(self, x, y, width, height, 0, 0, width, height)
         return surface
 
     def blit(self, surface, position, area=None):
@@ -129,45 +129,46 @@ class Surface(HTML5Canvas):
         Optional area delimitates the region of given surface to draw.
         """
         if not area:
-            rect = Rect(position[0],position[1],surface.width,surface.height)
-            self.drawImage(surface.canvas, rect.x, rect.y)    #pyjs0.8 *.canvas
-#            self.drawImage(surface, rect.x, rect.y)
+            rect = rectPool.get(position[0],position[1],surface.width,surface.height)
+            self.impl.canvasContext.drawImage(surface.canvas, rect.x, rect.y)    #pyjs0.8 *.canvas
         else:
-            rect = Rect(position[0],position[1],area[2], area[3])
-            self.drawImage(surface.canvas, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])    #pyjs0.8 *.canvas
-#            self.drawImage(surface, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])
+            rect = rectPool.get(position[0],position[1],area[2], area[3])
+            self.impl.canvasContext.drawImage(surface.canvas, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])    #pyjs0.8 *.canvas
         if self._display:
             surface_rect = self._display._surface_rect
         else:
             surface_rect = self.get_rect()
-        return surface_rect.clip(rect)
+        changed_rect = surface_rect.clip(rect)
+        rectPool.append(rect)
+        return changed_rect
 
-    def blits(self, surfaces):
-        """
-        Draw list of (surface, rect) on this surface.
-        """
-        for surface, rect in surfaces:
-            self.drawImage(surface.canvas, rect.x, rect.y)   #pyjs0.8 *.canvas
-#            self.drawImage(surface, rect.x, rect.y)
+    def _blits(self, surfaces):
+        ctx = self.impl.canvasContext
+        for s in surfaces:
+            ctx.drawImage(s.image.canvas, s.rect.x, s.rect.y)   #pyjs0.8 *.canvas
 
     def _blit_clear(self, surface, rect_list):
+        ctx = self.impl.canvasContext
+        if self._display:
+            surface_rect = self._display._surface_rect
+        else:
+            surface_rect = self.get_rect()
         for r in rect_list:
-            try:
-                self.drawImage(surface.canvas, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)    #pyjs0.8 *.canvas
-#                self.drawImage(surface, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)
-            except IndexSizeError:
-                rx = surface.get_rect().clip(r)
+            if surface_rect.contains(r):
+                ctx.drawImage(surface.canvas, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)    #pyjs0.8 *.canvas
+            else:
+                rx = surface_rect.clip(r)
                 if rx.width and rx.height:
-                    self.drawImage(surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    #pyjs0.8 *.canvas
-#                    self.drawImage(surface, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)
+                    ctx.drawImage(surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)    #pyjs0.8 *.canvas
 
     def set_colorkey(self, color, flags=None):
         """
         Set surface colorkey.
         """
         if self._colorkey:
-            r,g,b = self._colorkey.r,self._colorkey.g,self._colorkey.b
-            self.replace_color((r,g,b,0),(r,g,b,255))
+            r = self._colorkey.r
+            g = self._colorkey.g
+            b = self._colorkey.b
             self._colorkey = None
         if color:
             try:
@@ -191,8 +192,8 @@ class Surface(HTML5Canvas):
         return JS("""imagedata.data[@{{index}}];""")
 
     def _setPixel(self, imagedata, index, dat):
-        dat = str(dat)
-        JS("""imagedata.data[@{{index}}]=@{{dat}};""")
+        data = str(dat)
+        JS("""imagedata.data[@{{index}}]=@{{data}};""")
         return
 
     def replace_color(self, color, new_color=None):
@@ -201,9 +202,15 @@ class Surface(HTML5Canvas):
         """
         pixels = self.impl.getImageData(0, 0, self.width, self.height)
 #        pixels = self.getImageData(0, 0, self.width, self.height)
-        color1 = Color(color)
+        if hasattr(color, 'a'):
+            color1 = color
+        else:
+            color1 = Color(color)
         if new_color:
-            color2 = Color(new_color)
+            if hasattr(new_color, 'a'):
+                color2 = new_color
+            else:
+                color2 = Color(new_color)
         else:
             color2 = Color(color1.r,color1.g,color1.b,0)
         col1 = (color1.r, color1.g, color1.b, color1.a)
@@ -230,9 +237,12 @@ class Surface(HTML5Canvas):
         The arguments represent position x,y and color of pixel.
         """
         pixel = self.impl.getImageData(pos[0], pos[1], 1, 1)
-        color = Color(color)
+        if hasattr(color, 'a'):
+            _color = color
+        else:
+            _color = Color(color)
         for i in range(4):
-            self._setPixel(pixel, i, color[i])
+            self._setPixel(pixel, i, _color[i])
         self.impl.putImageData(pixel, pos[0], pos[1], 0, 0, 1, 1)
         return None
 
@@ -245,18 +255,28 @@ class Surface(HTML5Canvas):
             return
         self.beginPath()
         if color:
-            self.setFillStyle(Color(color))
-            if not rect:
-                rect = Rect(0, 0, self.width, self.height)
+            if hasattr(color, 'a'):
+                self.setFillStyle(color)
             else:
-                rect = self.get_rect().clip( Rect(rect) )
-                if not rect.width or not rect.height:
-                    return rect
-            self.fillRect(rect.x, rect.y, rect.width, rect.height)
+                self.setFillStyle(Color(color))
+            if not rect:
+                _rect = Rect(0, 0, self.width, self.height)
+            else:
+                if self._display:
+                    surface_rect = self._display._surface_rect
+                else:
+                    surface_rect = self.get_rect()
+                if hasattr(rect, 'width'):
+                    _rect = surface_rect.clip( rect )
+                else:
+                    _rect = surface_rect.clip( Rect(rect) )
+                if not _rect.width or not _rect.height:
+                    return _rect
+            self.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
         else:
-            rect = Rect(0, 0, self.width, self.height)
+            _rect = Rect(0, 0, self.width, self.height)
             self.clear()
-        return rect
+        return _rect
 
     def get_parent(self):
         """
