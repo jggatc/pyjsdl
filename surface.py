@@ -136,7 +136,11 @@ class Surface(HTML5Canvas):
             rect = Rect(position[0],position[1],area[2], area[3])
             self.drawImage(surface.canvas, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])    #pyjs0.8 *.canvas
 #            self.drawImage(surface, area[0], area[1], area[2], area[3], rect.x, rect.y, area[2], area[3])
-        return rect     #clipping?
+        if self._display:
+            surface_rect = self._display._surface_rect
+        else:
+            surface_rect = self.get_rect()
+        return surface_rect.clip(rect)
 
     def blits(self, surfaces):
         """
