@@ -26,14 +26,19 @@ class Color(_Color):
 
         Module initialization places pyjsdl.Color in module's namespace.
         """
-        if len(color) == 1:
-            color = color[0]
-        try:
-            self.r,self.g,self.b,self.a = color[0],color[1],color[2],color[3]
-        except IndexError:
-            self.r,self.g,self.b,self.a = color[0],color[1],color[2],255
-        except TypeError:
-            self.r,self.g,self.b,self.a = (color>>16) & 0xff, (color>>8) & 0xff, color & 0xff, (color>>24) & 0xff
+        ln = len(color)
+        if ln == 1:
+            _color = color[0]
+            if hasattr(_color, '__len__'):
+                ln = len(_color)
+        else:
+            _color = color
+        if ln == 4:
+            self.r,self.g,self.b,self.a = _color[0],_color[1],_color[2],_color[3]
+        elif ln == 3:
+            self.r,self.g,self.b,self.a = _color[0],_color[1],_color[2],255
+        else:
+            self.r,self.g,self.b,self.a = (_color>>16) & 0xff, (_color>>8) & 0xff, _color & 0xff, (_color>>24) & 0xff
 
     def __repr__(self):
         """
@@ -63,20 +68,20 @@ class Color(_Color):
         return 4
 
     def __eq__(self, other):
-        try:
+        if hasattr(other, 'a'):
             return self.r==other.r and self.g==other.g and self.b==other.b and self.a==other.a
-        except AttributeError:
-            try:
+        else:
+            if len(other) == 4:
                 return self.a==other[3] and self.r==other[0] and self.g==other[1] and self.b==other[2]
-            except IndexError:
+            else:
                 return self.r==other[0] and self.g==other[1] and self.b==other[2]
 
     def __ne__(self, other):
-        try:
+        if hasattr(other, 'a'):
             return self.r!=other.r or self.g!=other.g or self.b!=other.b or self.a!=other.a
-        except AttributeError:
-            try:
+        else:
+            if len(other) == 4:
                 return self.a!=other[3] or self.r!=other[0] or self.g!=other[1] or self.b!=other[2]
-            except IndexError:
+            else:
                 return self.r!=other[0] or self.g!=other[1] or self.b!=other[2]
 
