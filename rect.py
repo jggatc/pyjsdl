@@ -170,6 +170,9 @@ class Rect(object):
         """
         return iter([self.x, self.y, self.width, self.height])
 
+    def __len__(self):
+        return 4
+
     def __nonzero__(self):
         """
         Rect nonzero check.
