@@ -1,6 +1,5 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon
 
-#from __future__ import division
 from math import pi
 from rect import Rect
 from surface import Surface
@@ -38,17 +37,26 @@ class Draw(object):
         Argument include surface to draw, color, Rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        rect = Rect(rect)
+        if hasattr(rect, 'width'):
+            _rect = rect
+        else:
+            _rect = Rect(rect)
         surface.beginPath()
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color(color))
-            surface.rect(rect.x, rect.y, rect.width, rect.height)
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
+            surface.rect(_rect.x, _rect.y, _rect.width, _rect.height)
             surface.stroke()
         else:
-            surface.setFillStyle(Color(color))
-            surface.fillRect(rect.x, rect.y, rect.width, rect.height)
-        return surface.get_rect().clip(rect)
+            if hasattr(color, 'a'):
+                surface.setFillStyle(color)
+            else:
+                surface.setFillStyle(Color(color))
+            surface.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
+        return surface.get_rect().clip(_rect)
 
     def circle(self, surface, color, position, radius, width=0):
         """
@@ -60,10 +68,16 @@ class Draw(object):
         surface.arc(position[0], position[1], radius, 0, 2*pi, False)
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            surface.setFillStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setFillStyle(color)
+            else:
+                surface.setFillStyle(Color(color))
             surface.fill()
         return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius,2*radius) )
 
@@ -73,26 +87,35 @@ class Draw(object):
         Argument include surface to draw, color, and rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        rect = Rect(rect)
-        surface.saveContext()
-        surface.translate(rect.x+int(rect.width/2), rect.y+int(rect.height/2))
-        if rect.width >= rect.height:
-            surface.scale(rect.width/rect.height, 1)
-            radius = rect.height/2
+        if hasattr(rect, 'width'):
+            _rect = rect
         else:
-            surface.scale(1, rect.height/rect.width)
-            radius = rect.width/2
+            _rect = Rect(rect)
+        surface.saveContext()
+        surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
+        if _rect.width >= _rect.height:
+            surface.scale(_rect.width/_rect.height, 1)
+            radius = _rect.height/2
+        else:
+            surface.scale(1, _rect.height/_rect.width)
+            radius = _rect.width/2
         surface.beginPath()
         surface.arc(0, 0, radius, 0, 2*pi, False)
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            surface.setFillStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setFillStyle(color)
+            else:
+                surface.setFillStyle(Color(color))
             surface.fill()
         surface.restoreContext()
-        return surface.get_rect().clip(rect)
+        return surface.get_rect().clip(_rect)
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
         """
@@ -100,38 +123,52 @@ class Draw(object):
         Argument include surface to draw, color, rect, start_angle, stop_angle.
         Optional width argument of outline.
         """
-        rect = Rect(rect)
-        if rect.width == rect.height:
+        if hasattr(rect, 'width'):
+            _rect = rect
+        else:
+            _rect = Rect(rect)
+        if _rect.width == _rect.height:
             surface.beginPath()
-            surface.arc(rect.x+int(rect.width/2), rect.y+int(rect.height/2), int(rect.width/2), -start_angle, -stop_angle, True)
+            surface.arc(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2), int(_rect.width/2), -start_angle, -stop_angle, True)
             if width:
                 surface.setLineWidth(width)
-                surface.setStrokeStyle(Color(color))
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
                 surface.stroke()
             else:
                 surface.closePath()
-                surface.setFillStyle(Color(color))
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
                 surface.fill()
         else:
-            if rect.width < rect.height:
-                dim = rect.height
+            if _rect.width < _rect.height:
+                dim = _rect.height
             else:
-                dim = rect.width
+                dim = _rect.width
             surf = Surface((dim,dim))
             surf.beginPath()
             xdim = int(dim/2)
             surf.arc(xdim, xdim, xdim, -start_angle, -stop_angle, True)
             if width:
                 surf.setLineWidth(width)
-                surf.setStrokeStyle(Color(color))
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
                 surf.stroke()
             else:
                 surface.closePath()
-                surf.setFillStyle(Color(color))
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
                 surf.fill()
-            surface.drawImage(surf.canvas, 0, 0, dim, dim, rect.x, rect.y, rect.width, rect.height)    #pyjs0.8 *.canvas
-#            surface.drawImage(surf, 0, 0, dim, dim, rect.x, rect.y, rect.width, rect.height)
-        return surface.get_rect().clip(rect)
+            surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)    #pyjs0.8 *.canvas
+        return surface.get_rect().clip(_rect)
 
     def polygon(self, surface, color, pointlist, width=0):
         """
@@ -146,10 +183,16 @@ class Draw(object):
         surface.closePath()
         if width:
             surface.setLineWidth(width)
-            surface.setStrokeStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            surface.setFillStyle(Color(color))
+            if hasattr(color, 'a'):
+                surface.setFillStyle(color)
+            else:
+                surface.setFillStyle(Color(color))
             surface.fill()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
@@ -167,7 +210,10 @@ class Draw(object):
         surface.moveTo(*point1)
         surface.lineTo(*point2)
         surface.setLineWidth(width)
-        surface.setStrokeStyle(Color(color))
+        if hasattr(color, 'a'):
+            surface.setStrokeStyle(color)
+        else:
+            surface.setStrokeStyle(Color(color))
         surface.stroke()
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
@@ -188,7 +234,10 @@ class Draw(object):
         if closed:
             surface.closePath()
         surface.setLineWidth(width)
-        surface.setStrokeStyle(Color(color))
+        if hasattr(color, 'a'):
+            surface.setStrokeStyle(color)
+        else:
+            surface.setStrokeStyle(Color(color))
         surface.stroke()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
