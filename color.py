@@ -26,15 +26,12 @@ class Color(_Color):
 
         Module initialization places pyjsdl.Color in module's namespace.
         """
-        if isinstance(color[0],tuple):
+        if len(color) == 1:
             color = color[0]
         try:
             self.r,self.g,self.b,self.a = color[0],color[1],color[2],color[3]
         except IndexError:
-            try:
-                self.r,self.g,self.b,self.a = color[0],color[1],color[2],255
-            except IndexError:
-                self.r,self.g,self.b,self.a = (color[0]>>16) & 0xff, (color[0]>>8) & 0xff, color[0] & 0xff, (color[0]>>24) & 0xff
+            self.r,self.g,self.b,self.a = color[0],color[1],color[2],255
         except TypeError:
             self.r,self.g,self.b,self.a = (color>>16) & 0xff, (color>>8) & 0xff, color & 0xff, (color>>24) & 0xff
 
@@ -58,6 +55,12 @@ class Color(_Color):
 
     def __setitem__(self, index, val):
         self.__setattr__({0:'r', 1:'g', 2:'b', 3:'a'}[index], val)
+
+    def __iter__(self):
+        return iter([self.r, self.g, self.b, self.a])
+
+    def __len__(self):
+        return 4
 
     def __eq__(self, other):
         try:
