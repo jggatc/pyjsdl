@@ -56,7 +56,10 @@ class Draw(object):
             else:
                 surface.setFillStyle(Color(color))
             surface.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
-        return surface.get_rect().clip(_rect)
+        if surface._display:
+            return surface._display._surface_rect.clip(_rect)
+        else:
+            return surface.get_rect().clip(_rect)
 
     def circle(self, surface, color, position, radius, width=0):
         """
@@ -79,7 +82,10 @@ class Draw(object):
             else:
                 surface.setFillStyle(Color(color))
             surface.fill()
-        return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius,2*radius) )
+        if surface._display:
+            return surface._display._surface_rect.clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
+        else:
+            return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
 
     def ellipse(self, surface, color, rect, width=0):
         """
@@ -115,7 +121,10 @@ class Draw(object):
                 surface.setFillStyle(Color(color))
             surface.fill()
         surface.restoreContext()
-        return surface.get_rect().clip(_rect)
+        if surface._display:
+            return surface._display._surface_rect.clip(_rect)
+        else:
+            return surface.get_rect().clip(_rect)
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
         """
@@ -168,7 +177,10 @@ class Draw(object):
                     surface.setFillStyle(Color(color))
                 surf.fill()
             surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)    #pyjs0.8 *.canvas
-        return surface.get_rect().clip(_rect)
+        if surface._display:
+            return surface._display._surface_rect.clip(_rect)
+        else:
+            return surface.get_rect().clip(_rect)
 
     def polygon(self, surface, color, pointlist, width=0):
         """
@@ -198,7 +210,10 @@ class Draw(object):
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )
+        if surface._display:
+            return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        else:
+            return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
 
     def line(self, surface, color, point1, point2, width=1):
         """
@@ -219,7 +234,10 @@ class Draw(object):
         ypts = [pt[1] for pt in (point1,point2)]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )
+        if surface._display:
+            return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        else:
+            return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
 
     def lines(self, surface, color, closed, pointlist, width=1):
         """
@@ -243,7 +261,10 @@ class Draw(object):
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
         ymin, ymax = min(ypts), max(ypts)
-        return surface.get_rect().clip( Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1) )
+        if surface._display:
+            return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        else:
+            return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
 
     def aaline(self, surface, color, point1, point2, blend=1):
         """
