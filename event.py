@@ -97,12 +97,19 @@ class Event(object):
 
     def pump(self):
         """
-        Reset event queue.
+        Process events to reduce queue overflow, unnecessary if processing with other methods.
         """
-        self._lock()
-        self.eventNum = 0
-        self._unlock()
+        if self.eventNum > 250:
+            self._lock()
+            self._pump()
+            self._unlock()
         return None
+
+    def _pump(self):
+        queue = self.eventQueue[50:self.eventNum]
+        self.eventNum -= 50
+        for i in range(self.eventNum):
+            self.eventQueue[i] = queue[i]
 
     def get(self, eventType=None):
         """
@@ -129,6 +136,8 @@ class Event(object):
                 self.eventNum = len(queue)
                 for i in range(self.eventNum):
                     self.eventQueue[i] = queue[i]
+            if self.eventNum > 250:
+                self._pump()
         self._unlock()
         return self.queue
 
@@ -141,6 +150,8 @@ class Event(object):
             evt = JEvent( self.eventQueue.pop(0) )
             self.eventNum -= 1
             self.eventQueue.append(None)
+            if self.eventNum > 250:
+                self._pump()
         else:
             evt = self.Event(Const.NOEVENT)
         self._unlock()
@@ -156,6 +167,8 @@ class Event(object):
                 evt = JEvent( self.eventQueue.pop(0) )
                 self.eventNum -= 1
                 self.eventQueue.append(None)
+                if self.eventNum > 250:
+                    self._pump()
                 self._unlock()
                 return evt
             else:
@@ -175,6 +188,8 @@ class Event(object):
             evtType = [et for t in eventType for et in self.eventTypes[t]]
         self._lock()
         evt = [event.type for event in self.eventQueue[0:self.eventNum]]
+        if self.eventNum > 250:
+            self._pump()
         self._unlock()
         for et in evtType:
             if et in evt:
@@ -204,6 +219,8 @@ class Event(object):
                 self.eventNum = len(queue)
                 for i in range(self.eventNum):
                     self.eventQueue[i] = queue[i]
+            if self.eventNum > 250:
+                self._pump()
         self._unlock()
         return None
 

@@ -130,4 +130,5 @@ Pyjsdl Version History
 -add sprite collide methods - collide_rect_ratio, collide_circle, and collide_circle_ratio.
 -refactoring to isolate pyjs.
 -refactoring for optimization.
+-correct event.pump to maintain queue.
 
