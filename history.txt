@@ -131,4 +131,5 @@ Pyjsdl Version History
 -refactoring to isolate pyjs.
 -refactoring for optimization.
 -correct event.pump to maintain queue.
+-update IE9+ compatibility files in pyjs_changes.zip.
 
