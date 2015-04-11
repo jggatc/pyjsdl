@@ -48,9 +48,9 @@ class Event(object):
         self.mouseCursor = True
         self.timer = time.Clock()
         self.eventName = {'mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
-        self.eventType = ['mousemove', 'mousedown', 'mouseup', 'keydown', 'keypress', 'keyup']
+        self.eventType = ['mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
+        self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown','wheel','mousewheel', 'DOMMouseScroll'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
             self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
@@ -331,7 +331,7 @@ class UserEvent(object):
 class JEvent(object):
 
     _mouse_pos = (0, 0)
-    _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
+    _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
     _charCode = {33:Const.K_EXCLAIM, 34:Const.K_QUOTEDBL, 35:Const.K_HASH, 36:Const.K_DOLLAR, 38:Const.K_AMPERSAND, 39:Const.K_QUOTE, 40:Const.K_LEFTPAREN, 41:Const.K_RIGHTPAREN, 42:Const.K_ASTERISK, 43:Const.K_PLUS, 44:Const.K_COMMA, 45:Const.K_MINUS, 46:Const.K_PERIOD, 97:Const.K_a, 98:Const.K_b, 99:Const.K_c, 100:Const.K_d, 101:Const.K_e, 102:Const.K_f, 103:Const.K_g, 104:Const.K_h, 105:Const.K_i, 106:Const.K_j, 107:Const.K_k, 108:Const.K_l, 109:Const.K_m, 110:Const.K_n, 111:Const.K_o, 112:Const.K_p, 113:Const.K_q, 114:Const.K_r, 115:Const.K_s, 116:Const.K_t, 117:Const.K_u, 118:Const.K_v, 119:Const.K_w, 120:Const.K_x, 121:Const.K_y, 122:Const.K_z}
 
     def __init__(self, event):
@@ -341,7 +341,7 @@ class JEvent(object):
         Event object attributes:
         
         * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-        * button: mouse button pressed (1/2/3)
+        * button: mouse button pressed (1-3, 4-5 V-scroll, and 6-7 H-scroll some browsers)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
         * key: keycode of key pressed (K_a-K_z...)
@@ -357,6 +357,10 @@ class JEvent(object):
             self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
             self.rel = (self.pos[0]-self.__class__._mouse_pos[0], self.pos[1]-self.__class__._mouse_pos[1])
             self.__class__._mouse_pos = self.pos
+        elif event.type in ('wheel', 'mousewheel', 'DOMMouseScroll'):
+            self.type = self.__class__._types[event.type]
+            self.button = event.btn
+            self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
         elif event.type in ('keydown', 'keyup'):
             self.type = self.__class__._types[event.type]
             self.key = event.keyCode

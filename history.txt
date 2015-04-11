@@ -132,4 +132,5 @@ Pyjsdl Version History
 -refactoring for optimization.
 -correct event.pump to maintain queue.
 -update IE9+ compatibility files in pyjs_changes.zip.
+-add mousewheel event listener.
 

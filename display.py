@@ -6,18 +6,18 @@ from time import Time
 from color import Color
 import env
 import pyjsdl.event
-from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, Event
+from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event
 from __pyjamas__ import JS
 import base64
 
 __docformat__ = 'restructuredtext'
 
 
-class Canvas(Surface):
+class Canvas(Surface, MouseWheelHandler):
 
     def __init__(self, size, buffered):
         Surface.__init__(self, size)
-        Surface.resize(self, size[0], size[1])
+        MouseWheelHandler.__init__(self, True)
         if isinstance(buffered, bool):
             self._bufferedimage = buffered
         else:
@@ -32,6 +32,7 @@ class Canvas(Surface):
             self.surface = Surface(size)
         else:
             self.surface = self
+        self.resize(size[0], size[1])
         self.images = {}
         self.image_list = []
         self.function = None
@@ -39,8 +40,9 @@ class Canvas(Surface):
         self.time = Time()
         self.event = pyjsdl.event
         self.addMouseListener(self)
+        self.addMouseWheelListener(self)
         self.addKeyboardListener(self)
-        self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
+        self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
         self._rect_list = []
@@ -94,6 +96,71 @@ class Canvas(Surface):
         for keycode in self.modKey:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
+
+    def onMouseWheel(self, sender, velocity):
+        event = DOM.eventGetCurrentEvent()
+        if event.type == 'mousewheel':
+            #TODO: update for changes in mousewheel implementation
+            if hasattr(event, 'wheelDeltaX'):
+                self.onMouseWheel = self._onMouseWheel
+                self._onMouseWheel(sender, velocity)
+            else:
+                self.onMouseWheel = self._onMouseWheelY
+                DOM.eventGetMouseWheelVelocityY = eventGetMouseWheelVelocityY
+                self._onMouseWheelY(sender, eventGetMouseWheelVelocityY(event))
+        else:       #DOMMouseScroll
+            self.onMouseWheel = self._onMouseScroll
+            self._onMouseScroll(sender, velocity)
+
+    def _onMouseWheel(self, sender, velocity):
+        event = DOM.eventGetCurrentEvent()
+        if not event.wheelDeltaX:
+            if velocity < 0:
+                button = 4
+                events = velocity / -3
+            else:
+                button = 5
+                events = velocity / 3
+        else:
+            if velocity < 0:
+                button = 6
+                events = velocity / -3
+            else:
+                button = 7
+                events = velocity / 3
+        event.btn = button
+        event.pos = (self.event.mouseMove['x'], self.event.mouseMove['y'])
+        for evt in range(events):
+            self.event._updateQueue(event)
+
+    def _onMouseWheelY(self, sender, velocity):
+        event = DOM.eventGetCurrentEvent()
+        if velocity < 0:
+            button = 4
+            events = velocity / -3
+        else:
+            button = 5
+            events = velocity / 3
+        event.btn = button
+        event.pos = (self.event.mouseMove['x'], self.event.mouseMove['y'])
+        for evt in range(events):
+            self.event._updateQueue(event)
+
+    def _onMouseScroll(self, sender, velocity):
+        event = DOM.eventGetCurrentEvent()
+        if velocity > 1 or velocity < -1:
+            if velocity < 0:
+                button = 4
+            else:
+                button = 5
+        else:
+            if velocity < 0:
+                button = 6
+            else:
+                button = 7
+        event.btn = button
+        event.pos = (self.event.mouseMove['x'], self.event.mouseMove['y'])
+        self.event._updateQueue(event)
 
     def onKeyDown(self, sender, keycode, modifiers):
         if keycode in self.modKey:
