@@ -57,6 +57,7 @@ class Canvas(Surface, MouseWheelHandler):
         else:
             self.time_hold_min = 1
         self.time_hold = self.time_hold_min
+        self.initialized = False
 
     def _initAnimationFrame(self):
         JS("""
@@ -231,7 +232,9 @@ class Canvas(Surface, MouseWheelHandler):
 
     def start(self):
         self.run = self._run
-        self.time.timeout(self.time_hold, self)
+        if not self.initialized:
+            self.initialized = True
+            self.time.timeout(self.time_hold, self)
 
     def stop(self):
         self.time_wait = 0
@@ -367,6 +370,16 @@ class Display(object):
         if images:
             image_list.extend(images)
         self.canvas.load_images(image_list)
+
+    def set_callback(self, callback):
+        """
+        Set Canvas callback function.
+        Argument callback function to run.
+        """
+        if self.canvas.initialized:
+            self.canvas.set_function(callback)
+        else:
+            self.setup(callback)
 
     def setup_images(self, images):
         """
