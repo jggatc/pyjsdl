@@ -1,6 +1,7 @@
 0.22_dev
 -add display.set_callback method.
 -update Canvas handling of callback change.
+-add time.set_timer method.
 
 0.21    2015-04-12
 -update font to improve fonts access.

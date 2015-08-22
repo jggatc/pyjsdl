@@ -2,6 +2,7 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from __pyjamas__ import JS
+import pyjsdl.event
 import env
 
 __docformat__ = 'restructuredtext'
@@ -135,6 +136,20 @@ class Time(object):
         else:
             env.canvas.set_timeWait(time)
 
+    def set_timer(self, eventid, time):
+        """
+        **pyjsdl.time.set_timer**
+
+        Events of type eventid placed on queue at time (ms) intervals.
+        Disable by time of 0.
+        """
+        if eventid not in _EventTimer.timers:
+            _EventTimer.timers[eventid] = _EventTimer(eventid)
+        if time:
+            _EventTimer.timers[eventid].start(time)
+        else:
+            _EventTimer.timers[eventid].cancel()
+
     def time(self):
         """
         **pyjsdl.time.time**
@@ -152,4 +167,35 @@ class Time(object):
         """
         run = lambda: obj.run()
         JS("""$wnd['setTimeout'](function() {@{{run}}();}, @{{time}});""")
+
+
+class _EventTimer:
+    timers = {}
+
+    def __init__(self, eventid):
+        self.eventid = eventid
+        self.time = 0
+        self.timer = None
+        self.repeat = True
+
+    def run(self):
+        pyjsdl.event.post( pyjsdl.event.Event(self.eventid) )
+        if self.repeat:
+            self.timeout()
+
+    def timeout(self):
+        self.timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""") #Time.timeout
+
+    def start(self, time):
+        if self.timer:
+            self.cancel()
+        self.time = time
+        self.repeat = True
+        self.timeout()
+
+    def cancel(self):
+        if self.timer:
+            JS("""$wnd['clearTimeout'](@{{self}}['timer']);""")
+            self.timer = None
+        self.repeat = False
 
