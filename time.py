@@ -184,7 +184,8 @@ class _EventTimer:
             self.timeout()
 
     def timeout(self):
-        self.timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""") #Time.timeout
+        timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""") #Time.timeout
+        self.timer = timer
 
     def start(self, time):
         if self.timer:
