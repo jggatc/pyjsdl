@@ -249,7 +249,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.itervalues():
+        for sprite in self._sprites.values():
             sprite.update(*args)
         return None
 
