@@ -186,8 +186,6 @@ class Group(object):
             if spriteID not in self._sprites:
                 self._sprites[spriteID] = sprite
                 sprite._groups[id(self)] = self
-        for sprite in sprites:
-            self._sprites[id(sprite)] = sprite
         return None
 
     def remove(self, *sprites):
