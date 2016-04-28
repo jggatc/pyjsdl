@@ -37,8 +37,8 @@ class Sprite(object):
         self._identity = Sprite._identity
         Sprite._identity += 1
         self._groups = {}
-        for group in groups:
-            group.add(self)
+        if groups:
+            self.add(*groups)
 
     def __repr__(self):
         """
@@ -51,7 +51,10 @@ class Sprite(object):
         Add sprite to group(s).
         """
         for group in groups:
-            group.add(self)
+            if hasattr(group, '_sprites'):
+                group.add(self)
+            else:
+                self.add(*group)
         return None
 
     def remove(self, *groups):
@@ -59,7 +62,10 @@ class Sprite(object):
         Remove sprite from group(s).
         """
         for group in groups:
-            group.remove(self)
+            if hasattr(group, '_sprites'):
+                group.remove(self)
+            else:
+                self.remove(*group)
         return None
 
     def kill(self):
@@ -133,9 +139,7 @@ class Group(object):
         Group._identity += 1
         self._sprites = {}
         if sprites:
-            for sprite in sprites:
-                self._sprites[id(sprite)] = sprite
-                sprite._groups[id(self)] = self
+            self.add(*sprites)
         self._clear_active = False
         self._sprites_drawn = {}
 
@@ -182,10 +186,13 @@ class Group(object):
         Add sprite(s) to group.
         """
         for sprite in sprites:
-            spriteID = id(sprite)
-            if spriteID not in self._sprites:
-                self._sprites[spriteID] = sprite
-                sprite._groups[id(self)] = self
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID not in self._sprites:
+                    self._sprites[spriteID] = sprite
+                    sprite._groups[id(self)] = self
+            else:
+                self.add(*sprite)
         return None
 
     def remove(self, *sprites):
@@ -193,21 +200,26 @@ class Group(object):
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            spriteID = id(sprite)
-            if spriteID in self._sprites:
-                del self._sprites[spriteID]
-                del sprite._groups[id(self)]
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID in self._sprites:
+                    del self._sprites[spriteID]
+                    del sprite._groups[id(self)]
+            else:
+                self.remove(*sprite)
         return None
 
     def has(self, *sprites):
         """
         Check if all sprite(s) in group.
         """
-        if not isinstance(sprites[0], Sprite):
-            sprites = sprites[0]
         for sprite in sprites:
-            if id(sprite) not in self._sprites:
-                return False
+            if hasattr(sprite, '_groups'):
+                if id(sprite) not in self._sprites:
+                    return False
+            else:
+                if not self.has(*sprite):
+                    return False
         return True
 
     def draw(self, surface):

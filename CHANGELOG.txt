@@ -3,6 +3,7 @@
 -update Canvas handling of callback change.
 -add time.set_timer method.
 -update sprite to revise member groups.
+-update sprite argument handling.
 
 0.21    2015-04-12
 -update font to improve fonts access.
