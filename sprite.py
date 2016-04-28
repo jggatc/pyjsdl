@@ -66,7 +66,7 @@ class Sprite(object):
         """
         Remove sprite from all member groups.
         """
-        for group in self._groups:
+        for group in self._groups.values():
             group.remove(self)
         return None
 
@@ -208,7 +208,7 @@ class Group(object):
         if not isinstance(sprites[0], Sprite):
             sprites = sprites[0]
         for sprite in sprites:
-            if id(sprite) not in self._sprites.iterkeys():
+            if id(sprite) not in self._sprites:
                 return False
         return True
 
