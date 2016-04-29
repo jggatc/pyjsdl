@@ -667,13 +667,9 @@ def collide_mask(sprite1, sprite2):
     **pyjsdl.sprite.collide_mask**
     
     Check if mask of sprites intersect.
+    Will use sprite mask attribute or mask generated from image attribute.
     Can be used as spritecollide callback function.
     """
-    clip = sprite1.rect.intersection(sprite2.rect)
-    if clip.width < 1 or clip.height < 1:
-        return False
-    x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y
-    x2,y2 = clip.x-sprite2.rect.x, clip.y-sprite2.rect.y
     if hasattr(sprite1, 'mask'):
         mask1 = sprite1.mask
     else:
@@ -682,10 +678,10 @@ def collide_mask(sprite1, sprite2):
         mask2 = sprite2.mask
     else:
         mask2 = mask.from_surface(sprite2.image)
-    for y in range(clip.height):
-        if mask1.bit[y1+y].get(x1, x1+clip.width).intersects(mask2.bit[y2+y].get(x2, x2+clip.width)):
-            return True
-    return False
+    if mask1.overlap(mask2, (sprite2.rect.x-sprite1.rect.x,sprite2.rect.y-sprite1.rect.y)):
+        return True
+    else:
+        return False
 
 
 def groupcollide(group1, group2, dokill1, dokill2):

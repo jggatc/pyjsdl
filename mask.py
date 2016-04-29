@@ -87,6 +87,7 @@ class Mask(object):
     * Mask.clear
     * Mask.invert
     * Mask.count
+    * Mask.overlap
     * Mask.toString
     """
 
@@ -160,6 +161,30 @@ class Mask(object):
         for bitset in self.bit:
             true_bits += bitset.cardinality()
         return true_bits
+
+    def overlap(self, mask, offset):
+        """
+        Return True if mask at offset position overlap with this mask.
+        """
+        if offset[0] > 0:
+            x1 = offset[0]
+            x2 = 0
+        else:
+            x1 = 0
+            x2 = -offset[0]
+        if offset[1] > 0:
+            y1 = offset[1]
+            y2 = 0
+        else:
+            y1 = 0
+            y2 = -offset[1]
+        w = min(self.width-x1, mask.width-x2)
+        h = min(self.height-y1, mask.height-y2)
+        if w > 0 and h > 0:
+            for y in range(h):
+                if self.bit[y1+y].get(x1, x1+w).intersects(mask.bit[y2+y].get(x2, x2+w)):
+                    return True
+        return None
 
     def toString(self, bit=('1','0')):
         """
