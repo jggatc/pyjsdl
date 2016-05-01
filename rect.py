@@ -1,6 +1,8 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
+import env
+
 __docformat__ = 'restructuredtext'
 
 
@@ -104,22 +106,16 @@ class Rect(object):
             arg = args
         ln = len(arg)
         if ln == 4:
-            super(Rect, self).__setattr__('x', int(arg[0]))
-            super(Rect, self).__setattr__('y', int(arg[1]))
-            super(Rect, self).__setattr__('width', int(arg[2]))
-            super(Rect, self).__setattr__('height', int(arg[3]))
+            self.setLocation(arg[0], arg[1])
+            self.setSize(arg[2], arg[3])
         elif ln == 2:
-            super(Rect, self).__setattr__('x', int(arg[0][0]))
-            super(Rect, self).__setattr__('y', int(arg[0][1]))
-            super(Rect, self).__setattr__('width', int(arg[1][0]))
-            super(Rect, self).__setattr__('height', int(arg[1][1]))
+            self.setLocation(arg[0][0], arg[0][1])
+            self.setSize(arg[1][0], arg[1][1])
         else:
             if hasattr(arg, 'rect'):
                 arg = arg.rect
-            super(Rect, self).__setattr__('x', arg.x)
-            super(Rect, self).__setattr__('y', arg.y)
-            super(Rect, self).__setattr__('width', arg.width)
-            super(Rect, self).__setattr__('height', arg.height)
+            self.setLocation(arg.x, arg.y)
+            self.setSize(arg.width, arg.height)
 
     def __str__(self):
         """
@@ -137,8 +133,8 @@ class Rect(object):
         """
         Get Rect attributes.
         """
-        if attr in Rect._at:
-            return Rect._at[attr](self)
+        if attr in self._at:
+            return self._at[attr](self)
         else:
             raise AttributeError
 
@@ -146,11 +142,11 @@ class Rect(object):
         """
         Set Rect attributes.
         """
-        if attr in Rect._xy:
-            Rect._xy[attr](self, val)
+        if attr in self._xy:
+            self._xy[attr](self, val)
+            return None
         else:
             raise AttributeError
-        return None
 
     def __getitem__(self, key):
         """
@@ -193,11 +189,21 @@ class Rect(object):
         return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height   #pyjs compares rect==tuple not __eq__
 
     def setLocation(self, x, y):
+        self.x = int(x)
+        self.y = int(y)
+        return None
+
+    def setSize(self, w, h):
+        self.width = int(w)
+        self.height = int(h)
+        return None
+
+    def _setLocation(self, x, y):
         super(Rect, self).__setattr__('x', int(x))
         super(Rect, self).__setattr__('y', int(y))
         return None
 
-    def setSize(self, w, h):
+    def _setSize(self, w, h):
         super(Rect, self).__setattr__('width', int(w))
         super(Rect, self).__setattr__('height', int(h))
         return None
@@ -346,22 +352,21 @@ class Rect(object):
         """
         Return Rect of same dimension as this rect moved within rect.
         """
-        newrect = Rect(self.x, self.y, self.width, self.height)
         if self.width < rect.width:
             if self.x < rect.x:
-                super(Rect, newrect).__setattr__('x', rect.x)
+                x = rect.x
             elif self.x+self.width > rect.x+rect.width:
-                super(Rect, newrect).__setattr__('x', rect.x+rect.width-self.width)
+                x = rect.x+rect.width-self.width
         else:
-            super(Rect, newrect).__setattr__('x', rect.x-int((self.width-rect.width)/2))
+            x = rect.x-int((self.width-rect.width)/2)
         if self.height < rect.height:
             if self.y < rect.y:
-                super(Rect, newrect).__setattr__('y', rect.y)
+                y = rect.y
             elif self.y+self.height > rect.y+rect.height:
-                super(Rect, newrect).__setattr__('y', rect.y+rect.height-self.height)
+                y = rect.y+rect.height-self.height
         else:
-            super(Rect, newrect).__setattr__('y', rect.y-int((self.height-rect.height)/2))
-        return newrect
+            y = rect.y-int((self.height-rect.height)/2)
+        return Rect(x, y, self.width, self.height)
 
     def clamp_ip(self, rect):
         """
@@ -369,18 +374,19 @@ class Rect(object):
         """
         if self.width < rect.width:
             if self.x < rect.x:
-                super(Rect, self).__setattr__('x', rect.x)
+                x = rect.x
             elif self.x+self.width > rect.x+rect.width:
-                super(Rect, self).__setattr__('x', rect.x+rect.width-self.width)
+                x = rect.x+rect.width-self.width
         else:
-            super(Rect, self).__setattr__('x',  rect.x-int((self.width-rect.width)/2))
+            x = rect.x-int((self.width-rect.width)/2)
         if self.height < rect.height:
             if self.y < rect.y:
-                super(Rect, self).__setattr__('y', rect.y)
+                y = rect.y
             elif self.y+self.height > rect.y+rect.height:
-                super(Rect, self).__setattr__('y', rect.y+rect.height-self.height)
+                y = rect.y+rect.height-self.height
         else:
-            super(Rect, self).__setattr__('y', rect.y-int((self.height-rect.height)/2))
+            y = rect.y-int((self.height-rect.height)/2)
+        self.setLocation(x, y)
         return None
 
     def set(self, *args):
@@ -399,22 +405,16 @@ class Rect(object):
             arg = args
         ln = len(arg)
         if ln == 4:
-            super(Rect, self).__setattr__('x', int(arg[0]))
-            super(Rect, self).__setattr__('y', int(arg[1]))
-            super(Rect, self).__setattr__('width', int(arg[2]))
-            super(Rect, self).__setattr__('height', int(arg[3]))
+            self.setLocation(arg[0], arg[1])
+            self.setSize(arg[2], arg[3])
         elif ln == 2:
-            super(Rect, self).__setattr__('x', int(arg[0][0]))
-            super(Rect, self).__setattr__('y', int(arg[0][1]))
-            super(Rect, self).__setattr__('width', int(arg[1][0]))
-            super(Rect, self).__setattr__('height', int(arg[1][1]))
+            self.setLocation(arg[0][0], arg[0][1])
+            self.setSize(arg[1][0], arg[1][1])
         else:
             if hasattr(arg, 'rect'):
                 arg = arg.rect
-            super(Rect, self).__setattr__('x', arg.x)
-            super(Rect, self).__setattr__('y', arg.y)
-            super(Rect, self).__setattr__('width', arg.width)
-            super(Rect, self).__setattr__('height', arg.height)
+            self.setLocation(arg.x, arg.y)
+            self.setSize(arg.width, arg.height)
 
     def collidepoint(self, *point):
         """
@@ -468,6 +468,11 @@ class Rect(object):
             if self.colliderect(rects[rect]):
                 collided.append((rect,rects[rect]))
         return collided
+
+
+if env.pyjs_mode.strict:
+    Rect.setLocation = Rect._setLocation
+    Rect.setSize = Rect._setSize
 
 
 class RectPool(list):

@@ -22,6 +22,7 @@
 #Pyjsdl version 0.21
 #Project Site: http://gatc.ca/
 
+import util
 from display import Display
 from surface import Surface
 from rect import Rect
@@ -35,7 +36,6 @@ from surfarray import Surfarray
 from color import Color
 from mixer import Mixer
 from time import Time
-import util
 import mask
 import font
 import sprite
