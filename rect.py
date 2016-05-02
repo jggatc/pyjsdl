@@ -357,6 +357,8 @@ class Rect(object):
                 x = rect.x
             elif self.x+self.width > rect.x+rect.width:
                 x = rect.x+rect.width-self.width
+            else:
+                x = self.x
         else:
             x = rect.x-int((self.width-rect.width)/2)
         if self.height < rect.height:
@@ -364,6 +366,8 @@ class Rect(object):
                 y = rect.y
             elif self.y+self.height > rect.y+rect.height:
                 y = rect.y+rect.height-self.height
+            else:
+                y = self.y
         else:
             y = rect.y-int((self.height-rect.height)/2)
         return Rect(x, y, self.width, self.height)
@@ -377,6 +381,8 @@ class Rect(object):
                 x = rect.x
             elif self.x+self.width > rect.x+rect.width:
                 x = rect.x+rect.width-self.width
+            else:
+                x = self.x
         else:
             x = rect.x-int((self.width-rect.width)/2)
         if self.height < rect.height:
@@ -384,6 +390,8 @@ class Rect(object):
                 y = rect.y
             elif self.y+self.height > rect.y+rect.height:
                 y = rect.y+rect.height-self.height
+            else:
+                y = self.y
         else:
             y = rect.y-int((self.height-rect.height)/2)
         self.setLocation(x, y)
