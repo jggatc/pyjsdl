@@ -6,6 +6,7 @@
 -update sprite argument handling.
 -update sprite.collide_mask to use mask.overlap.
 -refactoring rect for optimization.
+-update display.setup to accept callback function or object with run method.
 
 0.21    2015-04-12
 -update font to improve fonts access.

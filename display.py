@@ -36,7 +36,7 @@ class Canvas(Surface, MouseWheelHandler):
         self.resize(size[0], size[1])
         self.images = {}
         self.image_list = []
-        self.function = None
+        self.callback = None
         self.time_wait = 0
         self.time = Time()
         self.event = pyjsdl.event
@@ -199,8 +199,11 @@ class Canvas(Surface, MouseWheelHandler):
         except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
             pass
 
-    def set_function(self, function):
-        self.function = function
+    def set_callback(self, cb):
+        if not hasattr(cb, 'run'):
+            self.callback = Callback(cb)
+        else:
+            self.callback = cb
 
     def load_images(self, images):
         if images:
@@ -264,7 +267,7 @@ class Canvas(Surface, MouseWheelHandler):
             return self._rect_list[self._rect_num]
 
     def _run(self):
-        self.function()
+        self.callback.run()
         JS("""$wnd['requestAnimationFrame'](@{{paint}});""")
 
     def rerun(self):
@@ -284,6 +287,14 @@ def paint(ts):
         i += 1
     env.canvas._rect_num = 0
     env.canvas.rerun()
+
+
+class Callback(object):
+
+    __slots__ = ['run']
+
+    def __init__(self, cb):
+        self.run = cb
 
 
 class Display(object):
@@ -356,13 +367,14 @@ class Display(object):
             self.update_rect = lambda *arg: None
         return self.surface
 
-    def setup(self, function, images=None):
+    def setup(self, callback, images=None):
         """
         Initialize Canvas for script execution.
         Argument include callback function to run and optional images list to preload.
+        Callback function can also be an object with a run method to call.
         The images can be image URL, or file-like object or base64 data in format (name.ext,data).
         """
-        self.canvas.set_function(function)
+        self.canvas.set_callback(callback)
         image_list = []
         if self._image_list:
             image_list.extend(self._image_list)
@@ -375,9 +387,10 @@ class Display(object):
         """
         Set Canvas callback function.
         Argument callback function to run.
+        Callback function can also be an object with a run method to call.
         """
         if self.canvas.initialized:
-            self.canvas.set_function(callback)
+            self.canvas.set_callback(callback)
         else:
             self.setup(callback)
 
