@@ -31,6 +31,8 @@ class Rect(object):
     * Rect.collidedictall
     """
 
+    __slots__ = ['x', 'y', 'width', 'height']
+
     _xy = {
         'center': lambda self,val: self.setLocation( val[0]-int(self.width/2), val[1]-int(self.height/2) ),
         'centerx': lambda self,val: self.setLocation( val-int(self.width/2), self.y ),
