@@ -17,6 +17,8 @@ class Mouse(object):
     * pyjsdl.mouse.get_pos
     * pyjsdl.mouse.get_rel
     * pyjsdl.mouse.set_visible
+    * pyjsdl.mouse.set_cursor
+    * pyjsdl.mouse.get_cursor
     """
 
     def __init__(self):
@@ -28,7 +30,8 @@ class Mouse(object):
         self.mousePress = pyjsdl.event.mousePress
         self.mouseMove = pyjsdl.event.mouseMove
         self.mouseMoveRel = pyjsdl.event.mouseMoveRel
-        self.mouseCursor = pyjsdl.event.mouseCursor
+        self._cursorVisible = True
+        self._cursorType = 'default'
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -64,15 +67,29 @@ class Mouse(object):
         """
         Set visibility of mouse cursor. Return bool of previous state.
         """
+        visible_pre = self._cursorVisible
         if visible:
-            if not self.mouseCursor:
-                DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', 'default')
-                self.mouseCursor = True
+            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
+            self._cursorVisible = True
         else:
-            if self.mouseCursor:
-                DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', 'none')
-                self.mouseCursor = False
-        return self.mouseCursor
+            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', 'none')
+            self._cursorVisible = False
+        return visible_pre
+
+    def set_cursor(self, *cursor):
+        """
+        Set mouse cursor. Refer to cursors.py for details.
+        """
+        if len(cursor) == 1:
+            self._cursorType = cursor[0]
+            if self._cursorVisible:
+                DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
+
+    def get_cursor(self):
+        """
+        Get mouse cursor.
+        """
+        return self._cursorType
 
     def _nonimplemented_methods(self):
         """
@@ -80,6 +97,4 @@ class Mouse(object):
         """
         self.set_pos = lambda *arg: None
         self.get_focused = lambda *arg: True
-        self.set_cursor = lambda *arg: None
-        self.get_cursor = lambda *arg: ()
 

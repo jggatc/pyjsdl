@@ -39,6 +39,7 @@ from time import Time
 import mask
 import font
 import sprite
+import cursors
 from locals import *
 
 time = Time()

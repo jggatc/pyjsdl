@@ -8,6 +8,7 @@
 -refactoring rect for optimization.
 -update display.setup to accept callback function or object with run method.
 -update rect to define __slots__.
+-add mouse set_cursor and get_cursor methods.
 
 0.21    2015-04-12
 -update font to improve fonts access.
