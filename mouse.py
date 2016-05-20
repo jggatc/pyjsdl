@@ -78,12 +78,28 @@ class Mouse(object):
 
     def set_cursor(self, *cursor):
         """
-        Set mouse cursor. Refer to cursors.py for details.
+        Set mouse cursor.
+        Alternative arguments:
+        * system cursor
+        * image url or base64 data such as surface.toDataURL output,
+          hotspot (x,y), and optional cursor fallback
+        Refer to pyjsdl.cursors for details.
         """
-        if len(cursor) == 1:
+        args = len(cursor)
+        if args == 1:
             self._cursorType = cursor[0]
-            if self._cursorVisible:
-                DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
+        elif args in (2,3):
+            url = cursor[0]
+            hotspot = cursor[1]
+            if args == 2:
+                fallback = 'default'
+            else:
+                fallback = cursor[2]
+            self._cursorType = 'url("%s") %d %d, %s' % (url, hotspot[0], hotspot[1], fallback)
+        else:
+            self._cursorType = 'default'
+        if self._cursorVisible:
+            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
 
     def get_cursor(self):
         """
