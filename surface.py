@@ -30,8 +30,15 @@ class Surface(HTML5Canvas):
     * Surface.fill
     * Surface.get_parent
     * Surface.get_offset
+    * Surface.toDataURL
     """
     def __init__(self, size, *args, **kwargs):
+        """
+        Return Surface subclassed from a Canvas implementation.
+        The size argument is the dimension (w,h) of surface.
+
+        Module initialization places pyjsdl.Surface in module's namespace.
+        """
         self.width = int(size[0])
         self.height = int(size[1])
         HTML5Canvas.__init__(self, self.width, self.height)
@@ -290,6 +297,17 @@ class Surface(HTML5Canvas):
         Return offset of subsurface in surface.
         """
         return self._offset
+
+    def toDataURL(self, datatype=None):
+        """
+        Return surface data as a base64 data string.
+        Optional datatype to set data format, default to 'image/png'.
+        Implemented with HTML5 Canvas toDataURL method.
+        """
+        if not datatype:
+            return self.canvas.toDataURL()
+        else:
+            return self.canvas.toDataURL(datatype)
 
     def _nonimplemented_methods(self):
         """
