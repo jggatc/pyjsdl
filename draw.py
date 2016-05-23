@@ -42,15 +42,13 @@ class Draw(object):
             _rect = rect
         else:
             _rect = Rect(rect)
-        surface.beginPath()
         if width:
             surface.setLineWidth(width)
             if hasattr(color, 'a'):
                 surface.setStrokeStyle(color)
             else:
                 surface.setStrokeStyle(Color(color))
-            surface.rect(_rect.x, _rect.y, _rect.width, _rect.height)
-            surface.stroke()
+            surface.strokeRect(_rect.x, _rect.y, _rect.width, _rect.height)
         else:
             if hasattr(color, 'a'):
                 surface.setFillStyle(color)
