@@ -10,6 +10,7 @@
 -update rect to define __slots__.
 -add mouse set_cursor and get_cursor methods.
 -add surface toDataURL method.
+-update surface.set_at for performance.
 
 0.21    2015-04-12
 -update font to improve fonts access.

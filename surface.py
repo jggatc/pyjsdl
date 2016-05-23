@@ -244,14 +244,12 @@ class Surface(HTML5Canvas):
         Set color of a surface pixel.
         The arguments represent position x,y and color of pixel.
         """
-        pixel = self.impl.getImageData(pos[0], pos[1], 1, 1)
         if hasattr(color, 'a'):
             _color = color
         else:
             _color = Color(color)
-        for i in range(4):
-            self._setPixel(pixel, i, _color[i])
-        self.impl.putImageData(pixel, pos[0], pos[1], 0, 0, 1, 1)
+        self.setFillStyle(_color)
+        self.fillRect(pos[0], pos[1], 1, 1)
         return None
 
     def fill(self, color=None, rect=None):
