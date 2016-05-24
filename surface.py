@@ -259,7 +259,6 @@ class Surface(HTML5Canvas):
         if color is None:
             HTML5Canvas.fill(self)
             return
-        self.beginPath()
         if color:
             if hasattr(color, 'a'):
                 self.setFillStyle(color)
