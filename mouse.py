@@ -5,6 +5,7 @@
 import env
 import pyjsdl.event
 from pyjsobj import DOM
+import cursors
 
 __docformat__ = 'restructuredtext'
 
@@ -31,7 +32,7 @@ class Mouse(object):
         self.mouseMove = pyjsdl.event.mouseMove
         self.mouseMoveRel = pyjsdl.event.mouseMoveRel
         self._cursorVisible = True
-        self._cursorType = 'default'
+        self._cursor = 'default'
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -69,7 +70,7 @@ class Mouse(object):
         """
         visible_pre = self._cursorVisible
         if visible:
-            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
+            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursor)
             self._cursorVisible = True
         else:
             DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', 'none')
@@ -80,32 +81,47 @@ class Mouse(object):
         """
         Set mouse cursor.
         Alternative arguments:
-        * system cursor
-        * image url or base64 data such as surface.toDataURL output,
-          hotspot (x,y), and optional cursor fallback
+        * system cursor or cursor object
+        * image url or surface, hotspot (x,y), and optional fallback
+        * size, hotspot, data, mask, and optional fallback
         Refer to pyjsdl.cursors for details.
         """
         args = len(cursor)
         if args == 1:
-            self._cursorType = cursor[0]
+            self._cursor = cursor[0]
         elif args in (2,3):
-            url = cursor[0]
+            if isinstance(cursor[0], str):
+                url = cursor[0]
+            else:
+                url = cursor[0].toDataURL()
             hotspot = cursor[1]
             if args == 2:
                 fallback = 'default'
             else:
                 fallback = cursor[2]
-            self._cursorType = 'url("%s") %d %d, %s' % (url, hotspot[0], hotspot[1], fallback)
+            self._cursor = 'url("%s") %d %d, %s' % (url, hotspot[0], hotspot[1], fallback)
+        elif args in (4,5):
+            size = cursor[0]
+            hotspot = cursor[1]
+            data = cursor[2]
+            mask = cursor[3]
+            if args == 4:
+                fallback = 'default'
+            else:
+                fallback = cursor[4]
+            surface = cursors.create_cursor(size, data, mask)
+            url = surface.toDataURL()
+            self._cursor = 'url("%s") %d %d, %s' % (url, hotspot[0], hotspot[1], fallback)
         else:
-            self._cursorType = 'default'
+            self._cursor = 'default'
         if self._cursorVisible:
-            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursorType)
+            DOM.setStyleAttribute(env.canvas.getElement(), 'cursor', self._cursor)
 
     def get_cursor(self):
         """
-        Get mouse cursor.
+        Return cursor object.
         """
-        return self._cursorType
+        return self._cursor
 
     def _nonimplemented_methods(self):
         """
