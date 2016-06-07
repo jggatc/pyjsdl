@@ -41,10 +41,6 @@ class Transform(object):
         sin_theta = math.fabs( math.sin(theta) )
         width_f = int( (width_i*cos_theta)+(height_i*sin_theta) )
         height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
-        if width_f%2:
-            width_f += 1
-        if height_f%2:
-            height_f += 1
         surf = Surface((width_f,height_f))
         surf.saveContext()
         surf.translate(width_f/2.0, height_f/2.0)
