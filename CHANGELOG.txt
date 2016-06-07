@@ -1,18 +1,19 @@
 0.22_dev
--add display.set_callback method.
+-add display set_callback method.
 -update Canvas handling of callback change.
--add time.set_timer method.
+-add time set_timer method.
 -update sprite to revise member groups.
 -update sprite argument handling.
--update sprite.collide_mask to use mask.overlap.
+-update sprite collide_mask to use mask.overlap.
 -refactoring rect for optimization.
--update display.setup to accept callback function or object with run method.
+-update display setup to accept callback function or object with run method.
 -update rect to define __slots__.
 -add mouse set_cursor and get_cursor methods.
 -add surface toDataURL method.
 -update mouse set_cursor to use custom image.
--update surface.set_at to optimize.
+-update surface set_at to optimize.
 -update mouse set_cursor to use cursor data.
+-update transform rotozoom to optimize.
 
 0.21    2015-04-12
 -update font to improve fonts access.

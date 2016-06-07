@@ -53,13 +53,27 @@ class Transform(object):
         """
         Return Surface rotated and resized by the given angle and size.
         """
-        surf = self.rotate(surface, angle)
-        w, h = int(math.ceil(surf.get_width()*size)), int(math.ceil(surf.get_height()*size))
-        if w % 2:
-            w += 1
-        if h % 2:
-            h += 1
-        surf = self.scale(surf, (w, h))
+        if not angle:
+            width = int(surface.get_width()*size)
+            height = int(surface.get_height()*size)
+            return self.scale(surface, (width, height))
+        theta = angle*self.deg_rad
+        width_i = int(surface.get_width()*size)
+        height_i = int(surface.get_height()*size)
+        cos_theta = math.fabs( math.cos(theta) )
+        sin_theta = math.fabs( math.sin(theta) )
+        width_f = int( math.ceil((width_i*cos_theta)+(height_i*sin_theta)) )
+        if width_f % 2:
+            width_f += 1
+        height_f = int( math.ceil((width_i*sin_theta)+(height_i*cos_theta)) )
+        if height_f % 2:
+            height_f += 1
+        surf = Surface((width_f,height_f))
+        surf.saveContext()
+        surf.translate(width_f/2.0, height_f/2.0)
+        surf.rotate(-theta)
+        surf.drawImage(surface.canvas, 0, 0, surface.get_width(), surface.get_height(), -width_i/2, -height_i/2, width_i, height_i)
+        surf.restoreContext()
         return surf
 
     def scale(self, surface, size, dest=None):
