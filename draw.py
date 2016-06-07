@@ -175,7 +175,7 @@ class Draw(object):
                 else:
                     surface.setFillStyle(Color(color))
                 surf.fill()
-            surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)    #pyjs0.8 *.canvas
+            surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
         else:
