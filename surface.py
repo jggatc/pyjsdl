@@ -42,6 +42,7 @@ class Surface(HTML5Canvas):
         self.width = int(size[0])
         self.height = int(size[1])
         HTML5Canvas.__init__(self, self.width, self.height)
+        HTML5Canvas.resize(self, self.width, self.height)
         self._display = None    #display surface
         self._super_surface = None
         self._offset = (0,0)

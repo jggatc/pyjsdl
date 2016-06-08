@@ -33,7 +33,6 @@ class Canvas(Surface, MouseWheelHandler):
             self.surface = Surface(size)
         else:
             self.surface = self
-        self.resize(size[0], size[1])
         self.images = {}
         self.image_list = []
         self.callback = None
@@ -189,15 +188,9 @@ class Canvas(Surface, MouseWheelHandler):
 
     def resize(self, width, height):
         Surface.resize(self, width, height)
-        self.surface.resize(width, height)
-        try:
-            self.surface._display.textbox.resize()
-        except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
-            pass
-        try:
-            self.surface._display.textarea.resize()
-        except (TypeError, AttributeError):     #pyjs-O:TypeError/-S:AttributeError
-            pass
+        if self._bufferedimage:
+            self.surface.resize(width, height)
+        self.surface._display._surface_rect = self.surface.get_rect()
 
     def set_callback(self, cb):
         if not hasattr(cb, 'run'):
@@ -364,7 +357,6 @@ class Display(object):
         if not self.canvas._bufferedimage:
             self.flip = lambda: None
             self.update = lambda *arg: None
-            self.update_rect = lambda *arg: None
         return self.surface
 
     def setup(self, callback, images=None):
