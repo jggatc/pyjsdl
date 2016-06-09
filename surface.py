@@ -320,18 +320,38 @@ class Surface(HTML5Canvas):
         self.get_locks = lambda *arg: ()
 
 
-class Surf:
+class Surf(object):
 
     def __init__(self, image):
         self.canvas = image
-        element = image.getElement()
-        self.width, self.height = element.width, element.height
-        self.get_size = Surface.get_size
-        self.get_width = Surface.get_width
-        self.get_height = Surface.get_height
-        self.get_rect = Surface.get_rect
-        self._nonimplemented_methods = Surface._nonimplemented_methods
+        self.width, self.height = self.canvas.width, self.canvas.height
         self._nonimplemented_methods()
+
+    def get_size(self):
+        return (self.width, self.height)
+
+    def get_width(self):
+        return self.width
+
+    def get_height(self):
+        return self.height
+
+    def get_rect(self, **attr):
+        rect = Rect(0, 0, self.width, self.height)
+        for key in attr:
+            rect.__setattr__(key,attr[key])
+        return rect
+
+    def _nonimplemented_methods(self):
+        self.convert = lambda *arg: self
+        self.convert_alpha = lambda *arg: self
+        self.set_alpha = lambda *arg: None
+        self.get_alpha = lambda *arg: None
+        self.lock = lambda *arg: None
+        self.unlock = lambda *arg: None
+        self.mustlock = lambda *arg: False
+        self.get_locked = lambda *arg: False
+        self.get_locks = lambda *arg: ()
 
 
 class IndexSizeError(Exception):

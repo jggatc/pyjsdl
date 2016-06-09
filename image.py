@@ -60,8 +60,7 @@ class Image(object):
         Return the image as a Surface.
         """
         if env.canvas._isCanvas:
-            img = image.getElement()
-            surface = Surface((img.width,img.height))
+            surface = Surface((image.width,image.height))
             surface.drawImage(image, 0, 0)
         else:
             surface = Surf(image)

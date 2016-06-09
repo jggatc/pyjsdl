@@ -238,7 +238,7 @@ class Canvas(Surface, MouseWheelHandler):
 
     def onImagesLoaded(self, images):
         for i, image in enumerate(self.image_list):
-            self.images[image] = images[i]
+            self.images[image] = images[i].getElement()
         self.start()
 
     def set_timeWait(self, time):
