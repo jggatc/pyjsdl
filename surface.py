@@ -158,17 +158,8 @@ class Surface(HTML5Canvas):
 
     def _blit_clear(self, surface, rect_list):
         ctx = self.impl.canvasContext
-        if self._display:
-            surface_rect = self._display._surface_rect
-        else:
-            surface_rect = self.get_rect()
         for r in rect_list:
-            if surface_rect.contains(r):
-                ctx.drawImage(surface.canvas, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)
-            else:
-                rx = surface_rect.clip(r)
-                if rx.width and rx.height:
-                    ctx.drawImage(surface.canvas, rx.x,rx.y,rx.width,rx.height, rx.x,rx.y,rx.width,rx.height)
+            ctx.drawImage(surface.canvas, r.x,r.y,r.width,r.height, r.x,r.y,r.width,r.height)
 
     def set_colorkey(self, color, flags=None):
         """

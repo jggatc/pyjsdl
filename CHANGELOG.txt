@@ -14,6 +14,8 @@
 -update surface set_at to optimize.
 -update mouse set_cursor to use cursor data.
 -update transform rotozoom to optimize.
+-update display update method (_update) to optimize.
+-update surface blit method (_blit_clear) to optimize.
 
 0.21    2015-04-12
 -update font to improve fonts access.
