@@ -49,7 +49,6 @@ class Canvas(Surface, MouseWheelHandler):
         self._rect_list.append(Rect(0,0,0,0))
         self._rect_len = 1
         self._rect_num = 0
-        self._rect_temp = Rect(0,0,0,0)
         _animationFrame = self._initAnimationFrame()
         if _animationFrame:
             self.time_hold_min = 0
@@ -521,40 +520,24 @@ class Display(object):
 
 
 def _update(canvas, rect_list):
-    for r in rect_list:
-        if hasattr(r, 'width'):
-            rect = r
+    for rect in rect_list:
+        if hasattr(rect, 'width'):
+            repaint_rect = canvas._get_rect()
+            repaint_rect.x = rect.x
+            repaint_rect.y = rect.y
+            repaint_rect.width = rect.width
+            repaint_rect.height = rect.height
+            canvas._rect_num += 1
         else:
-            if r:
-                rect = canvas._rect_temp
-                rect.set(r)
+            if rect:
+                repaint_rect = canvas._get_rect()
+                repaint_rect.x = rect[0]
+                repaint_rect.y = rect[1]
+                repaint_rect.width = rect[2]
+                repaint_rect.height = rect[3]
+                canvas._rect_num += 1
             else:
                 continue
-        repaint_rect = canvas._get_rect()
-        if rect.x >= 0:
-            repaint_rect.x = rect.x
-        else:
-            repaint_rect.x = 0
-            repaint_rect.width = rect.width + rect.x
-        if rect.y >= 0:
-            repaint_rect.y = rect.y
-        else:
-            repaint_rect.y = 0
-            repaint_rect.height = rect.height + rect.y
-        if rect.x+rect.width <= canvas.surface.width:
-            repaint_rect.width = rect.width
-        else:
-            repaint_rect.width = canvas.surface.width - repaint_rect.x
-            if repaint_rect.width < 1:
-                continue
-        if rect.y+rect.height <= canvas.surface.height:
-            repaint_rect.height = rect.height
-        else:
-            repaint_rect.height = canvas.surface.height - repaint_rect.y
-            if repaint_rect.height < 1:
-                continue
-        canvas._rect_num += 1
-    return None
 
 
 class Textbox(TextBox):
