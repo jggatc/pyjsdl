@@ -507,15 +507,14 @@ class Display(object):
     def update(self, rect_list=None):
         """
         Repaint display.
-        An optional rect_list to specify regions to repaint.
+        Optional rect or rect list to specify regions to repaint.
         """
         if hasattr(rect_list, 'append'):
             _update(self.canvas, rect_list)
+        elif rect_list:
+            _update(self.canvas, [rect_list])
         else:
-            if rect_list:
-                _update(self.canvas, [rect_list])
-            else:
-                self.flip()
+            self.flip()
         return None
 
 
@@ -528,16 +527,13 @@ def _update(canvas, rect_list):
             repaint_rect.width = rect.width
             repaint_rect.height = rect.height
             canvas._rect_num += 1
-        else:
-            if rect:
-                repaint_rect = canvas._get_rect()
-                repaint_rect.x = rect[0]
-                repaint_rect.y = rect[1]
-                repaint_rect.width = rect[2]
-                repaint_rect.height = rect[3]
-                canvas._rect_num += 1
-            else:
-                continue
+        elif rect:
+            repaint_rect = canvas._get_rect()
+            repaint_rect.x = rect[0]
+            repaint_rect.y = rect[1]
+            repaint_rect.width = rect[2]
+            repaint_rect.height = rect[3]
+            canvas._rect_num += 1
 
 
 class Textbox(TextBox):
