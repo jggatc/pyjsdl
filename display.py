@@ -46,8 +46,7 @@ class Canvas(Surface, MouseWheelHandler):
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
         self._rect_list = []
-        self._rect_list.append(Rect(0,0,0,0))
-        self._rect_len = 1
+        self._rect_len = 0
         self._rect_num = 0
         _animationFrame = self._initAnimationFrame()
         if _animationFrame:
@@ -497,11 +496,7 @@ class Display(object):
         """
         Repaint display.
         """
-        self.canvas._rect_list[0].x = 0
-        self.canvas._rect_list[0].y = 0
-        self.canvas._rect_list[0].width = self._surface_rect.width
-        self.canvas._rect_list[0].height = self._surface_rect.height
-        self.canvas._rect_num = 1
+        self.canvas.impl.canvasContext.drawImage(self.surface.canvas, 0, 0)
         return None
 
     def update(self, rect_list=None):
