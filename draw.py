@@ -164,16 +164,16 @@ class Draw(object):
             if width:
                 surf.setLineWidth(width)
                 if hasattr(color, 'a'):
-                    surface.setStrokeStyle(color)
+                    surf.setStrokeStyle(color)
                 else:
-                    surface.setStrokeStyle(Color(color))
+                    surf.setStrokeStyle(Color(color))
                 surf.stroke()
             else:
-                surface.closePath()
+                surf.closePath()
                 if hasattr(color, 'a'):
-                    surface.setFillStyle(color)
+                    surf.setFillStyle(color)
                 else:
-                    surface.setFillStyle(Color(color))
+                    surf.setFillStyle(Color(color))
                 surf.fill()
             surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)
         if surface._display:
