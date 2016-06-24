@@ -516,19 +516,21 @@ class Display(object):
 def _update(canvas, rect_list):
     for rect in rect_list:
         if hasattr(rect, 'width'):
-            repaint_rect = canvas._get_rect()
-            repaint_rect.x = rect.x
-            repaint_rect.y = rect.y
-            repaint_rect.width = rect.width
-            repaint_rect.height = rect.height
-            canvas._rect_num += 1
+            if (rect.width > 0) and (rect.height > 0):
+                repaint_rect = canvas._get_rect()
+                repaint_rect.x = rect.x
+                repaint_rect.y = rect.y
+                repaint_rect.width = rect.width
+                repaint_rect.height = rect.height
+                canvas._rect_num += 1
         elif rect:
-            repaint_rect = canvas._get_rect()
-            repaint_rect.x = rect[0]
-            repaint_rect.y = rect[1]
-            repaint_rect.width = rect[2]
-            repaint_rect.height = rect[3]
-            canvas._rect_num += 1
+            if (rect[2] > 0) and (rect[3] > 0):
+                repaint_rect = canvas._get_rect()
+                repaint_rect.x = rect[0]
+                repaint_rect.y = rect[1]
+                repaint_rect.width = rect[2]
+                repaint_rect.height = rect[3]
+                canvas._rect_num += 1
 
 
 class Textbox(TextBox):
