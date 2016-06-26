@@ -17,6 +17,8 @@
 -update display update method (_update) to optimize.
 -update surface blit method (_blit_clear) to optimize.
 -update draw arc of nonequal dimension to process properly.
+-update draw ellipse to use float scale argument.
+-update draw arc to optimize.
 
 0.21    2015-04-12
 -update font to improve fonts access.

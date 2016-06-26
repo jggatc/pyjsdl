@@ -153,29 +153,31 @@ class Draw(object):
                     surface.setFillStyle(Color(color))
                 surface.fill()
         else:
-            if _rect.width < _rect.height:
-                dim = _rect.height
+            surface.saveContext()
+            surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
+            if _rect.width >= _rect.height:
+                surface.scale(_rect.width/(_rect.height*1.0), 1)
+                radius = _rect.height/2
             else:
-                dim = _rect.width
-            surf = Surface((dim,dim))
-            surf.beginPath()
-            xdim = int(dim/2)
-            surf.arc(xdim, xdim, xdim, -start_angle, -stop_angle, True)
+                surface.scale(1, _rect.height/(_rect.width*1.0))
+                radius = _rect.width/2
+            surface.beginPath()
+            surface.arc(0, 0, radius, -start_angle, -stop_angle, True)
             if width:
-                surf.setLineWidth(width)
+                surface.setLineWidth(width)
                 if hasattr(color, 'a'):
-                    surf.setStrokeStyle(color)
+                    surface.setStrokeStyle(color)
                 else:
-                    surf.setStrokeStyle(Color(color))
-                surf.stroke()
+                    surface.setStrokeStyle(Color(color))
+                surface.stroke()
             else:
-                surf.closePath()
+                surface.closePath()
                 if hasattr(color, 'a'):
-                    surf.setFillStyle(color)
+                    surface.setFillStyle(color)
                 else:
-                    surf.setFillStyle(Color(color))
-                surf.fill()
-            surface.drawImage(surf.canvas, 0, 0, dim, dim, _rect.x, _rect.y, _rect.width, _rect.height)
+                    surface.setFillStyle(Color(color))
+                surface.fill()
+            surface.restoreContext()
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
         else:
