@@ -23,9 +23,8 @@ class Clock(object):
         Return Clock.
         """
         self.time_init = self.time()
-        self.time_diff = [0 for i in range(10)]
+        self.time_diff = [33 for i in range(10)]
         self.pos = 0
-        self.tick = self._tick_init
 
     def get_time(self):
         """
@@ -33,26 +32,7 @@ class Clock(object):
         """
         return self.time_diff[self.pos]
 
-    def _tick_init(self, framerate=0):
-        if not env.canvas.time_wait:
-            time = self.time()
-        else:
-            self.time_init += env.canvas.time_wait
-            return
-        time_diff = time-self.time_init
-        self.time_init = time
-        if self.pos < 9:
-            self.pos += 1
-            self.time_diff[self.pos] = time_diff
-            if framerate:
-                env.canvas.set_timeout( ( 1000/framerate ) - self.time_diff[self.pos] )
-        else:
-            self.pos = 0
-            self.time_diff[self.pos] = time_diff
-            self.tick = self._tick
-        return self.time_diff[self.pos]
-
-    def _tick(self, framerate=0):
+    def tick(self, framerate=0):
         """
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
