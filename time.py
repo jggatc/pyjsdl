@@ -125,10 +125,7 @@ class Time(object):
         """
         if eventid not in _EventTimer.timers:
             _EventTimer.timers[eventid] = _EventTimer(eventid)
-        if time:
-            _EventTimer.timers[eventid].start(time)
-        else:
-            _EventTimer.timers[eventid].cancel()
+        _EventTimer.timers[eventid].set_timer(time)
 
     def time(self):
         """
@@ -153,30 +150,31 @@ class _EventTimer:
     timers = {}
 
     def __init__(self, eventid):
-        self.eventid = eventid
-        self.time = 0
+        self.event = pyjsdl.event.Event(eventid)
         self.timer = None
+        self.time = 0
         self.repeat = True
 
-    def run(self):
-        pyjsdl.event.post( pyjsdl.event.Event(self.eventid) )
-        if self.repeat:
-            self.timeout()
+    def set_timer(self, time):
+        if self.timer:
+            self.repeat = False
+            self.clearTimeout()
+        if time:
+            self.time = time
+            self.repeat = True
+            self.setTimeout()
 
-    def timeout(self):
-        timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""") #Time.timeout
+    def setTimeout(self):
+        #Time.timeout
+        timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""")
         self.timer = timer
 
-    def start(self, time):
-        if self.timer:
-            self.cancel()
-        self.time = time
-        self.repeat = True
-        self.timeout()
+    def clearTimeout(self):
+        JS("""$wnd['clearTimeout'](@{{self}}['timer']);""")
+        self.timer = None
 
-    def cancel(self):
-        if self.timer:
-            JS("""$wnd['clearTimeout'](@{{self}}['timer']);""")
-            self.timer = None
-        self.repeat = False
+    def run(self):
+        pyjsdl.event.post(self.event)
+        if self.repeat:
+            self.setTimeout()
 
