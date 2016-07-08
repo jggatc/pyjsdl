@@ -19,6 +19,7 @@
 -update draw arc of nonequal dimension to process properly.
 -update draw ellipse to use float scale argument.
 -update draw arc to optimize.
+-update asynchronous loop process to optimize.
 
 0.21    2015-04-12
 -update font to improve fonts access.

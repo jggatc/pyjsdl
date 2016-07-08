@@ -8,10 +8,17 @@ from color import Color
 import env
 import pyjsdl.event
 from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event
+from pyjsobj import requestAnimationFrameInit
 from __pyjamas__ import JS
 import base64
 
 __docformat__ = 'restructuredtext'
+
+
+_canvas = None
+_ctx = None
+_img = None
+_wnd = None
 
 
 class Canvas(Surface, MouseWheelHandler):
@@ -36,7 +43,6 @@ class Canvas(Surface, MouseWheelHandler):
         self.images = {}
         self.image_list = []
         self.callback = None
-        self.time_wait = 0
         self.time = Time()
         self.event = pyjsdl.event
         self.addMouseListener(self)
@@ -45,30 +51,21 @@ class Canvas(Surface, MouseWheelHandler):
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
+        self._repaint = False
         self._rect_list = []
         self._rect_len = 0
         self._rect_num = 0
-        _animationFrame = self._initAnimationFrame()
-        if _animationFrame:
-            self.time_hold_min = 0
-        else:
-            self.time_hold_min = 1
-        self.time_hold = self.time_hold_min
+        self._framerate = 0
+        self._frametime = 0
+        self._canvas_init()
         self.initialized = False
 
-    def _initAnimationFrame(self):
-        JS("""
-            $wnd['requestAnimationFrame'] = $wnd['requestAnimationFrame'] ||
-                                            $wnd['mozRequestAnimationFrame'] ||
-                                            $wnd['webkitRequestAnimationFrame'] ||
-                                            $wnd['oRequestAnimationFrame'];
-           """)
-        if JS("""$wnd['requestAnimationFrame'] != undefined"""):
-            _animationFrame = True
-        else:
-            JS("""$wnd['requestAnimationFrame'] = function(cb){cb()};""")
-            _animationFrame = False
-        return _animationFrame
+    def _canvas_init(self):
+        global _canvas, _ctx, _img, _wnd
+        _canvas = self
+        _ctx = self.impl.canvasContext
+        _img = self.surface.canvas
+        _wnd = requestAnimationFrameInit()
 
     def onMouseMove(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
@@ -219,35 +216,21 @@ class Canvas(Surface, MouseWheelHandler):
         else:
             self.start()
 
-    def set_timeout(self, change):
-        self.time_hold += change
-        if self.time_hold < self.time_hold_min:
-            self.time_hold = self.time_hold_min
-
-    def start(self):
-        self.run = self._run
-        if not self.initialized:
-            self.initialized = True
-            self.time.timeout(self.time_hold, self)
-
-    def stop(self):
-        self.time_wait = 0
-        self.run = lambda: None
-
     def onImagesLoaded(self, images):
         for i, image in enumerate(self.image_list):
             self.images[image] = images[i].getElement()
         self.start()
 
-    def set_timeWait(self, time):
-        if time:
-            self.time_wait = time
-            self.run = lambda: None
-        else:
-            if self.time_wait:
-                self.time_wait = 0
-                self.run = self._run
-                self.run()
+    def start(self):
+        if not self.initialized:
+            self.initialized = True
+            _wnd.requestAnimationFrame(run)
+            self.time.timeout(0, self)
+
+    def stop(self):
+        global run
+        run = lambda ts: None
+        self.run = lambda: None
 
     def _get_rect(self):
         if self._rect_num < self._rect_len:
@@ -257,27 +240,24 @@ class Canvas(Surface, MouseWheelHandler):
             self._rect_len += 1
             return self._rect_list[self._rect_num]
 
-    def _run(self):
-        self.callback.run()
-        JS("""$wnd['requestAnimationFrame'](@{{paint}});""")
-
-    def rerun(self):
-        if not self.time_hold:
-            self.run()
-        else:
-            self.time.timeout(self.time_hold, self)
+    def run(self):
+        if not self._repaint:
+            self.callback.run()
+            self._repaint = True
+        self.time.timeout(0, self)
 
 
-def paint(ts):
-    ctx = env.canvas.impl.canvasContext
-    img = env.canvas.surface.canvas
-    i = 0
-    while i < env.canvas._rect_num:
-        rect = env.canvas._rect_list[i]
-        ctx.drawImage(img, rect.x,rect.y,rect.width,rect.height, rect.x,rect.y,rect.width,rect.height)
-        i += 1
-    env.canvas._rect_num = 0
-    env.canvas.rerun()
+def run(timestamp):
+    _wnd.requestAnimationFrame(run)
+    if _canvas._repaint:
+        if (timestamp-_canvas._frametime) >= _canvas._framerate:
+            _canvas._frametime = timestamp
+            while _canvas._rect_num:
+                rect = _canvas._rect_list[_canvas._rect_num-1]
+                _ctx.drawImage(_img, rect.x,rect.y,rect.width,rect.height,
+                                     rect.x,rect.y,rect.width,rect.height)
+                _canvas._rect_num -= 1
+            _canvas._repaint = False
 
 
 class Callback(object):

@@ -14,7 +14,7 @@ from pyjamas.ui import Event
 from pyjamas.ui.MouseListener import MouseWheelHandler
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
 from pyjamas.media.Audio import Audio
-from __pyjamas__ import JS
+from __pyjamas__ import JS, wnd
 
 
 def eventGetMouseWheelVelocityY(evt):
@@ -22,4 +22,41 @@ def eventGetMouseWheelVelocityY(evt):
     JS("""
     return Math['round'](-@{{evt}}['wheelDelta'] / 40) || 0;
     """)
+
+
+def requestAnimationFrameInit():
+    requestAnimationFramePolyfill()
+    return wnd()
+
+
+#requestAnimationFrame polyfill
+#derived from code by Erik Möller, fixes from Paul Irish and Tino Zijdel
+#https://gist.github.com/paulirish/1579671
+#MIT license
+requestAnimationFramePolyfill = JS("""
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !$wnd['requestAnimationFramex']; ++x) {
+        $wnd['requestAnimationFrame'] = $wnd[vendors[x]+'RequestAnimationFramex'];
+        $wnd['cancelAnimationFrame'] = $wnd[vendors[x]+'CancelAnimationFrame']
+                                   || $wnd[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+    if (!$wnd['requestAnimationFramex'])
+        $wnd['requestAnimationFrame'] = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = $wnd['setTimeout'](function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    if (!$wnd['cancelAnimationFrame'])
+        $wnd['cancelAnimationFrame'] = function(id) {
+            clearTimeout(id);
+        };
+});
+""")
 

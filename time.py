@@ -23,36 +23,27 @@ class Clock(object):
         Return Clock.
         """
         self.time_init = self.time()
-        self.time_diff = [33 for i in range(10)]
-        self.pos = 0
+        self.time_diff = 0
+        self.framerate = 0
 
     def get_time(self):
         """
         Return time (in ms) between last two calls to tick().
         """
-        return self.time_diff[self.pos]
+        return self.time_diff
 
     def tick(self, framerate=0):
         """
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
         """
-        if not env.canvas.time_wait:
-            time = self.time()
-        else:
-            self.time_init += env.canvas.time_wait
-            return
-        time_diff = time-self.time_init
+        time = self.time()
+        self.time_diff = time-self.time_init
         self.time_init = time
-        if self.pos < 9:
-            self.pos += 1
-            self.time_diff[self.pos] = time_diff
-        else:
-            self.pos = 0
-            self.time_diff[self.pos] = time_diff
-            if framerate:
-                env.canvas.set_timeout( ( 1000/framerate ) - ( sum(self.time_diff)/10 ) )
-        return self.time_diff[self.pos]
+        if framerate and (self.framerate != framerate):
+            self.framerate = framerate
+            env.canvas._framerate = 1000/framerate
+        return self.time_diff
 
     def tick_busy_loop(self, framerate=0):
         """
@@ -66,7 +57,7 @@ class Clock(object):
         """
         Return fps.
         """
-        return 1000/(sum(self.time_diff)/10)
+        return 1000/self.time_diff
 
     def time(self):
         """
@@ -83,6 +74,7 @@ class Time(object):
     def __init__(self):
         self._time_init = self.time()
         self.run = lambda: self.wait()
+        self.framerate = None
         self.Clock = Clock
 
     def get_ticks(self):
@@ -111,10 +103,14 @@ class Time(object):
         Timeout program main loop for given time (in ms).
         """
         if time:
-            env.canvas.set_timeWait(time)
-            self.timeout(time, self)
+            if self.framerate is None:
+                self.framerate = env.canvas._framerate
+                env.canvas._framerate = time*10
+                self.timeout(time, self)
         else:
-            env.canvas.set_timeWait(time)
+            if self.framerate is not None:
+                env.canvas._framerate = self.framerate
+                self.framerate = None
 
     def set_timer(self, eventid, time):
         """
