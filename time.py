@@ -22,42 +22,47 @@ class Clock(object):
         """
         Return Clock.
         """
-        self.time_init = self.time()
-        self.time_diff = 0
-        self.framerate = 0
+        self._time = self.time()
+        self._time_init = self._time
+        self._time_diff = [33 for i in range(10)]
+        self._pos = 0
+        self._framerate = 0
 
     def get_time(self):
         """
         Return time (in ms) between last two calls to tick().
         """
-        return self.time_diff
+        return self._time_diff[self._pos]
 
     def tick(self, framerate=0):
         """
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
         """
-        time = self.time()
-        self.time_diff = time-self.time_init
-        self.time_init = time
-        if framerate and (self.framerate != framerate):
-            self.framerate = framerate
-            env.canvas._framerate = 1000/framerate
-        return self.time_diff
+        if self._pos:
+            self._pos -= 1
+        else:
+            self._pos = 9
+            if self._framerate != framerate:
+                self._framerate = framerate
+                env.canvas._framerate = 1000/framerate
+        self._time = self.time()
+        self._time_diff[self._pos] = self._time-self._time_init
+        self._time_init = self._time
+        return self._time_diff[self._pos]
 
     def tick_busy_loop(self, framerate=0):
         """
         Calls tick() with optional framerate.
         Returns ms since last call.
         """
-        time_diff = self.tick(framerate)
-        return time_diff
+        return self.tick(framerate)
 
     def get_fps(self):
         """
         Return fps.
         """
-        return 1000/self.time_diff
+        return 1000/(sum(self._time_diff)/10)
 
     def time(self):
         """
