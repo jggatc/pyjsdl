@@ -2,7 +2,7 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-from pyjsbitset import BitSet
+from pyjsarray import BitSet
 from color import Color
 
 __docformat__ = 'restructuredtext'
