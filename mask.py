@@ -2,8 +2,8 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-from pyjsarray import BitSet
-from color import Color
+from pyjsdl.pyjsarray import BitSet
+from pyjsdl.color import Color
 
 __docformat__ = 'restructuredtext'
 

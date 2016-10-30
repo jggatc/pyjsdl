@@ -2,10 +2,10 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-from surface import Surface
-import math
-from color import Color
-from pyjsobj import HTML5Canvas
+from math import ceil as _ceil
+from pyjsdl.surface import Surface
+from pyjsdl.color import Color
+from pyjsdl.pyjsobj import HTML5Canvas
 
 __docformat__ = 'restructuredtext'
 
@@ -208,7 +208,7 @@ class Font(object):
                 size.append(self.char_size[char] * self.fontsize)
             except KeyError:
                 size.append(self.char_size['x'] * self.fontsize)
-        x = math.ceil( sum(size) )
+        x = _ceil( sum(size) )
         return x
 
     def set_underline(self, setting=True):

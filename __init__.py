@@ -22,25 +22,25 @@
 #Pyjsdl version 0.21
 #Project Site: http://gatc.ca/
 
-import util
-from display import Display
-from surface import Surface
-from rect import Rect
-from image import Image
-from draw import Draw
-from event import Event
-from key import Key
-from mouse import Mouse
-from transform import Transform
-from surfarray import Surfarray
-from color import Color
-from mixer import Mixer
-from time import Time
-import mask
-import font
-import sprite
-import cursors
-from locals import *
+from pyjsdl import util
+from pyjsdl.display import Display
+from pyjsdl.surface import Surface
+from pyjsdl.rect import Rect
+from pyjsdl.image import Image
+from pyjsdl.draw import Draw
+from pyjsdl.event import Event
+from pyjsdl.key import Key
+from pyjsdl.mouse import Mouse
+from pyjsdl.transform import Transform
+from pyjsdl.surfarray import Surfarray
+from pyjsdl.color import Color
+from pyjsdl.mixer import Mixer
+from pyjsdl.time import Time
+from pyjsdl import mask
+from pyjsdl import font
+from pyjsdl import sprite
+from pyjsdl import cursors
+from pyjsdl.locals import *
 
 time = Time()
 display = Display()

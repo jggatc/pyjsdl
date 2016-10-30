@@ -2,8 +2,8 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-from surface import Surface
-from pyjsarray import PyUint8ClampedArray, PyUint8Array, PyUint32Array, Ndarray, PyImageData, PyImageMatrix
+from pyjsdl.surface import Surface
+from pyjsdl.pyjsarray import PyUint8ClampedArray, PyUint8Array, PyUint32Array, Ndarray, PyImageData, PyImageMatrix
 
 __docformat__ = 'restructuredtext'
 

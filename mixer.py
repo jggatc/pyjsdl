@@ -1,8 +1,8 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from pyjsobj import Audio
-from time import Time
+from pyjsdl.pyjsobj import Audio
+from pyjsdl.time import Time
 
 __docformat__ = 'restructuredtext'
 

@@ -1,16 +1,15 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from surface import Surface
-from rect import Rect
-from time import Time
-from color import Color
-import env
-import pyjsdl.event
-from pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event
-from pyjsobj import requestAnimationFrameInit
-from __pyjamas__ import JS
 import base64
+from pyjsdl.surface import Surface
+from pyjsdl.rect import Rect
+from pyjsdl.time import Time
+from pyjsdl.color import Color
+from pyjsdl import env
+import pyjsdl.event
+from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event, requestAnimationFrameInit
+from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'
 

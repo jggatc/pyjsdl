@@ -1,10 +1,10 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from math import pi
-from rect import Rect
-from surface import Surface
-from color import Color
+from math import pi as _pi
+from pyjsdl.rect import Rect
+from pyjsdl.surface import Surface
+from pyjsdl.color import Color
 
 __docformat__ = 'restructuredtext'
 
@@ -30,7 +30,7 @@ class Draw(object):
         
         Module initialization creates pyjsdl.draw instance.
         """
-        self.rad_deg = 180.0/pi
+        self.rad_deg = 180.0/_pi
 
     def rect(self, surface, color, rect, width=0):
         """
@@ -67,7 +67,7 @@ class Draw(object):
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
         surface.beginPath()
-        surface.arc(position[0], position[1], radius, 0, 2*pi, False)
+        surface.arc(position[0], position[1], radius, 0, 2*_pi, False)
         if width:
             surface.setLineWidth(width)
             if hasattr(color, 'a'):
@@ -105,7 +105,7 @@ class Draw(object):
             surface.scale(1, _rect.height/(_rect.width*1.0))
             radius = _rect.width/2
         surface.beginPath()
-        surface.arc(0, 0, radius, 0, 2*pi, False)
+        surface.arc(0, 0, radius, 0, 2*_pi, False)
         if width:
             surface.setLineWidth(width)
             if hasattr(color, 'a'):

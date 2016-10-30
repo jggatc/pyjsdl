@@ -1,9 +1,9 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from __pyjamas__ import JS
 import pyjsdl.event
-import env
+from pyjsdl import env
+from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'
 

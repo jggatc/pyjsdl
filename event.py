@@ -1,8 +1,8 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-import env
-import locals as Const
+from pyjsdl import env
+from pyjsdl import locals as Const
 
 __docformat__ = 'restructuredtext'
 

@@ -1,10 +1,9 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from time import Time
+from pyjsdl.time import Time
+from pyjsdl import env
 from __pyjamas__ import JS
-import env
-
 
 class Timer(object):
     """

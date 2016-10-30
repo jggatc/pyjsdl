@@ -1,9 +1,9 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from rect import Rect, rectPool
-from color import Color
-from pyjsobj import HTML5Canvas
+from pyjsdl.pyjsobj import HTML5Canvas
+from pyjsdl.rect import Rect, rectPool
+from pyjsdl.color import Color
 from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'

@@ -2,10 +2,10 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-from surface import Surface, Surf
-import env
+import os
+from pyjsdl.surface import Surface, Surf
+from pyjsdl import env
 import pyjsdl
-import os.path
 
 __docformat__ = 'restructuredtext'
 

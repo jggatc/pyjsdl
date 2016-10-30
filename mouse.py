@@ -2,10 +2,9 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-import env
 import pyjsdl.event
-from pyjsobj import DOM
-import cursors
+from pyjsdl.pyjsobj import DOM
+from pyjsdl import cursors, env
 
 __docformat__ = 'restructuredtext'
 

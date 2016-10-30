@@ -1,8 +1,8 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from rect import rectPool
-import mask
+from pyjsdl.rect import rectPool
+from pyjsdl import mask
 
 __docformat__ = 'restructuredtext'
 
