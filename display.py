@@ -281,6 +281,10 @@ class Display(object):
     * pyjsdl.display.get_canvas
     * pyjsdl.display.get_panel
     * pyjsdl.display.get_vpanel
+    * pyjsdl.display.getAbsoluteLeft
+    * pyjsdl.display.getAbsoluteTop
+    * pyjsdl.display.getScrollLeft
+    * pyjsdl.display.getScrollTop
     * pyjsdl.display.quit
     * pyjsdl.display.get_init
     * pyjsdl.display.get_active
@@ -319,7 +323,8 @@ class Display(object):
         """
         self.canvas = Canvas(size, buffered)
         env.canvas = self.canvas
-        env.frame = Window.getDocumentRoot()
+        self.frame = Window.getDocumentRoot()
+        env.frame = self.frame
         panel = FocusPanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
@@ -413,6 +418,30 @@ class Display(object):
             self.vpanel = VerticalPanel()
             RootPanel().add(self.vpanel)
         return self.vpanel
+
+    def getAbsoluteLeft(self):
+        """
+        Return canvas left-offset position.
+        """
+        return self.canvas.getAbsoluteLeft()
+
+    def getAbsoluteTop(self):
+        """
+        Return canvas top-offset position.
+        """
+        return self.canvas.getAbsoluteTop()
+
+    def getScrollLeft(self):
+        """
+        Return page horizontal scroll offset.
+        """
+        return self.frame.scrollLeft
+
+    def getScrollTop(self):
+        """
+        Return page vertical scroll offset.
+        """
+        return self.frame.scrollTop
 
     def quit(self):
         """

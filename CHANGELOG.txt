@@ -22,6 +22,7 @@
 -update asynchronous loop process to optimize.
 -refactoring time clock object.
 -revise with absolute import statements.
+-add display methods getAbsoluteLeft/getAbsoluteTop/getScrollLeft/getScrollTop.
 
 0.21    2015-04-12
 -update font to improve fonts access.
