@@ -50,6 +50,8 @@ class Canvas(Surface, MouseWheelHandler):
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
         self.modKey = pyjsdl.event.modKey
         self.specialKey = pyjsdl.event.specialKey
+        self.event._initiate_touch_listener(self)
+        self._touch_callback = self.event.touchlistener.callback
         self._repaint = False
         self._rect_list = []
         self._rect_len = 0
@@ -179,6 +181,29 @@ class Canvas(Surface, MouseWheelHandler):
         if keycode in self.modKey:
             self.event.keyPress[keycode] = False
         self.event._updateQueue(event)
+
+    def onTouchInitiate(self, event):
+        self.event.touchlistener.activate()
+        for callback in self._touch_callback:
+            if hasattr(callback, 'onTouchInitiate'):
+                callback.onTouchInitiate(event)
+        self.onTouchStart(event)
+
+    def onTouchStart(self, event):
+        for callback in self._touch_callback:
+            callback.onTouchStart(event)
+
+    def onTouchEnd(self, event):
+        for callback in self._touch_callback:
+            callback.onTouchEnd(event)
+
+    def onTouchMove(self, event):
+        for callback in self._touch_callback:
+            callback.onTouchMove(event)
+
+    def onTouchCancel(self, event):
+        for callback in self._touch_callback:
+            callback.onTouchCancel(event)
 
     def resize(self, width, height):
         Surface.resize(self, width, height)

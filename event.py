@@ -56,6 +56,7 @@ class Event(object):
             self.modKey = set([keycode.valueOf() for keycode in (Const.K_ALT, Const.K_CTRL, Const.K_SHIFT)])
             self.specialKey = set([keycode.valueOf() for keycode in (Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE)])
 #Const.K_F1, Const.K_F2, Const.K_F3, Const.K_F4, Const.K_F5, Const.K_F6, Const.K_F7, Const.K_F8, Const.K_F9, Const.K_F10, Const.K_F11, Const.K_F12, Const.K_F13, Const.K_F14, Const.K_F15   #IE keypress keycode: id same as alpha keys
+        self.touchlistener = None
         self.Event = UserEvent
         self._nonimplemented_methods()
 
@@ -285,6 +286,10 @@ class Event(object):
         self._unlock()
         return None
 
+    def _initiate_touch_listener(self, canvas):
+        self.touchlistener = TouchListener(canvas)
+        return None
+
     def _nonimplemented_methods(self):
         """
         Non-implemented methods.
@@ -391,4 +396,83 @@ class JEvent(object):
         Return browser event.
         """
         return self.event
+
+
+class TouchListener:
+    """
+    **event.touchlistener**
+
+    * event.touchlistener.add_callback
+    * event.touchlistener.is_active
+    * event.touchlistener.get_types
+    """
+
+    def __init__(self, canvas):
+        """
+        Touch event listener.
+
+        Refer to touch event api documentation:
+          https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent.
+        Notes:
+          The event.touches attribute is a list of touch objects.
+          Use len(touches) for touch count and touches.item(<index>) to retrieve touch object.
+          The touch attribute touch.clientX/touch.clientY provides touch position.
+          Position offset checked by display getAbsoluteLeft/getAbsoluteTop/getScrollLeft/getScrollTop.
+          Browser triggers delayed mousedown/mouseup event after touchstart/touchend event.
+        Module initialization creates pyjsdl.event.touchlistener instance.
+        """
+        global _canvas
+        _canvas = canvas
+        self.element = canvas.getElement()
+        self.element.addEventListener('touchstart', _touch_detect)
+        self.hastouchevent = False
+        self.touchevents = ['touchstart', 'touchend', 'touchmove', 'touchcancel']
+        self.callback = []
+
+    def activate(self):
+        self.element.removeEventListener('touchstart', _touch_detect)
+        self.element.addEventListener('touchstart', _touch_start)
+        self.element.addEventListener('touchend', _touch_end)
+        self.element.addEventListener('touchmove', _touch_move)
+        self.element.addEventListener('touchcancel', _touch_cancel)
+        self.hastouchevent = True
+
+    def add_callback(self, callback):
+        """
+        Add callback object to receive touch events.
+        The callback should have methods onTouchStart, onTouchEnd, onTouchMove, and onTouchCancel.
+        Optional callback method onTouchInitiate used to report initial touch event detection.
+        Callback methods will be called with an event argument.
+        """
+        self.callback.append(callback)
+        return None
+
+    def is_active(self):
+        """
+        Check if touch event is registered.
+        """
+        return self.hastouchevent
+
+    def get_types(self):
+        """
+        Return list of touch event types.
+        """
+        return [evt for evt in self.touchevents]
+
+_canvas = None
+
+def _touch_detect(event):
+    _canvas.onTouchInitiate(event)
+
+def _touch_start(event):
+    _canvas.onTouchStart(event)
+
+def _touch_end(event):
+    _canvas.onTouchEnd(event)
+
+def _touch_move(event):
+    _canvas.onTouchMove(event)
+
+def _touch_cancel(event):
+    _canvas.onTouchCancel(event)
 
