@@ -404,7 +404,6 @@ class TouchListener:
 
     * event.touchlistener.add_callback
     * event.touchlistener.is_active
-    * event.touchlistener.get_types
     """
 
     def __init__(self, canvas):
@@ -425,8 +424,7 @@ class TouchListener:
         _canvas = canvas
         self.element = canvas.getElement()
         self.element.addEventListener('touchstart', _touch_detect)
-        self.hastouchevent = False
-        self.touchevents = ['touchstart', 'touchend', 'touchmove', 'touchcancel']
+        self.active = False
         self.callback = []
 
     def activate(self):
@@ -435,7 +433,7 @@ class TouchListener:
         self.element.addEventListener('touchend', _touch_end)
         self.element.addEventListener('touchmove', _touch_move)
         self.element.addEventListener('touchcancel', _touch_cancel)
-        self.hastouchevent = True
+        self.active = True
 
     def add_callback(self, callback):
         """
@@ -451,13 +449,7 @@ class TouchListener:
         """
         Check if touch event is registered.
         """
-        return self.hastouchevent
-
-    def get_types(self):
-        """
-        Return list of touch event types.
-        """
-        return [evt for evt in self.touchevents]
+        return self.active
 
 _canvas = None
 
