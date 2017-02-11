@@ -44,8 +44,11 @@ class Clock(object):
         else:
             self._pos = 9
             if self._framerate != framerate:
-                self._framerate = framerate
-                env.canvas._framerate = 1000/framerate
+                if framerate:
+                    self._framerate = framerate
+                    env.canvas._framerate = 1000/framerate
+                else:
+                    env.canvas._framerate = 0
         self._time = self.time()
         self._time_diff[self._pos] = self._time-self._time_init
         self._time_init = self._time
