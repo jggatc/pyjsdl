@@ -173,13 +173,15 @@ class Font(object):
         surf.setFont('%s %dpx %s' % (self.fontstyle, self.fontsize, self.fontname))
 #        if antialias: pass
         surf.setFillStyle(Color(color))
-        surf.fillText(text,0,self.fontsize)
+        surf.setTextAlign('center')
+        surf.setTextBaseline('middle')
+        surf.fillText(text,w/2,h/2)
         if self.underline:
-            surf.setLineWidth(1)
+            surf.setLineWidth(self.fontsize/20)
             surf.setStrokeStyle(Color(color))
-            surf.setStroke(BasicStroke(1))
-            surf.moveTo(0, h-1)
-            surf.lineTo(w-1, h-1)
+            surf.beginPath()
+            surf.moveTo(0, h*0.85)
+            surf.lineTo(w, h*0.85)
             surf.stroke()
         return surf
 
@@ -194,7 +196,7 @@ class Font(object):
             x = self._size_estimate(text)
         if x < 1:
             x = 1
-        y = self.fontsize + 5
+        y = int(self.fontsize * 1.2)
         return (x, y)
 
     def _size_estimate(self, text=None):   #for browsers HTML5Canvas not implemented
