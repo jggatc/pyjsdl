@@ -24,7 +24,8 @@
 -revise with absolute import statements.
 -add display methods getAbsoluteLeft/getAbsoluteTop/getScrollLeft/getScrollTop.
 -add touch event support.
-
+-update font with minor rendering adjustment.
+-update font to include initiation from a file.
 
 0.21    2015-04-12
 -update font to improve fonts access.

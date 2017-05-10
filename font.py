@@ -118,13 +118,31 @@ class Font(object):
     def __init__(self, name, size):
         """
         Return Font object.
-        Arguments include name of a system font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
+        Arguments include name of a font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found. A font can be loaded from a filename 'fontname.ext' that was set in a css file; note: load process may be delayed a frame.
+
+Example of font file declaration:
+
+# Add css file link to app.html <head> section:
+<link rel="stylesheet" href="app.css" />
+
+# Add font-face to app.css:
+# (note:font-family is lowercase filename w/o ext)
+@font-face {
+    font-family: 'freesansbold';
+    src: url('freesansbold.ttf');
+}
         """
         if not name:
-            name = Font._font[0]
-        font = [fn.strip().lower() for fn in name.split(',')]
+            font = [Font._font[0]]
+        else:
+            font = [fn.strip().lower() for fn in name.split(',')]
+        load_custom_font = False
         fallback = None
         for i, fn in enumerate(font):
+            if '.' in fn:
+                fn = fn.split('.')[0]
+                font[i] = fn
+                load_custom_font = True
             if fn in Font._font:
                 if not fallback:
                     fallback = fn
@@ -148,6 +166,8 @@ class Font(object):
         self.fontstyle = self.bold + ' ' + self.italic
         self.underline = False
         self.char_size = None
+        if load_custom_font:
+            self.render('x')
         self._nonimplemented_methods()
 
     def __repr__(self):
