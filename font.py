@@ -54,7 +54,7 @@ def get_init():
 
 def get_default_font():
     """
-    **pyjs2d.font.get_default_font**
+    **pyjsdl.font.get_default_font**
     
     Return default font.
     """
