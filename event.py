@@ -174,13 +174,15 @@ class Event(object):
                 self._unlock()
                 return None
 
-    def peek(self, eventType):
+    def peek(self, eventType=None):
         """
         Check if an event of given type is present.
-        The eventType argument can be a single event type or a list.
+        Optional eventType argument specifies event type or list, which defaults to all.
         """
         if not self.eventNum:
             return False
+        elif eventType is None:
+            return True
         if not isinstance(eventType, (tuple,list)):
             evtType = [et for et in self.eventTypes[eventType]]
         else:
