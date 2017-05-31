@@ -26,6 +26,8 @@
 -add touch event support.
 -update font with minor rendering adjustment.
 -update font to include initiation from a file.
+-update event peek option of all types.
+-update event methods to optimize.
 
 0.21    2015-04-12
 -update font to improve fonts access.

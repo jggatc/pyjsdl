@@ -40,6 +40,8 @@ class Event(object):
         self.queueLock = False
         self.queueAccess = False
         self.queue = []
+        self.queueNil = []
+        self.queueTmp = []
         self.mousePress = {0:False, 1:False, 2:False}
         self.mouseMove = {'x':-1, 'y':-1}
         self.mouseMoveRel = {'x':None, 'y':None}
@@ -115,6 +117,8 @@ class Event(object):
         Return list of events, and queue is reset.
         Optional eventType argument of single or list of event type(s) to return.
         """
+        if not self.eventNum:
+            return self.queueNil
         self._lock()
         if not eventType:
             self.queue = [ JEvent(event) for event in self.eventQueue[0:self.eventNum] ]
@@ -124,17 +128,19 @@ class Event(object):
                 evtType = [et for et in self.eventTypes[eventType]]
             else:
                 evtType = [et for t in eventType for et in self.eventTypes[t]]
-            queue = []
             self.queue = []
             for i in range(self.eventNum):
                 if self.eventQueue[i].type not in evtType:
-                    queue.append(self.eventQueue[i])
+                    self.queueTmp.append(self.eventQueue[i])
                 else:
                     self.queue.append( JEvent(self.eventQueue[i]) )
-            if len(queue) != self.eventNum:
-                self.eventNum = len(queue)
+            if not self.queueTmp:
+                self.eventNum = 0
+            else:
+                self.eventNum = len(self.queueTmp)
                 for i in range(self.eventNum):
-                    self.eventQueue[i] = queue[i]
+                    self.eventQueue[i] = self.queueTmp[i]
+                self.queueTmp[:] = []
             if self.eventNum > 250:
                 self._pump()
         self._unlock()
@@ -212,14 +218,16 @@ class Event(object):
                 evtType = [et for et in self.eventTypes[eventType]]
             else:
                 evtType = [et for t in eventType for et in self.eventTypes[t]]
-            queue = []
             for i in range(self.eventNum):
                 if self.eventQueue[i].type not in evtType:
-                    queue.append(self.eventQueue[i])
-            if len(queue) != self.eventNum:
-                self.eventNum = len(queue)
+                    self.queueTmp.append(self.eventQueue[i])
+            if not self.queueTmp:
+                self.eventNum = 0
+            else:
+                self.eventNum = len(self.queueTmp)
                 for i in range(self.eventNum):
-                    self.eventQueue[i] = queue[i]
+                    self.eventQueue[i] = self.queueTmp[i]
+                self.queueTmp[:] = []
             if self.eventNum > 250:
                 self._pump()
         self._unlock()
