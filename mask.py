@@ -195,7 +195,7 @@ class Mask(object):
         cbitset = []
         for bitset in self.bit:
             cbitset.append('\n')
-            cbitset.extend([cbit[bitset.get(bit)] for bit in range(self.width)])
+            cbitset.extend([cbit[bitset.get(i)] for i in range(self.width)])
         bitstr = ''.join(cbitset)
         return bitstr
 
