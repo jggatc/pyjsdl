@@ -7,11 +7,8 @@ from pyjsdl import mask
 __docformat__ = 'restructuredtext'
 
 
-def id(sprite):
-    return sprite._identity
-
-def id(group):
-    return group._identity
+def id(obj):
+    return obj._identity
 
 
 class Sprite(object):
