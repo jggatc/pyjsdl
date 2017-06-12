@@ -315,7 +315,6 @@ class Display(object):
     * pyjsdl.display.get_active
     * pyjsdl.display.set_caption
     * pyjsdl.display.get_caption
-    * pyjsdl.display.clear
     * pyjsdl.display.flip
     * pyjsdl.display.update
     """
@@ -510,14 +509,6 @@ class Display(object):
             return self.canvas.getID()
         except (TypeError, AttributeError):
             return self.id
-
-    def clear(self):
-        """
-        Clear display surface.
-        """
-        self.surface.beginPath()
-        self.surface.setFillStyle(Color(0,0,0))
-        self.surface.fillRect(0, 0, self.surface.width, self.surface.height)
 
     def _nonimplemented_methods(self):
         """
