@@ -28,6 +28,9 @@
 -update font to include initiation from a file.
 -update event peek option of all types.
 -update event methods to optimize.
+-update color constructor to accept hex '#rrggbb' argument.
+-update draw methods to optimize context state change.
+-update draw methods to optimize with optional rect return.
 
 0.21    2015-04-12
 -update font to improve fonts access.

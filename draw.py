@@ -22,6 +22,7 @@ class Draw(object):
     * pyjsdl.draw.lines
     * pyjsdl.draw.aaline
     * pyjsdl.draw.aalines
+    * pyjsdl.draw.set_return
     """
 
     def __init__(self):
@@ -31,6 +32,7 @@ class Draw(object):
         Module initialization creates pyjsdl.draw instance.
         """
         self.rad_deg = 180.0/_pi
+        self._return_rect = True
 
     def rect(self, surface, color, rect, width=0):
         """
@@ -59,6 +61,8 @@ class Draw(object):
                 else:
                     surface.setFillStyle(Color(color))
             surface.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
+        if not self._return_rect:
+            return None
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
         else:
@@ -89,6 +93,8 @@ class Draw(object):
                 else:
                     surface.setFillStyle(Color(color))
             surface.fill()
+        if not self._return_rect:
+            return None
         if surface._display:
             return surface._display._surface_rect.clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
         else:
@@ -132,6 +138,8 @@ class Draw(object):
                     surface.setFillStyle(Color(color))
             surface.fill()
         surface.restoreContext()
+        if not self._return_rect:
+            return None
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
         else:
@@ -198,6 +206,8 @@ class Draw(object):
                         surface.setFillStyle(Color(color))
                 surface.fill()
             surface.restoreContext()
+        if not self._return_rect:
+            return None
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
         else:
@@ -231,6 +241,8 @@ class Draw(object):
                 else:
                     surface.setFillStyle(Color(color))
             surface.fill()
+        if not self._return_rect:
+            return None
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
@@ -257,6 +269,8 @@ class Draw(object):
             else:
                 surface.setStrokeStyle(Color(color))
         surface.stroke()
+        if not self._return_rect:
+            return None
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
         xmin, xmax = min(xpts), max(xpts)
@@ -286,6 +300,8 @@ class Draw(object):
             else:
                 surface.setStrokeStyle(Color(color))
         surface.stroke()
+        if not self._return_rect:
+            return None
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
         xmin, xmax = min(xpts), max(xpts)
@@ -308,4 +324,10 @@ class Draw(object):
         """
         rect = self.lines(surface, color, closed, pointlist, blend)
         return rect
+
+    def set_return(self, setting):
+        """
+        Set whether draw methods return bounding Rect.
+        """
+        self._return_rect = setting
 
