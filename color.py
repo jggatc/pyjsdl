@@ -39,6 +39,8 @@ class Color(_Color):
         elif ln == 3:
             self.r,self.g,self.b,self.a = _color[0],_color[1],_color[2],255
         else:
+            if hasattr(_color, 'startswith') and _color.startswith('#'):
+                _color = '0x' + _color[1:]
             self.r,self.g,self.b,self.a = (_color>>16) & 0xff, (_color>>8) & 0xff, _color & 0xff, (_color>>24) & 0xff
 
     def __repr__(self):
