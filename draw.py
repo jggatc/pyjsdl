@@ -44,16 +44,20 @@ class Draw(object):
             _rect = Rect(rect)
         if width:
             surface.setLineWidth(width)
-            if hasattr(color, 'a'):
-                surface.setStrokeStyle(color)
-            else:
-                surface.setStrokeStyle(Color(color))
+            if surface._stroke_style != color:
+                surface._stroke_style = color
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
             surface.strokeRect(_rect.x, _rect.y, _rect.width, _rect.height)
         else:
-            if hasattr(color, 'a'):
-                surface.setFillStyle(color)
-            else:
-                surface.setFillStyle(Color(color))
+            if surface._fill_style != color:
+                surface._fill_style = color
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
             surface.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
         if surface._display:
             return surface._display._surface_rect.clip(_rect)
@@ -70,16 +74,20 @@ class Draw(object):
         surface.arc(position[0], position[1], radius, 0, 2*_pi, False)
         if width:
             surface.setLineWidth(width)
-            if hasattr(color, 'a'):
-                surface.setStrokeStyle(color)
-            else:
-                surface.setStrokeStyle(Color(color))
+            if surface._stroke_style != color:
+                surface._stroke_style = color
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            if hasattr(color, 'a'):
-                surface.setFillStyle(color)
-            else:
-                surface.setFillStyle(Color(color))
+            if surface._fill_style != color:
+                surface._fill_style = color
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
             surface.fill()
         if surface._display:
             return surface._display._surface_rect.clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
@@ -108,16 +116,20 @@ class Draw(object):
         surface.arc(0, 0, radius, 0, 2*_pi, False)
         if width:
             surface.setLineWidth(width)
-            if hasattr(color, 'a'):
-                surface.setStrokeStyle(color)
-            else:
-                surface.setStrokeStyle(Color(color))
+            if surface._stroke_style != color:
+                surface._stroke_style = color
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            if hasattr(color, 'a'):
-                surface.setFillStyle(color)
-            else:
-                surface.setFillStyle(Color(color))
+            if surface._fill_style != color:
+                surface._fill_style = color
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
             surface.fill()
         surface.restoreContext()
         if surface._display:
@@ -140,17 +152,21 @@ class Draw(object):
             surface.arc(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2), int(_rect.width/2), -start_angle, -stop_angle, True)
             if width:
                 surface.setLineWidth(width)
-                if hasattr(color, 'a'):
-                    surface.setStrokeStyle(color)
-                else:
-                    surface.setStrokeStyle(Color(color))
+                if surface._stroke_style != color:
+                    surface._stroke_style = color
+                    if hasattr(color, 'a'):
+                        surface.setStrokeStyle(color)
+                    else:
+                        surface.setStrokeStyle(Color(color))
                 surface.stroke()
             else:
                 surface.closePath()
-                if hasattr(color, 'a'):
-                    surface.setFillStyle(color)
-                else:
-                    surface.setFillStyle(Color(color))
+                if surface._fill_style != color:
+                    surface._fill_style = color
+                    if hasattr(color, 'a'):
+                        surface.setFillStyle(color)
+                    else:
+                        surface.setFillStyle(Color(color))
                 surface.fill()
         else:
             surface.saveContext()
@@ -165,17 +181,21 @@ class Draw(object):
             surface.arc(0, 0, radius, -start_angle, -stop_angle, True)
             if width:
                 surface.setLineWidth(width)
-                if hasattr(color, 'a'):
-                    surface.setStrokeStyle(color)
-                else:
-                    surface.setStrokeStyle(Color(color))
+                if surface._stroke_style != color:
+                    surface._stroke_style = color
+                    if hasattr(color, 'a'):
+                        surface.setStrokeStyle(color)
+                    else:
+                        surface.setStrokeStyle(Color(color))
                 surface.stroke()
             else:
                 surface.closePath()
-                if hasattr(color, 'a'):
-                    surface.setFillStyle(color)
-                else:
-                    surface.setFillStyle(Color(color))
+                if surface._fill_style != color:
+                    surface._fill_style = color
+                    if hasattr(color, 'a'):
+                        surface.setFillStyle(color)
+                    else:
+                        surface.setFillStyle(Color(color))
                 surface.fill()
             surface.restoreContext()
         if surface._display:
@@ -196,16 +216,20 @@ class Draw(object):
         surface.closePath()
         if width:
             surface.setLineWidth(width)
-            if hasattr(color, 'a'):
-                surface.setStrokeStyle(color)
-            else:
-                surface.setStrokeStyle(Color(color))
+            if surface._stroke_style != color:
+                surface._stroke_style = color
+                if hasattr(color, 'a'):
+                    surface.setStrokeStyle(color)
+                else:
+                    surface.setStrokeStyle(Color(color))
             surface.stroke()
         else:
-            if hasattr(color, 'a'):
-                surface.setFillStyle(color)
-            else:
-                surface.setFillStyle(Color(color))
+            if surface._fill_style != color:
+                surface._fill_style = color
+                if hasattr(color, 'a'):
+                    surface.setFillStyle(color)
+                else:
+                    surface.setFillStyle(Color(color))
             surface.fill()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
@@ -226,10 +250,12 @@ class Draw(object):
         surface.moveTo(*point1)
         surface.lineTo(*point2)
         surface.setLineWidth(width)
-        if hasattr(color, 'a'):
-            surface.setStrokeStyle(color)
-        else:
-            surface.setStrokeStyle(Color(color))
+        if surface._stroke_style != color:
+            surface._stroke_style = color
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
         surface.stroke()
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
@@ -253,10 +279,12 @@ class Draw(object):
         if closed:
             surface.closePath()
         surface.setLineWidth(width)
-        if hasattr(color, 'a'):
-            surface.setStrokeStyle(color)
-        else:
-            surface.setStrokeStyle(Color(color))
+        if surface._stroke_style != color:
+            surface._stroke_style = color
+            if hasattr(color, 'a'):
+                surface.setStrokeStyle(color)
+            else:
+                surface.setStrokeStyle(Color(color))
         surface.stroke()
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]

@@ -47,6 +47,8 @@ class Surface(HTML5Canvas):
         self._super_surface = None
         self._offset = (0,0)
         self._colorkey = None
+        self._stroke_style = None
+        self._fill_style = None
         self._nonimplemented_methods()
 
     def __repr__(self):
@@ -234,11 +236,13 @@ class Surface(HTML5Canvas):
         Set color of a surface pixel.
         The arguments represent position x,y and color of pixel.
         """
-        if hasattr(color, 'a'):
-            _color = color
-        else:
-            _color = Color(color)
-        self.setFillStyle(_color)
+        if self._fill_style != color:
+            self._fill_style = color
+            if hasattr(color, 'a'):
+                _color = color
+            else:
+                _color = Color(color)
+            self.setFillStyle(_color)
         self.fillRect(pos[0], pos[1], 1, 1)
         return None
 
@@ -250,10 +254,12 @@ class Surface(HTML5Canvas):
             HTML5Canvas.fill(self)
             return
         if color:
-            if hasattr(color, 'a'):
-                self.setFillStyle(color)
-            else:
-                self.setFillStyle(Color(color))
+            if self._fill_style != color:
+                self._fill_style = color
+                if hasattr(color, 'a'):
+                    self.setFillStyle(color)
+                else:
+                    self.setFillStyle(Color(color))
             if not rect:
                 _rect = Rect(0, 0, self.width, self.height)
             else:
@@ -326,12 +332,6 @@ class Surf(object):
 
     def get_height(self):
         return self.height
-
-    def get_rect(self, **attr):
-        rect = Rect(0, 0, self.width, self.height)
-        for key in attr:
-            rect.__setattr__(key,attr[key])
-        return rect
 
     def _nonimplemented_methods(self):
         self.convert = lambda *arg: self
