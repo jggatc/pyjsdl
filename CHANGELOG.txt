@@ -31,6 +31,7 @@
 -update color constructor to accept hex '#rrggbb' argument.
 -update draw methods to optimize context state change.
 -update draw methods to optimize with optional rect return.
+-add app.py to launch app in webkit on desktop.
 
 0.21    2015-04-12
 -update font to improve fonts access.
