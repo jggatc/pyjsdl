@@ -3,6 +3,19 @@
 #Pyjsdl - Copyright (C) 2013
 #Released under the MIT License
 
+"""
+Pyjsdl App
+
+Script launches HTML app on desktop using Webkit.
+To use, copy script and run once to create app.ini.
+Edit app.ini with the necessary information:
+app_name, app_size, server_ip, server_port.
+
+Tested under Linux, required python-webkit installation.
+On other OS, additional installation steps may be required.
+"""
+
+
 import webkit, gtk
 import SocketServer
 import SimpleHTTPServer
