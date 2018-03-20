@@ -467,8 +467,8 @@ class Ndarray:
         return None
 
     def __getitem__(self, index):
-        try:
-            indexLn, shapeLn = index.__len__(), len(self._shape)    #len(0) no exception
+        if hasattr(index, '__len__'):
+            indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
                 return self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])]
             else:
@@ -479,7 +479,7 @@ class Ndarray:
                 array._shape = self._shape[indexLn:]
                 array._indices = self._indices[indexLn:]
                 return array
-        except (TypeError,AttributeError):  #index[i] if index is int raises both AttributeError -S and TypeError -O. No exception for len(index) if index is int.
+        else:
             if len(self._shape) == 1:
                 return self.__data[index]
             else:
@@ -501,7 +501,7 @@ class Ndarray:
                 else:
                     lst.append(element)
             return lst
-        try:
+        if hasattr(index, '__len__'):
             indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
                 self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])] = value
@@ -515,7 +515,7 @@ class Ndarray:
                     if isinstance(value[0], (list,tuple)):
                         value = unpack(value)
                 subarray.set(value)
-        except (TypeError,AttributeError):
+        else:
             if len(self._shape) == 1:
                 self.__data[index] = value
             else:
@@ -606,15 +606,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
-        except (TypeError, ValueError):      #pys -S TypeError, -O ValueError
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def __sub__(self, other):
@@ -622,15 +622,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def __mul__(self, other):
@@ -638,15 +638,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def __div__(self, other):
@@ -654,15 +654,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def add(self, other):
@@ -675,15 +675,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def sub(self, other):
@@ -696,15 +696,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def mul(self, other):
@@ -717,15 +717,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def div(self, other):
@@ -738,15 +738,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def iadd(self, other):
@@ -754,15 +754,15 @@ class Ndarray:
         Add across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] + other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] + other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def isub(self, other):
@@ -770,15 +770,15 @@ class Ndarray:
         Subtract across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] - other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] - other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def imul(self, other):
@@ -786,15 +786,15 @@ class Ndarray:
         Multiply across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] * other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] * other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def idiv(self, other):
@@ -802,15 +802,15 @@ class Ndarray:
         Divide across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] / other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] / other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def bitwise_and(self, other):
@@ -823,15 +823,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] & other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] & other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def bitwise_or(self, other):
@@ -844,15 +844,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] | other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] | other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def bitwise_xor(self, other):
@@ -865,15 +865,15 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] ^ other
-        except (TypeError, ValueError):
-            if ndarray._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if ndarray._shape == other._shape:
                 for i in xrange(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] ^ other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return ndarray
 
     def bitwise_iand(self, other):
@@ -881,15 +881,15 @@ class Ndarray:
         Bitwise AND across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] & other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] & other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def bitwise_ior(self, other):
@@ -897,15 +897,15 @@ class Ndarray:
         Bitwise OR across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] | other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] | other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def bitwise_ixor(self, other):
@@ -913,15 +913,15 @@ class Ndarray:
         Bitwise XOR across array elements in-place.
         Argument is a numeral or another array.
         """
-        try:
+        if not hasattr(other, '__iter__'):
             for i in xrange(len(self.__data)):
                 self.__data[i] = self.__data[i] ^ other
-        except (TypeError, ValueError):
-            if self._shape != other._shape:
-                raise TypeError("array shapes are not compatible")
-            else:
+        else:
+            if self._shape == other._shape:
                 for i in xrange(len(self.__data)):
                     self.__data[i] = self.__data[i] ^ other.__data[i]
+            else:
+                raise TypeError("array shapes are not compatible")
         return None
 
     def bitwise_not(self):
@@ -1318,7 +1318,7 @@ class BitSet:
                 size = toIndex-index
                 if size > 0:
                     return self.__class__(size)
-                else:   #use exception
+                else:
                     return None
         if toIndex is None:
             return bool( self.__data[ int(index/self.__bit) ] & self.__bitmask[ index%self.__bit ] )
@@ -1333,7 +1333,7 @@ class BitSet:
                     bitset.set(ix, bool( self.__data[ int(i/self.__bit) ] & self.__bitmask[ i%self.__bit ] ))
                     ix += 1
                 return bitset
-            else:    #use exception
+            else:
                 return None
 
     def set(self, index, value=1):
