@@ -114,10 +114,10 @@ class Draw(object):
         surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
         if _rect.width >= _rect.height:
             surface.scale(_rect.width/(_rect.height*1.0), 1)
-            radius = _rect.height/2
+            radius = int(_rect.height/2)
         else:
             surface.scale(1, _rect.height/(_rect.width*1.0))
-            radius = _rect.width/2
+            radius = int(_rect.width/2)
         surface.beginPath()
         surface.arc(0, 0, radius, 0, 2*_pi, False)
         if width:
@@ -181,10 +181,10 @@ class Draw(object):
             surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
             if _rect.width >= _rect.height:
                 surface.scale(_rect.width/(_rect.height*1.0), 1)
-                radius = _rect.height/2
+                radius = int(_rect.height/2)
             else:
                 surface.scale(1, _rect.height/(_rect.width*1.0))
-                radius = _rect.width/2
+                radius = int(_rect.width/2)
             surface.beginPath()
             surface.arc(0, 0, radius, -start_angle, -stop_angle, True)
             if width:
