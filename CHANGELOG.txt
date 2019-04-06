@@ -1,4 +1,4 @@
-0.21_dev
+0.22    2019-04-06
 -add display set_callback method.
 -update Canvas handling of callback change.
 -add time set_timer method.
