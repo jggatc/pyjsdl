@@ -6,5 +6,7 @@ canvas = None
 
 frame = None
 
+event = None
+
 pyjs_mode = None
 

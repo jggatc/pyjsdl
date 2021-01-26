@@ -47,10 +47,10 @@ class Event(object):
         self.mouseMoveRel = {'x':None, 'y':None}
         self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
-        self.eventName = {'mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
-        self.eventType = ['mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
+        self.eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp','mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
+        self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION:['mousemove'], Const.MOUSEBUTTONDOWN:['mousedown','wheel','mousewheel', 'DOMMouseScroll'], Const.MOUSEBUTTONUP:['mouseup'], Const.KEYDOWN:['keydown','keypress'], Const.KEYUP:['keyup']}
+        self.eventTypes = {Const.MOUSEMOTION:[Const.MOUSEMOTION,'mousemove'], Const.MOUSEBUTTONDOWN:[Const.MOUSEBUTTONDOWN,'mousedown','wheel','mousewheel', 'DOMMouseScroll'], Const.MOUSEBUTTONUP:[Const.MOUSEBUTTONUP,'mouseup'], Const.KEYDOWN:[Const.KEYDOWN,'keydown','keypress'], Const.KEYUP:[ Const.KEYUP,'keyup']}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
             self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
@@ -75,9 +75,9 @@ class Event(object):
         if not self.queueLock:
             if self.eventNumTmp:
                  self._appendMerge()
-            self._append(event)
+            self._append(JEvent(event))
         else:
-            self._appendTmp(event)
+            self._appendTmp(JEvent(event))
         self.queueAccess = False
 
     def _append(self, event):
@@ -121,19 +121,22 @@ class Event(object):
             return self.queueNil
         self._lock()
         if not eventType:
-            self.queue = [ JEvent(event) for event in self.eventQueue[0:self.eventNum] ]
+            self.queue = [event for event in self.eventQueue[0:self.eventNum]]
             self.eventNum = 0
         else:
-            if not isinstance(eventType, (tuple,list)):
-                evtType = [et for et in self.eventTypes[eventType]]
-            else:
-                evtType = [et for t in eventType for et in self.eventTypes[t]]
             self.queue = []
-            for i in range(self.eventNum):
-                if self.eventQueue[i].type not in evtType:
-                    self.queueTmp.append(self.eventQueue[i])
-                else:
-                    self.queue.append( JEvent(self.eventQueue[i]) )
+            if isinstance(eventType, (tuple,list)):
+                for i in range(self.eventNum):
+                    if self.eventQueue[i].type not in eventType:
+                        self.queueTmp.append(self.eventQueue[i])
+                    else:
+                        self.queue.append(self.eventQueue[i])
+            else:
+                for i in range(self.eventNum):
+                    if self.eventQueue[i].type != eventType:
+                        self.queueTmp.append(self.eventQueue[i])
+                    else:
+                        self.queue.append(self.eventQueue[i])
             if not self.queueTmp:
                 self.eventNum = 0
             else:
@@ -152,7 +155,7 @@ class Event(object):
         """
         self._lock()
         if self.eventNum:
-            evt = JEvent( self.eventQueue.pop(0) )
+            evt = self.eventQueue.pop(0)
             self.eventNum -= 1
             self.eventQueue.append(None)
             if self.eventNum > 250:
@@ -169,7 +172,7 @@ class Event(object):
         while True:
             if self.eventNum:
                 self._lock()
-                evt = JEvent( self.eventQueue.pop(0) )
+                evt = self.eventQueue.pop(0)
                 self.eventNum -= 1
                 self.eventQueue.append(None)
                 if self.eventNum > 250:
@@ -189,17 +192,17 @@ class Event(object):
             return False
         elif eventType is None:
             return True
-        if not isinstance(eventType, (tuple,list)):
-            evtType = [et for et in self.eventTypes[eventType]]
-        else:
-            evtType = [et for t in eventType for et in self.eventTypes[t]]
         self._lock()
         evt = [event.type for event in self.eventQueue[0:self.eventNum]]
         if self.eventNum > 250:
             self._pump()
         self._unlock()
-        for et in evtType:
-            if et in evt:
+        if isinstance(eventType, (tuple,list)):
+            for evtType in eventType:
+                if evtType in evt:
+                    return True
+        else:
+            if eventType in evt:
                 return True
         return False
 
@@ -214,13 +217,14 @@ class Event(object):
         if eventType is None:
             self.eventNum = 0
         else:
-            if not isinstance(eventType, (tuple,list)):
-                evtType = [et for et in self.eventTypes[eventType]]
+            if isinstance(eventType, (tuple,list)):
+                for i in range(self.eventNum):
+                    if self.eventQueue[i].type not in eventType:
+                        self.queueTmp.append(self.eventQueue[i])
             else:
-                evtType = [et for t in eventType for et in self.eventTypes[t]]
-            for i in range(self.eventNum):
-                if self.eventQueue[i].type not in evtType:
-                    self.queueTmp.append(self.eventQueue[i])
+                for i in range(self.eventNum):
+                    if self.eventQueue[i].type != eventType:
+                        self.queueTmp.append(self.eventQueue[i])
             if not self.queueTmp:
                 self.eventNum = 0
             else:
@@ -237,9 +241,8 @@ class Event(object):
         """
         Return event name of a event type.
         """
-        evtType = self.eventTypes[eventType][0]
-        if evtType in self.eventName:
-            return self.eventName[evtType]
+        if eventType in self.eventName:
+            return self.eventName[eventType]
         else:
             return None
 
@@ -248,16 +251,12 @@ class Event(object):
         Block specified event type(s) from queue.
         """
         if eventType is not None:
-            if not isinstance(eventType, (tuple,list)):
-                evtType = [et for et in self.eventTypes[eventType]]
+            if isinstance(eventType, (tuple,list)):
+                self.events = self.events.difference(set(eventType))
             else:
-                evtType = [et for t in eventType for et in self.eventTypes[t]]
-            for et in evtType:
-                if et in self.events:
-                    self.events.remove(et)
+                self.events = self.events.difference(set([eventType]))
         else:
-            for event in self.eventType:
-                self.events.add(event)
+            self.events = set(self.eventType)
         return None
 
     def set_allowed(self, eventType):
@@ -265,12 +264,10 @@ class Event(object):
         Set allowed event type(s) on queue. 
         """
         if eventType is not None:
-            if not isinstance(eventType, (tuple,list)):
-                evtType = [et for et in self.eventTypes[eventType]]
+            if isinstance(eventType, (tuple,list)):
+                self.events = self.events.union(set(eventType))
             else:
-                evtType = [et for t in eventType for et in self.eventTypes[t]]
-            for et in evtType:
-                self.events.add(et)
+                self.events = self.events.union(set[eventType])
         else:
             self.events.clear()
         return None
@@ -279,8 +276,7 @@ class Event(object):
         """
         Check if specified event type is blocked from queue.
         """
-        evtType = [et for et in self.eventTypes[eventType]][0]
-        if evtType not in self.events:
+        if eventType not in self.events:
             return True
         else:
             return False
@@ -290,15 +286,22 @@ class Event(object):
         Post event to queue.
         """
         self._lock()
-        self._append(event)
-        if event.type not in self.events:
-            self.eventTypes[event.type] = [event.type]
+        if event.type in self.events:
+            self._append(event)
         self._unlock()
         return None
 
     def _initiate_touch_listener(self, canvas):
         self.touchlistener = TouchListener(canvas)
         return None
+
+    def _register_event(self, eventType):
+        if eventType not in self.eventTypes:
+            self.eventTypes[eventType] = eventType
+            self.eventName[eventType] = 'UserEvent'
+            self.eventType.append(eventType)
+            self.events = self.events.union(set([eventType]))
+            #pyjs -S set add/remove member check issue
 
     def _nonimplemented_methods(self):
         """
@@ -324,12 +327,16 @@ class UserEvent(object):
             attr = kwargs
         object.__setattr__(self, "type", eventType)
         object.__setattr__(self, "attr", attr)
+        if env.pyjs_mode.optimized: #__getattr__ not implemented in pyjs -O
+            for attr in self.attr:
+                object.__setattr__(self, attr, self.attr[attr])
+        env.event._register_event(eventType)
 
     def __repr__(self):
         """
         Return string representation of Event object.
         """
-        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
+        return self.toString()
 
     def __getattr__(self, attr):
         if attr in self.attr:
@@ -338,7 +345,12 @@ class UserEvent(object):
             raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
-        raise AttributeError("'Event' object has no attribute '%s'" % attr)
+        self.attr[attr] = value
+
+    def toString(self):
+        event_name = env.event.event_name(self.type)
+        return "<Event(%s-%s %r)>" % (self.type, event_name, self.attr)
+
 
 
 class JEvent(object):
@@ -359,53 +371,59 @@ class JEvent(object):
         * rel: mouse relative position change (x,y)
         * key: keycode of key pressed (K_a-K_z...)
         """
-        self.event = event      #__getattr__ not implemented in pyjs -O
+        object.__setattr__(self, "type", self.__class__._types[event.type])
+        object.__setattr__(self, "attr", {})
         if event.type in ('mousedown', 'mouseup'):
-            self.type = self.__class__._types[event.type]
-            self.button = event.button + 1
-            self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
+            self.attr['button'] = event.button + 1
+            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
         elif event.type == 'mousemove':
-            self.type = self.__class__._types[event.type]
-            self.button = event.button + 1
-            self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
-            self.rel = (self.pos[0]-self.__class__._mouse_pos[0], self.pos[1]-self.__class__._mouse_pos[1])
-            self.__class__._mouse_pos = self.pos
+            self.attr['button'] = event.button + 1
+            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
+            self.attr['rel'] = (self.attr['pos'][0]-self.__class__._mouse_pos[0], self.attr['pos'][1]-self.__class__._mouse_pos[1])
+            self.__class__._mouse_pos = self.attr['pos']
         elif event.type in ('wheel', 'mousewheel', 'DOMMouseScroll'):
-            self.type = self.__class__._types[event.type]
-            self.button = event.btn
-            self.pos = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
+            self.attr['button'] = event.btn
+            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
         elif event.type in ('keydown', 'keyup'):
-            self.type = self.__class__._types[event.type]
-            self.key = event.keyCode
+            self.attr['key'] = event.keyCode
         elif event.type == 'keypress':
-            self.type = self.__class__._types[event.type]
             if event.keyCode:
                 code = event.keyCode
             else:
                 code = event.which
             if code in self.__class__._charCode:
-                self.key = self.__class__._charCode[code]
+                self.attr['key'] = self.__class__._charCode[code]
             else:
-                self.key = code
-        else:
-            self.type = event.type
-            for attr in event.attr:
-                object.__setattr__(self, attr, event.attr[attr])
+                self.attr['key'] = code
+        if env.pyjs_mode.optimized: #__getattr__ not implemented in pyjs -O
+            for attr in self.attr:
+                object.__setattr__(self, attr, self.attr[attr])
+        self.attr['event'] = event
 
     def __repr__(self):
         """
         Return string representation of Event object.
         """
-        if hasattr(self.event, 'toString'):
-            return "%s(%s)" % (self.__class__, self.event.toString())
-        else:      #User Event
-            return self.event.__repr__()
+        return self.toString()
+
+    def __getattr__(self, attr):
+        if attr in self.attr:
+            return self.attr[attr]
+        else:
+            raise AttributeError("'Event' object has no attribute '%s'" % attr)
+
+    def __setattr__(self, attr, value):
+        self.attr[attr] = value
+
+    def toString(self):
+        event_name = env.event.event_name(self.type)
+        return "<Event(%s-%s %r)>" % (self.type, event_name, self.attr)
 
     def getEvent(self):
         """
         Return browser event.
         """
-        return self.event
+        return self.attr['event']
 
 
 class TouchListener:

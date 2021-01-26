@@ -40,8 +40,11 @@ from pyjsdl import mask
 from pyjsdl import font
 from pyjsdl import sprite
 from pyjsdl import cursors
+from pyjsdl import env
 from pyjsdl.locals import *
 
+event = Event()
+env.event = event
 time = Time()
 display = Display()
 image = Image()
@@ -49,7 +52,6 @@ draw = Draw()
 transform = Transform()
 surfarray = Surfarray()
 mixer = Mixer()
-event = Event()
 mouse = Mouse()
 key = Key()
 

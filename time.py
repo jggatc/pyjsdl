@@ -1,7 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-import pyjsdl.event
 from pyjsdl import env
 from __pyjamas__ import JS
 
@@ -154,7 +153,7 @@ class _EventTimer:
     timers = {}
 
     def __init__(self, eventid):
-        self.event = pyjsdl.event.Event(eventid)
+        self.event = env.event.Event(eventid)
         self.timer = None
         self.time = 0
         self.repeat = True
@@ -178,7 +177,7 @@ class _EventTimer:
         self.timer = None
 
     def run(self):
-        pyjsdl.event.post(self.event)
+        env.event.post(self.event)
         if self.repeat:
             self.setTimeout()
 

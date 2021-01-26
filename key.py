@@ -1,7 +1,7 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-import pyjsdl.event
+from pyjsdl import env
 from pyjsdl import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -21,8 +21,8 @@ class Key(object):
         
         Module initialization creates pyjsdl.key instance.
         """
-        self.keyPress = pyjsdl.event.keyPress
-        self.keyMod = pyjsdl.event.keyMod
+        self.keyPress = env.event.keyPress
+        self.keyMod = env.event.keyMod
         self.alt = Const.K_ALT
         self.ctrl = Const.K_CTRL
         self.shift = Const.K_SHIFT

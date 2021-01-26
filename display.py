@@ -7,7 +7,6 @@ from pyjsdl.rect import Rect
 from pyjsdl.time import Time
 from pyjsdl.color import Color
 from pyjsdl import env
-import pyjsdl.event
 from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event, requestAnimationFrameInit
 from __pyjamas__ import JS
 
@@ -43,13 +42,13 @@ class Canvas(Surface, MouseWheelHandler):
         self.image_list = []
         self.callback = None
         self.time = Time()
-        self.event = pyjsdl.event
+        self.event = env.event
         self.addMouseListener(self)
         self.addMouseWheelListener(self)
         self.addKeyboardListener(self)
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
-        self.modKey = pyjsdl.event.modKey
-        self.specialKey = pyjsdl.event.specialKey
+        self.modKey = env.event.modKey
+        self.specialKey = env.event.specialKey
         self.event._initiate_touch_listener(self)
         self._touch_callback = self.event.touchlistener.callback
         self._repaint = False

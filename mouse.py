@@ -2,9 +2,9 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 #from __future__ import division
-import pyjsdl.event
+from pyjsdl import env
+from pyjsdl import cursors
 from pyjsdl.pyjsobj import DOM
-from pyjsdl import cursors, env
 
 __docformat__ = 'restructuredtext'
 
@@ -27,9 +27,9 @@ class Mouse(object):
         
         Module initialization creates pyjsdl.mouse instance.
         """
-        self.mousePress = pyjsdl.event.mousePress
-        self.mouseMove = pyjsdl.event.mouseMove
-        self.mouseMoveRel = pyjsdl.event.mouseMoveRel
+        self.mousePress = env.event.mousePress
+        self.mouseMove = env.event.mouseMove
+        self.mouseMoveRel = env.event.mouseMoveRel
         self._cursorVisible = True
         self._cursor = 'default'
         self._nonimplemented_methods()
