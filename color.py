@@ -47,13 +47,13 @@ class Color(_Color):
         """
         Return string representation of Color object.
         """
-        return "(%d,%d,%d,%d)" % (self.r, self.g, self.b, self.a)
+        return "(%d, %d, %d, %d)" % (self.r, self.g, self.b, self.a)
 
     def __str__(self):
         """
         Return string representation of Color object.
         """
-        return "rgba(%d,%d,%d,%f)" % (self.r, self.g, self.b, self.a/255.0)
+        return "rgba(%d, %d, %d, %f)" % (self.r, self.g, self.b, self.a/255.0)
 
     def __getitem__(self, index):
         """
