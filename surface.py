@@ -229,7 +229,7 @@ class Surface(HTML5Canvas):
         Return color (r,g,b,a) of a surface pixel.
         """
         pixel = self.impl.getImageData(pos[0], pos[1], 1, 1)
-        return self._getPixel(pixel,0), self._getPixel(pixel,1), self._getPixel(pixel,2), self._getPixel(pixel,3)
+        return Color([self._getPixel(pixel,i) for i in (0,1,2,3)])
 
     def set_at(self, pos, color):
         """
