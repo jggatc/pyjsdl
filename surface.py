@@ -168,26 +168,23 @@ class Surface(HTML5Canvas):
         Set surface colorkey.
         """
         if self._colorkey:
-            r = self._colorkey.r
-            g = self._colorkey.g
-            b = self._colorkey.b
+            self.replace_color((0,0,0,0),self._colorkey)
             self._colorkey = None
         if color:
-            try:
-                color = Color(color)
-                self._colorkey = color
-                self.replace_color((color.r,color.g,color.b))
-            except:
-                pass
+            self._colorkey = Color(color)
+            self.replace_color(self._colorkey)
         return None
 
     def get_colorkey(self):
         """
         Return surface colorkey.
         """
-        try:
-            return self._colorkey.r, self._colorkey.g, self._colorkey.b, 255
-        except (TypeError,AttributeError):      #-O/-S TypeError/AttributeError
+        if self._colorkey:
+            return ( self._colorkey.r,
+                     self._colorkey.g,
+                     self._colorkey.b,
+                     self._colorkey.a )
+        else:
             return None
 
     def _getPixel(self, imagedata, index):
@@ -202,25 +199,41 @@ class Surface(HTML5Canvas):
         """
         Replace color with with new_color or with alpha.
         """
-        pixels = self.impl.getImageData(0, 0, self.width, self.height)
+        pixels = self.impl.getImageData(0,0,self.width,self.height)
         if hasattr(color, 'a'):
             color1 = color
         else:
             color1 = Color(color)
-        if new_color:
+        if new_color is None:
+            alpha_zero = True
+        else:
             if hasattr(new_color, 'a'):
                 color2 = new_color
             else:
                 color2 = Color(new_color)
+            alpha_zero = False
+        if alpha_zero:
+            r1,g1,b1,a1  = color1.r, color1.g, color1.b, color1.a
+            a2  = 0
+            for i in xrange(0, len(pixels.data), 4):
+                if (    self._getPixel(pixels,i) == r1 and 
+                        self._getPixel(pixels,i+1) == g1 and 
+                        self._getPixel(pixels,i+2) == b1 and 
+                        self._getPixel(pixels,i+3) == a1   ):
+                    self._setPixel(pixels, i+3, a2)
         else:
-            color2 = Color(color1.r,color1.g,color1.b,0)
-        col1 = (color1.r, color1.g, color1.b, color1.a)
-        col2 = (color2.r, color2.g, color2.b, color2.a)
-        for i in xrange(0,len(pixels.data),4):
-            if (self._getPixel(pixels, i), self._getPixel(pixels, i+1), self._getPixel(pixels, i+2), self._getPixel(pixels, i+3)) == col1:
-                for j in range(4):
-                    self._setPixel(pixels, i+j, col2[j])
-        self.impl.putImageData(pixels, 0, 0, 0, 0, self.width, self.height)
+            r1,g1,b1,a1 = color1.r, color1.g, color1.b, color1.a
+            r2,g2,b2,a2 = color2.r, color2.g, color2.b, color2.a
+            for i in xrange(0, len(pixels.data), 4):
+                if (    self._getPixel(pixels,i) == r1 and 
+                        self._getPixel(pixels,i+1) == g1 and 
+                        self._getPixel(pixels,i+2) == b1 and 
+                        self._getPixel(pixels,i+3) == a1   ):
+                    self._setPixel(pixels, i, r2)
+                    self._setPixel(pixels, i+1, g2)
+                    self._setPixel(pixels, i+2, b2)
+                    self._setPixel(pixels, i+3, a2)
+        self.impl.putImageData(pixels,0,0,0,0,self.width,self.height)
         return None
 
     def get_at(self, pos):

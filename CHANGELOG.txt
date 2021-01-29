@@ -1,6 +1,7 @@
 0.22-dev
 -update event handling.
 -update surface get_at to return color object.
+-refactoring of surface colorkey methods.
 
 0.22    2019-04-06
 -add display set_callback method.
