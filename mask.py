@@ -15,7 +15,7 @@ def from_surface(surface, threshold=127):
     Return Mask derived from surface using alpha transparency.
     Optional argument to set alpha threshold.
     """
-    mask = Mask(surface.width, surface.height)
+    mask = Mask((surface.width, surface.height))
     if not mask.bit:
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
@@ -37,7 +37,7 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
     Return Mask from surface using a given color.
     Optional threshold argument to set color range and alpha threshold.
     """
-    mask = Mask(surface.width, surface.height)
+    mask = Mask((surface.width, surface.height))
     if not mask.bit:
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
@@ -91,14 +91,14 @@ class Mask(object):
     * Mask.toString
     """
 
-    def __init__(self, width, height):
+    def __init__(self, size):
         """
-        Return a Mask of an image.
-        The arguments include width and height of the image.
-        The mask is stored as a list of bitset for each pixel row in the image.
+        Return a Mask object.
+        The size argument is (width, height) of the mask.
+        The mask is represented by a list of Bitset.
         """
-        self.width = int(width)
-        self.height = int(height)
+        self.width = int(size[0])
+        self.height = int(size[1])
         self.bit = []
         for bitset in range(self.height):
             self.bit.append(BitSet(self.width))
