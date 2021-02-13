@@ -3,7 +3,6 @@
 
 from math import pi as _pi
 from pyjsdl.rect import Rect
-from pyjsdl.surface import Surface
 from pyjsdl.color import Color
 
 __docformat__ = 'restructuredtext'
