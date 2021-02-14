@@ -35,13 +35,11 @@ def compile(strings, black='X', white='.', xor='o'):
     dbit = {black:1, white:0, xor:1}
     mbit = {black:1, white:1, xor:0}
     string = ''.join(strings)
-    rang = range(8)
-    blank = '        '
-    for i in range(0,len(string),8):
+    for i in range(0, len(string), 8):
         s = string[i:i+8]
         db = mb = 0
-        if s != blank:
-            for j in rang:
+        if s != '        ':
+            for j in range(8):
                 c = s[j]
                 if c == ' ':
                     continue
@@ -64,10 +62,9 @@ def create_cursor(size, data, mask):
     black = Color(0,0,0,255)
     white = Color(255,255,255,255)
     x = y = 0
-    rang = range(8)
     for i in range(len(data)):
         if data[i] or mask[i]:
-            for j in rang:
+            for j in range(8):
                 if data[i] & 0x01<<7-j:
                     surface.setFillStyle(black)
                     surface.fillRect(x+j, y, 1, 1)
