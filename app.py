@@ -19,7 +19,6 @@ On other OS, additional installation steps may be required.
 import webkit, gtk
 import SocketServer
 import SimpleHTTPServer
-import requests
 import multiprocessing
 import os.path
 import sys
