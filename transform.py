@@ -1,7 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-#from __future__ import division
 from math import pi as _pi, fabs as _fabs, sin as _sin, cos as _cos, ceil as _ceil
 from pyjsdl.surface import Surface
 
