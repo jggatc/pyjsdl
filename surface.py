@@ -155,8 +155,8 @@ class Surface(HTML5Canvas):
 
     def _blits(self, surfaces):
         ctx = self.impl.canvasContext
-        for s in surfaces:
-            ctx.drawImage(s.image.canvas, s.rect.x, s.rect.y)
+        for surface, rect in surfaces:
+            ctx.drawImage(surface.canvas, rect.x, rect.y)
 
     def _blit_clear(self, surface, rect_list):
         ctx = self.impl.canvasContext
