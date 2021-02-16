@@ -99,7 +99,7 @@ class Mask(object):
         self.width = int(size[0])
         self.height = int(size[1])
         self.bit = []
-        for bitset in range(self.height):
+        for bitset in xrange(self.height):
             self.bit.append(BitSet(self.width))
 
     def __repr__(self):
@@ -180,7 +180,7 @@ class Mask(object):
         w = min(self.width-x1, mask.width-x2)
         h = min(self.height-y1, mask.height-y2)
         if w > 0 and h > 0:
-            for y in range(h):
+            for y in xrange(h):
                 if self.bit[y1+y].get(x1, x1+w).intersects(mask.bit[y2+y].get(x2, x2+w)):
                     return True
         return None
@@ -194,7 +194,7 @@ class Mask(object):
         cbitset = []
         for bitset in self.bit:
             cbitset.append('\n')
-            cbitset.extend([cbit[bitset.get(i)] for i in range(self.width)])
+            cbitset.extend([cbit[bitset.get(i)] for i in xrange(self.width)])
         bitstr = ''.join(cbitset)
         return bitstr
 
