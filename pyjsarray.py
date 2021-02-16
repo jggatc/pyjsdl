@@ -470,9 +470,9 @@ class Ndarray:
         if hasattr(index, '__len__'):
             indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
-                return self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])]
+                return self.__data[sum([index[i]*self._indices[i] for i in xrange(indexLn)])]
             else:
-                begin = sum([index[i]*self._indices[i] for i in range(indexLn)])
+                begin = sum([index[i]*self._indices[i] for i in xrange(indexLn)])
                 end = begin + self._indices[indexLn-1]
                 subarray = self.__data.subarray(begin, end)
                 array = Ndarray(subarray, self._dtype)
@@ -504,9 +504,9 @@ class Ndarray:
         if hasattr(index, '__len__'):
             indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
-                self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])] = value
+                self.__data[sum([index[i]*self._indices[i] for i in xrange(indexLn)])] = value
             else:
-                begin = sum([index[i]*self._indices[i] for i in range(indexLn)])
+                begin = sum([index[i]*self._indices[i] for i in xrange(indexLn)])
                 end = begin + self._indices[indexLn-1]
                 subarray = self.__data.subarray(begin, end)
                 if isinstance(value, Ndarray):
@@ -591,9 +591,9 @@ class Ndarray:
                     continue
                 else:
                     if count == 1:      #pyjs-O ' '*n > NaN
-                        alst[i] = '\n'+''.join([' ' for x in range(tab-count)])+alst[i]
+                        alst[i] = '\n'+''.join([' ' for x in xrange(tab-count)])+alst[i]
                     else:
-                        alst[i] = '\n\n'+''.join([' ' for x in range(tab-count)])+alst[i]
+                        alst[i] = '\n\n'+''.join([' ' for x in xrange(tab-count)])+alst[i]
                     i += count
                     break
         return ''.join(alst)
@@ -1252,7 +1252,7 @@ class BitSet:
 
     def __init__(self, width=None):
         if not self.__class__.__bitmask:
-            self.__class__.__bitmask = dict([(self.__class__.__bit-i-1,1<<i) for i in range(self.__class__.__bit-1,-1,-1)])
+            self.__class__.__bitmask = dict([(self.__class__.__bit-i-1,1<<i) for i in xrange(self.__class__.__bit-1,-1,-1)])
             self.__class__.__bitmask[self.__class__.__bit-1] = int(self.__class__.__bitmask[self.__class__.__bit-1])      #pyjs [1<<0] = 1L
         if width:
             self.__width = abs(width)
