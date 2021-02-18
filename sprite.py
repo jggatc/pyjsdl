@@ -3,6 +3,9 @@
 
 from pyjsdl.rect import rectPool
 from pyjsdl import mask
+import sys
+if sys.version_info < (3,):
+    range = xrange
 
 __docformat__ = 'restructuredtext'
 
@@ -364,7 +367,7 @@ class OrderedUpdates(RenderUpdates):
         self.order = {}
         self.place = {}
         self.range = 1000
-        self.index = iter(xrange(self.range))
+        self.index = iter(range(self.range))
         self.sort = None
         for sprite in sprites:
             if sprite not in self._sprites:
@@ -408,7 +411,7 @@ class OrderedUpdates(RenderUpdates):
         newgroup.order = self.order.copy()
         newgroup.place = self.place.copy()
         newgroup.range = self.range
-        newgroup.index = iter(xrange(max(self.order.keys())+1,self.range))
+        newgroup.index = iter(range(max(self.order.keys())+1,self.range))
         return newgroup
 
     def add(self, *sprites):
@@ -427,7 +430,7 @@ class OrderedUpdates(RenderUpdates):
                     keys.sort()
                     if len(keys)*2 > self.range:
                         self.range = len(keys)*2
-                    self.index = iter(xrange(self.range))
+                    self.index = iter(range(self.range))
                     order = self.order
                     self.order = {}
                     self.place = {}
@@ -468,7 +471,7 @@ class OrderedUpdates(RenderUpdates):
         """
         self.order = {}
         self.place = {}
-        self.index = iter(xrange(self.range))
+        self.index = iter(range(self.range))
         self.sort = None
         RenderUpdates.empty(self)
 

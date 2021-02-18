@@ -172,6 +172,12 @@ class Rect(object):
     def __len__(self):
         return 4
 
+    def __bool__(self):
+        """
+        Rect nonzero check.
+        """
+        return self.width and self.height
+
     def __nonzero__(self):
         """
         Rect nonzero check.

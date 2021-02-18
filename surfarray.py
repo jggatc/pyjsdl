@@ -3,6 +3,9 @@
 
 from pyjsdl.surface import Surface
 from pyjsdl.pyjsarray import PyUint8ClampedArray, PyUint8Array, PyUint32Array, Ndarray, PyImageData, PyImageMatrix
+import sys
+if sys.version_info < (3,):
+    range = xrange
 
 __docformat__ = 'restructuredtext'
 
@@ -99,8 +102,8 @@ class Surfarray(object):
             imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
             if len(array._shape) == 2:
                 array2d = PyImageMatrix(imagedata)
-                for y in xrange(array2d.getHeight()):
-                    for x in xrange(array2d.getWidth()):
+                for y in range(array2d.getHeight()):
+                    for x in range(array2d.getWidth()):
                         value = array[x,y]
                         array2d[y,x] = (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, 255)
                 imagedata = array2d.getImageData()
@@ -150,9 +153,9 @@ class PyImageRGB(Ndarray):
         except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
             data = PyUint8Array(self.__imagedata.height*self.__imagedata.width*3)
         index = 0
-        for x in xrange(self.__imagedata.width):
-            for y in xrange(self.__imagedata.height):
-                for i in xrange(3):
+        for x in range(self.__imagedata.width):
+            for y in range(self.__imagedata.height):
+                for i in range(3):
                     data[index] = array[y,x,i]
                     index += 1
         try:
@@ -163,9 +166,9 @@ class PyImageRGB(Ndarray):
 
     def getImageData(self):
         index = 0
-        for x in xrange(self.__imagedata.height):
-            for y in xrange(self.__imagedata.width):
-                for i in xrange(3):
+        for x in range(self.__imagedata.height):
+            for y in range(self.__imagedata.width):
+                for i in range(3):
                     self.__imagedata.data[index+i] = self[y,x,i]
                 index += 4
         return self.__imagedata.getImageData()
@@ -199,8 +202,8 @@ class PyImageAlpha(Ndarray):
         except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
             data = PyUint8Array(self.__imagedata.height*self.__imagedata.width)
         index = 0
-        for x in xrange(self.__imagedata.width):
-            for y in xrange(self.__imagedata.height):
+        for x in range(self.__imagedata.width):
+            for y in range(self.__imagedata.height):
                 data[index] = array[y,x,3]
                 index += 1
         try:
@@ -211,8 +214,8 @@ class PyImageAlpha(Ndarray):
 
     def getImageData(self):
         index = 0
-        for x in xrange(self.__imagedata.height):
-            for y in xrange(self.__imagedata.width):
+        for x in range(self.__imagedata.height):
+            for y in range(self.__imagedata.width):
                 self.__imagedata.data[index+3] = self[y,x]
                 index += 4
         return self.__imagedata.getImageData()
@@ -244,8 +247,8 @@ class PyImageInteger(Ndarray):
         array.setshape(self.__imagedata.height,self.__imagedata.width,4)
         data = PyUint32Array(self.__imagedata.height*self.__imagedata.width)
         index = 0
-        for x in xrange(self.__imagedata.width):
-            for y in xrange(self.__imagedata.height):
+        for x in range(self.__imagedata.width):
+            for y in range(self.__imagedata.height):
                 data[index] = array[y,x,0]<<16 | array[y,x,1]<<8 | array[y,x,2] | array[y,x,3]<<24
                 index += 1
         Ndarray.__init__(self, data, 3)
@@ -253,8 +256,8 @@ class PyImageInteger(Ndarray):
 
     def getImageData(self):
         index = 0
-        for x in xrange(self.__imagedata.height):
-            for y in xrange(self.__imagedata.width):
+        for x in range(self.__imagedata.height):
+            for y in range(self.__imagedata.width):
                 self.__imagedata.data[index], self.__imagedata.data[index+1], self.__imagedata.data[index+2], self.__imagedata.data[index+3] = self[y,x]>>16 & 0xff, self[y,x]>>8 & 0xff, self[y,x] & 0xff, self[y,x]>>24 & 0xff
                 index += 4
         return self.__imagedata.getImageData()

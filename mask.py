@@ -3,6 +3,9 @@
 
 from pyjsdl.pyjsarray import BitSet
 from pyjsdl.color import Color
+import sys
+if sys.version_info < (3,):
+    range = xrange
 
 __docformat__ = 'restructuredtext'
 
@@ -19,10 +22,10 @@ def from_surface(surface, threshold=127):
         return None
     pixels = surface.impl.getImageData(0, 0, surface.width, surface.height)
     width, height = surface.width*4, surface.height
-    for y in xrange(0, height):
+    for y in range(0, height):
         xpix = 0
         i = (y*width)+3
-        for x in xrange(0, width, 4):
+        for x in range(0, width, 4):
             if surface._getPixel(pixels, i+x) > threshold:
                 mask.set_at((xpix,y))
             xpix += 1
@@ -44,10 +47,10 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
         color = Color(color)
         color = (color.r,color.g,color.b)
         width, height = surface.width*4, surface.height
-        for y in xrange(0, height):
+        for y in range(0, height):
             xpix = 0
             i = y*width
-            for x in xrange(0, width, 4):
+            for x in range(0, width, 4):
                 ix = i+x
                 if surface._getPixel(pixels, ix) == color[0] and surface._getPixel(pixels, ix+1) == color[1] and surface._getPixel(pixels, ix+2) == color[2] and surface._getPixel(pixels, ix+3) >= threshold[3]:
                     mask.set_at((xpix,y))
@@ -64,10 +67,10 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
                 col[c+'2'] = color[i] + 1
         col['a'] = threshold[3] - 1
         width, height = surface.width*4, surface.height
-        for y in xrange(0, height):
+        for y in range(0, height):
             xpix = 0
             i = y*width
-            for x in xrange(0, width, 4):
+            for x in range(0, width, 4):
                 ix = i+x
                 if (col['r1'] < surface._getPixel(pixels, ix) < col['r2']) and (col['g1'] < surface._getPixel(pixels, ix+1) < col['g2']) and (col['b1'] < surface._getPixel(pixels, ix+2) < col['b2']) and (surface._getPixel(pixels, ix+3) > col['a']):
                     mask.set_at((xpix,y))
@@ -99,7 +102,7 @@ class Mask(object):
         self.width = int(size[0])
         self.height = int(size[1])
         self.bit = []
-        for bitset in xrange(self.height):
+        for bitset in range(self.height):
             self.bit.append(BitSet(self.width))
 
     def __repr__(self):
@@ -180,7 +183,7 @@ class Mask(object):
         w = min(self.width-x1, mask.width-x2)
         h = min(self.height-y1, mask.height-y2)
         if w > 0 and h > 0:
-            for y in xrange(h):
+            for y in range(h):
                 if self.bit[y1+y].get(x1, x1+w).intersects(mask.bit[y2+y].get(x2, x2+w)):
                     return True
         return None
@@ -194,7 +197,7 @@ class Mask(object):
         cbitset = []
         for bitset in self.bit:
             cbitset.append('\n')
-            cbitset.extend([cbit[bitset.get(i)] for i in xrange(self.width)])
+            cbitset.extend([cbit[bitset.get(i)] for i in range(self.width)])
         bitstr = ''.join(cbitset)
         return bitstr
 

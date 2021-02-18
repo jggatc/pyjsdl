@@ -17,20 +17,23 @@ On other OS, additional installation steps may be required.
 
 
 import webkit, gtk
-import SocketServer
-import SimpleHTTPServer
 import multiprocessing
 import os.path
 import sys
+if sys.version_info.major >= 3:
+    from socketserver import TCPServer
+    from http.server import SimpleHTTPRequestHandler
+else:
+    from SocketServer import TCPServer
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
 
 
-class Server(SocketServer.TCPServer):
+class Server(TCPServer):
 
     allow_reuse_address = True
 
     def __init__(self, port):
-        Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        SocketServer.TCPServer.__init__(self, ("", port), Handler)
+        TCPServer.__init__(self, ("", port), SimpleHTTPRequestHandler)
         self.process = multiprocessing.Process(target=self.serve_forever)
 
     def initiate(self):

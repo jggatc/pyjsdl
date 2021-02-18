@@ -5,6 +5,7 @@
 -revise sprite blit process.
 -update mask for optimization.
 -update ndarray and bitset for optimization.
+-update for python 2/3 compatibility.
 
 0.22    2019-04-06
 -add display set_callback method.

@@ -27,6 +27,9 @@
 
 from math import ceil as _ceil
 from __pyjamas__ import JS
+import sys
+if sys.version_info < (3,):
+    range = xrange
 
 
 class PyTypedArray:
@@ -377,7 +380,7 @@ class PyCanvasPixelArray(PyTypedArray):
         Set data to the array. Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
         """
         if not self._superArray:
-            for index in xrange(len(data)):
+            for index in range(len(data)):
                 self[index+offset] = data[index]
         else:
             self._superArray.set(data, offset+self._superIndex[0])
@@ -470,9 +473,9 @@ class Ndarray:
         if hasattr(index, '__len__'):
             indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
-                return self.__data[sum([index[i]*self._indices[i] for i in xrange(indexLn)])]
+                return self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])]
             else:
-                begin = sum([index[i]*self._indices[i] for i in xrange(indexLn)])
+                begin = sum([index[i]*self._indices[i] for i in range(indexLn)])
                 end = begin + self._indices[indexLn-1]
                 subarray = self.__data.subarray(begin, end)
                 array = Ndarray(subarray, self._dtype)
@@ -504,9 +507,9 @@ class Ndarray:
         if hasattr(index, '__len__'):
             indexLn, shapeLn = index.__len__(), len(self._shape)
             if indexLn == shapeLn:
-                self.__data[sum([index[i]*self._indices[i] for i in xrange(indexLn)])] = value
+                self.__data[sum([index[i]*self._indices[i] for i in range(indexLn)])] = value
             else:
-                begin = sum([index[i]*self._indices[i] for i in xrange(indexLn)])
+                begin = sum([index[i]*self._indices[i] for i in range(indexLn)])
                 end = begin + self._indices[indexLn-1]
                 subarray = self.__data.subarray(begin, end)
                 if isinstance(value, Ndarray):
@@ -591,9 +594,9 @@ class Ndarray:
                     continue
                 else:
                     if count == 1:      #pyjs-O ' '*n > NaN
-                        alst[i] = '\n'+''.join([' ' for x in xrange(tab-count)])+alst[i]
+                        alst[i] = '\n'+''.join([' ' for x in range(tab-count)])+alst[i]
                     else:
-                        alst[i] = '\n\n'+''.join([' ' for x in xrange(tab-count)])+alst[i]
+                        alst[i] = '\n\n'+''.join([' ' for x in range(tab-count)])+alst[i]
                     i += count
                     break
         return ''.join(alst)
@@ -607,11 +610,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -623,11 +626,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -639,11 +642,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -655,11 +658,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -676,11 +679,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -697,11 +700,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -718,11 +721,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -739,11 +742,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -755,11 +758,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] + other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] + other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -771,11 +774,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] - other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] - other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -787,11 +790,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] * other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] * other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -803,11 +806,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] / other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] / other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -824,11 +827,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] & other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] & other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -845,11 +848,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] | other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] | other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -866,11 +869,11 @@ class Ndarray:
         ndarray._shape = self._shape
         ndarray._indices = self._indices
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(ndarray.__data)):
+            for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] ^ other
         else:
             if ndarray._shape == other._shape:
-                for i in xrange(len(ndarray.__data)):
+                for i in range(len(ndarray.__data)):
                     ndarray.__data[i] = ndarray.__data[i] ^ other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -882,11 +885,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] & other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] & other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -898,11 +901,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] | other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] | other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -914,11 +917,11 @@ class Ndarray:
         Argument is a numeral or another array.
         """
         if not hasattr(other, '__iter__'):
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = self.__data[i] ^ other
         else:
             if self._shape == other._shape:
-                for i in xrange(len(self.__data)):
+                for i in range(len(self.__data)):
                     self.__data[i] = self.__data[i] ^ other.__data[i]
             else:
                 raise TypeError("array shapes are not compatible")
@@ -933,7 +936,7 @@ class Ndarray:
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
-        for i in xrange(len(ndarray.__data)):
+        for i in range(len(ndarray.__data)):
             ndarray.__data[i] = ~self.__data[i]
         return ndarray
 
@@ -1014,18 +1017,18 @@ class Ndarray:
             dataLn = data.length
         else:
             if pyjs_mode.optimized:
-                for index in xrange(self.__data.__data.length):
+                for index in range(self.__data.__data.length):
                     JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{data}};""")
             else:
                 data = data.valueOf()
-                for index in xrange(self.__data.__data.length):
+                for index in range(self.__data.__data.length):
                     JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{data}};""")
             return None
         if dataLn == self.__data.__data.length:
-            for index in xrange(self.__data.__data.length):
+            for index in range(self.__data.__data.length):
                 JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{data}}[@{{index}}];""")
         else:
-            for index in xrange(self.__data.__data.length):
+            for index in range(self.__data.__data.length):
                 JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{data}}[@{{index}}%@{{dataLn}}];""")
         return None
 
@@ -1034,11 +1037,11 @@ class Ndarray:
         Set array elements to value argument.
         """
         if pyjs_mode.optimized:
-            for index in xrange(self.__data.__data.length):
+            for index in range(self.__data.__data.length):
                 JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{value}};""")
         else:
             value = value.valueOf()
-            for index in xrange(self.__data.__data.length):
+            for index in range(self.__data.__data.length):
                 JS("""@{{self}}['__data']['__data'][@{{index}}]=@{{value}};""")
         return None
 
@@ -1252,7 +1255,7 @@ class BitSet:
 
     def __init__(self, width=None):
         if not self.__class__.__bitmask:
-            self.__class__.__bitmask = dict([(self.__class__.__bit-i-1,1<<i) for i in xrange(self.__class__.__bit-1,-1,-1)])
+            self.__class__.__bitmask = dict([(self.__class__.__bit-i-1,1<<i) for i in range(self.__class__.__bit-1,-1,-1)])
             self.__class__.__bitmask[self.__class__.__bit-1] = int(self.__class__.__bitmask[self.__class__.__bit-1])      #pyjs [1<<0] = 1L
         if width:
             self.__width = abs(width)
@@ -1271,7 +1274,7 @@ class BitSet:
         Return string of the indexes of the set bits.
         """
         setBit = []
-        for index in xrange(self.__width):
+        for index in range(self.__width):
             if self.get(index):
                 setBit.append(str(index))
         return "{" + ", ".join(setBit) + "}"
@@ -1292,7 +1295,7 @@ class BitSet:
         """
         Get bit length.
         """
-        for index in xrange(self.__width-1, -1, -1):
+        for index in range(self.__width-1, -1, -1):
             if self.get(index):
                 break
         return index+1
@@ -1329,7 +1332,7 @@ class BitSet:
                 ix = 0
                 if toIndex > self.__width:
                     toIndex = self.__width
-                for i in xrange(index, toIndex):
+                for i in range(index, toIndex):
                     bitset.set(ix, bool( self.__data[ int(i/self.__bit) ] & self.__bitmask[ i%self.__bit ] ))
                     ix += 1
                 return bitset
@@ -1360,13 +1363,13 @@ class BitSet:
         Optional argument index is bit index to set, and toIndex to set a range of bits.
         """
         if index is None and toIndex is None:
-            for i in xrange(0, self.__width):
+            for i in range(0, self.__width):
                 self.set(i, 1)
         else:
             if toIndex is None:
                 self.set(index, 1)
             else:
-                for i in xrange(index, toIndex):
+                for i in range(index, toIndex):
                     self.set(i, 1)
 
     def clear(self, index=None, toIndex=None):
@@ -1375,17 +1378,17 @@ class BitSet:
         Optional argument index is bit index to clear, and toIndex to clear a range of bits.
         """
         if index is None:
-            for i in xrange(len(self.__data)):
+            for i in range(len(self.__data)):
                 self.__data[i] = 0
         else:
             if toIndex is None:
                 self.set(index, 0)
             else:
                 if index == 0 and toIndex == self.__width:
-                    for dat in xrange(len(self.__data)):
+                    for dat in range(len(self.__data)):
                         self.__data[dat] = 0
                 else:
-                    for i in xrange(index, toIndex):
+                    for i in range(index, toIndex):
                         self.set(i, 0)
 
     def flip(self, index, toIndex=None):
@@ -1400,10 +1403,10 @@ class BitSet:
                 self.resize(toIndex)
                 toIndex = self.__width
             if index == 0 and toIndex == self.__width:
-                for dat in xrange(len(self.__data)):
+                for dat in range(len(self.__data)):
                     self.__data[dat] = ~self.__data[dat]
             else:
-                for i in xrange(index, toIndex):
+                for i in range(index, toIndex):
                     self.set(i, not self.get(i))
 
     def cardinality(self):
@@ -1411,7 +1414,7 @@ class BitSet:
         Return the count of bit set.
         """
         count = 0
-        for bit in xrange(self.__width):
+        for bit in range(self.__width):
             if self.get(bit):
                 count += 1
         return count
@@ -1421,7 +1424,7 @@ class BitSet:
         Check if set bits in this BitSet are also set in the bitset argument.
         Return True if bitsets intersect, otherwise return False.
         """
-        for dat in xrange(len(bitset.__data)):
+        for dat in range(len(bitset.__data)):
             if bitset.__data[dat] & self.__data[dat]:
                 return True
         return False
@@ -1431,7 +1434,7 @@ class BitSet:
         BitSet and BitSet.
         """
         data = min(len(self.__data), len(bitset.__data))
-        for dat in xrange(data):
+        for dat in range(data):
             self.__data[dat] = self.__data[dat] & bitset.__data[dat]
 #            self.__data[dat] &= bitset.__data[dat]     #pyjs -O: &= not processed
 #        pyjs -S: &= calls __and__ instead of __iand__, -O: no call to operator methods
@@ -1441,7 +1444,7 @@ class BitSet:
         BitSet or BitSet.
         """
         data = min(len(self.__data), len(bitset.__data))
-        for dat in xrange(data):
+        for dat in range(data):
             self.__data[dat] = self.__data[dat] | bitset.__data[dat]
 #            self.__data[dat] |= bitset.__data[dat]    #pyjs -O: |= not processed
 
@@ -1450,7 +1453,7 @@ class BitSet:
         BitSet xor BitSet.
         """
         data = min(len(self.__data), len(bitset.__data))
-        for dat in xrange(data):
+        for dat in range(data):
             self.__data[dat] = self.__data[dat] ^ bitset.__data[dat]
 #            self.__data[dat] ^= bitset.__data[dat]    #pyjs -O: |= not processed
 

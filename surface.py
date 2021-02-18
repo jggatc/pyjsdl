@@ -5,6 +5,9 @@ from pyjsdl.pyjsobj import HTML5Canvas
 from pyjsdl.rect import Rect, rectPool
 from pyjsdl.color import Color
 from __pyjamas__ import JS
+import sys
+if sys.version_info < (3,):
+    range = xrange
 
 __docformat__ = 'restructuredtext'
 
@@ -215,7 +218,7 @@ class Surface(HTML5Canvas):
         if alpha_zero:
             r1,g1,b1,a1  = color1.r, color1.g, color1.b, color1.a
             a2  = 0
-            for i in xrange(0, len(pixels.data), 4):
+            for i in range(0, len(pixels.data), 4):
                 if (    self._getPixel(pixels,i) == r1 and 
                         self._getPixel(pixels,i+1) == g1 and 
                         self._getPixel(pixels,i+2) == b1 and 
@@ -224,7 +227,7 @@ class Surface(HTML5Canvas):
         else:
             r1,g1,b1,a1 = color1.r, color1.g, color1.b, color1.a
             r2,g2,b2,a2 = color2.r, color2.g, color2.b, color2.a
-            for i in xrange(0, len(pixels.data), 4):
+            for i in range(0, len(pixels.data), 4):
                 if (    self._getPixel(pixels,i) == r1 and 
                         self._getPixel(pixels,i+1) == g1 and 
                         self._getPixel(pixels,i+2) == b1 and 
