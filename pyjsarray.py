@@ -132,9 +132,9 @@ class PyTypedArray:
         elif isinstance(data, PyTypedArray):
             self.__data.set(data.__data, offset)
 
-    def subarray(self, begin, end=None):
+    def subarray(self, begin=0, end=None):
         """
-        Retrieve a subarray of the array. The subarray is a TypedArray and is a view of the derived array. Arguments begin and optional end (defaults to array end) are the index spanning the subarray.
+        Retrieve a subarray of the array. The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
         """
         if end is None:
             end = self.__data.length
@@ -385,9 +385,9 @@ class PyCanvasPixelArray(PyTypedArray):
         else:
             self._superArray.set(data, offset+self._superIndex[0])
 
-    def subarray(self, begin, end=None):
+    def subarray(self, begin=0, end=None):
         """
-        Retrieve a subarray of the array. The subarray is a view of the derived array. Arguments begin and optional end (defaults to array end) are the index spanning the subarray.
+        Retrieve a subarray of the array. The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
         """
         if end is None:
             end = self.__data.length
