@@ -605,7 +605,7 @@ class Ndarray:
         return self._shape[0]
 
     def __add__(self, other):
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -621,7 +621,7 @@ class Ndarray:
         return ndarray
 
     def __sub__(self, other):
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -637,7 +637,7 @@ class Ndarray:
         return ndarray
 
     def __mul__(self, other):
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -653,7 +653,7 @@ class Ndarray:
         return ndarray
 
     def __div__(self, other):
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -674,7 +674,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -695,7 +695,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -716,7 +716,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -737,7 +737,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -822,7 +822,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -843,7 +843,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -864,7 +864,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -932,7 +932,7 @@ class Ndarray:
         Bitwise NOT across array elements.
         Return new array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -1049,7 +1049,7 @@ class Ndarray:
         """
         Return copy of array.
         """
-        array = Ndarray.__typedarray[self._dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, self._dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
@@ -1060,7 +1060,7 @@ class Ndarray:
         Return copy of array.
         Argument dtype is TypedArray data type.
         """
-        array = Ndarray.__typedarray[dtype](self.__data)
+        array = self.__data.__class__(self.__data)
         ndarray = Ndarray(array, dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
