@@ -605,10 +605,7 @@ class Ndarray:
         return self._shape[0]
 
     def __add__(self, other):
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
@@ -621,10 +618,7 @@ class Ndarray:
         return ndarray
 
     def __sub__(self, other):
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
@@ -637,10 +631,7 @@ class Ndarray:
         return ndarray
 
     def __mul__(self, other):
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
@@ -653,10 +644,7 @@ class Ndarray:
         return ndarray
 
     def __div__(self, other):
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
@@ -674,10 +662,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] + other
@@ -695,10 +680,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] - other
@@ -716,10 +698,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] * other
@@ -737,10 +716,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] / other
@@ -822,10 +798,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] & other
@@ -843,10 +816,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] | other
@@ -864,10 +834,7 @@ class Ndarray:
         Argument is a numeral or another array.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         if not hasattr(other, '__iter__'):
             for i in range(len(ndarray.__data)):
                 ndarray.__data[i] = ndarray.__data[i] ^ other
@@ -932,10 +899,7 @@ class Ndarray:
         Bitwise NOT across array elements.
         Return new array.
         """
-        array = self.__data.__class__(self.__data)
-        ndarray = Ndarray(array, self._dtype)
-        ndarray._shape = self._shape
-        ndarray._indices = self._indices
+        ndarray = self.copy()
         for i in range(len(ndarray.__data)):
             ndarray.__data[i] = ~self.__data[i]
         return ndarray
