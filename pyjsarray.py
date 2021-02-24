@@ -1024,7 +1024,7 @@ class Ndarray:
         Return copy of array.
         Argument dtype is TypedArray data type.
         """
-        array = self.__data.__class__(self.__data)
+        array = Ndarray.__typedarray[dtype](self.__data)
         ndarray = Ndarray(array, dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
