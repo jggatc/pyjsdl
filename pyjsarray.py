@@ -1019,6 +1019,15 @@ class Ndarray:
         ndarray._indices = self._indices
         return ndarray
 
+    def empty(self):
+        """
+        Return empty copy of array.
+        """
+        ndarray = Ndarray(len(self.__data), self._dtype)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        return ndarray
+
     def astype(self, dtype):
         """
         Return copy of array.
