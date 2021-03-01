@@ -442,9 +442,16 @@ class Ndarray:
             self._shape = (dim,)
             self._indices = (self._shape[0],)
         elif isinstance(dim, list):
-            self.__data = Ndarray.__typedarray[dtype](dim)
-            self._shape = (len(dim),)
-            self._indices = (self._shape[0],)
+            if not (len(dim)>0 and isinstance(dim[0], list)):
+                self.__data = Ndarray.__typedarray[dtype](dim)
+                self._shape = (len(dim),)
+                self._indices = (self._shape[0],)
+            else:
+                _dat = self._lflatten(dim)
+                _dim = self._lshape(dim)
+                self.__data = Ndarray.__typedarray[dtype](list(_dat))
+                self._shape = (len(self.__data),)
+                self.setshape(tuple(_dim))
         else:
             self.__data = dim
             self._shape = (len(dim),)
@@ -468,6 +475,20 @@ class Ndarray:
         """
         self.setshape(dim)
         return None
+
+    def _lflatten(self, l):
+        for el in l:
+            if isinstance(el, list):
+                for _l in self._lflatten(el):
+                    yield _l
+            else:
+                yield el
+
+    def _lshape(self, l):
+        _l = l
+        while isinstance(_l, list):
+            yield len(_l)
+            _l = _l[0]
 
     def __getitem__(self, index):
         if hasattr(index, '__len__'):
