@@ -582,45 +582,10 @@ class Ndarray:
                 index += 1
 
     def __str__(self):
-        def array_str(array, width, strval):
-            alst = []
-            if len(array._shape) == 1:
-                alst.append('[')
-                alst.extend([strval % (width,val) for val in array])
-#                    alst.extend(["{0:>{1}} ".format(val,width) for val in array])
-                    #pyjs-O {0:>{1}} width > NaN?
-                alst[-1] = alst[-1].rstrip()
-                alst.append(']')
-            else:
-                alst.append('[')
-                for a in array:
-                    alst.extend( array_str(a,width,strval) )
-                alst.append(']')
-            return alst
-        if self._dtype < 7:
-            alst = array_str(self, len(str( max([i for i in self.__data]) )), "%*d ")
-        else:
-            alst = array_str(self, len(str( max([i for i in self.__data]) ))+7, "%*f ")
-        tab = len(self._shape)
-        i = tab
-        while True:
-            try:
-                i = alst.index('[', i)
-            except ValueError:
-                break
-            count = 0
-            while True:
-                if alst[i+count] == '[':
-                    count += 1
-                    continue
-                else:
-                    if count == 1:      #pyjs-O ' '*n > NaN
-                        alst[i] = '\n'+''.join([' ' for x in range(tab-count)])+alst[i]
-                    else:
-                        alst[i] = '\n\n'+''.join([' ' for x in range(tab-count)])+alst[i]
-                    i += count
-                    break
-        return ''.join(alst)
+        return str(self.tolist())
+
+    def __repr__(self):
+        return 'Ndarray(%s, dtype=%d)' % (str(self), self._dtype)
 
     def __len__(self):
         return self._shape[0]
