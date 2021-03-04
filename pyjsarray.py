@@ -1085,6 +1085,22 @@ class Ndarray:
         array._indices = tuple(indices)
         return array
 
+    def tolist(self):
+        def to_list(array, l):
+            if hasattr(array[0], '__iter__'):
+                if len(l) == 0:
+                    _l = l
+                else:
+                    l = [l]
+                    _l = l[0]
+                for i, a in enumerate(array):
+                    _l.append([])
+                    to_list(a, _l[i])
+            else:
+                l.extend([v for v in array])
+            return l
+        return to_list(self, [])
+
     def getArray(self):
         """
         Return JavaScript TypedArray.
