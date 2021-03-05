@@ -32,7 +32,7 @@ if sys.version_info < (3,):
     range = xrange
 
 
-class PyTypedArray:
+class PyTypedArray(object):
 
     """
     PyTypedArray is the base class that wraps the JavaScript TypedArray objects.
@@ -398,7 +398,7 @@ class PyCanvasPixelArray(PyTypedArray):
         return array
 
 
-class Ndarray:
+class Ndarray(object):
 
     __typedarray = {0: PyUint8ClampedArray,
                     1: PyUint8Array,
@@ -1082,7 +1082,7 @@ class Ndarray:
         return self.__data.getArray()
 
 
-class NP:
+class NP(object):
 
     def zeros(self, size, dtype):
         if dtype == 'i':
@@ -1103,7 +1103,7 @@ class NP:
 np = NP()
 
 
-class PyImageData:
+class PyImageData(object):
 
     def __init__(self, imagedata):
         """
@@ -1227,7 +1227,7 @@ class PyImageMatrix(Ndarray):
         return self.__imagedata.getImageData()
 
 
-class BitSet:
+class BitSet(object):
 
     """
     BitSet provides a bitset object to use in a Python-to-JavaScript application. It uses the PyUint8Array implementation of the JavaScript Uint8Array 8-bit typedarray. BitSet16 and BitSet32 stores data in PyUint16Array (16-bit) and PyUint32Array (32-bit) that implement the Uint16Array and Uint32Array typedarray. The BitSet will dynamically expand to hold the bits required, an optional width argument define number of bits the BitSet instance will initially hold.
@@ -1511,7 +1511,7 @@ class BitSet32(BitSet):
         BitSet.__init__(self, width)
 
 
-class Pyjs_Mode:
+class Pyjs_Mode(object):
 
     def __init__(self):
         self.strict, self.optimized = self._setmode()
