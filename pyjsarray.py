@@ -582,10 +582,16 @@ class Ndarray:
                 index += 1
 
     def __str__(self):
-        return str(self.tolist())
+        s = str(self.tolist())
+        s = s.replace(' [',' '*(len(self._shape)-1)+'[') \
+             .replace(']], ', ']],\n') \
+             .replace('],', '],\n') \
+             .replace(', ', ' ')
+        return s
 
     def __repr__(self):
-        return 'Ndarray(%s, dtype=%d)' % (str(self), self._dtype)
+        s = 'Ndarray(%s, dtype=%d)'
+        return s % (str(self.tolist()), self._dtype)
 
     def __len__(self):
         return self._shape[0]
