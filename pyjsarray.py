@@ -400,16 +400,6 @@ class PyCanvasPixelArray(PyTypedArray):
 
 class Ndarray(object):
 
-    __typedarray = {0: PyUint8ClampedArray,
-                    1: PyUint8Array,
-                    2: PyUint16Array,
-                    3: PyUint32Array,
-                    4: PyInt8Array,
-                    5: PyInt16Array,
-                    6: PyInt32Array,
-                    7: PyFloat32Array,
-                    8: PyFloat64Array}
-
     def __init__(self, dim, dtype=8):
         """
         Generate an N-dimensional array of TypedArray data.
@@ -426,11 +416,12 @@ class Ndarray(object):
             8: Float64Array
         """
         self._dtype = dtype
+        typedarray = self._typedarray(dtype)
         if isinstance(dim, tuple):
             size = 1
             for i in dim:
                 size *= i
-            self.__data = Ndarray.__typedarray[dtype](size)
+            self.__data = typedarray(size)
             self._shape = dim
             indices = []
             for i in self._shape:
@@ -438,24 +429,37 @@ class Ndarray(object):
                 indices.append(size)
             self._indices = tuple(indices)
         elif isinstance(dim, int):
-            self.__data = Ndarray.__typedarray[dtype](dim)
+            self.__data = typedarray(dim)
             self._shape = (dim,)
             self._indices = (self._shape[0],)
         elif isinstance(dim, list):
             if not (len(dim)>0 and isinstance(dim[0], list)):
-                self.__data = Ndarray.__typedarray[dtype](dim)
+                self.__data = typedarray(dim)
                 self._shape = (len(dim),)
                 self._indices = (self._shape[0],)
             else:
                 _dat = self._lflatten(dim)
                 _dim = self._lshape(dim)
-                self.__data = Ndarray.__typedarray[dtype](list(_dat))
+                self.__data = typedarray(list(_dat))
                 self._shape = (len(self.__data),)
                 self.setshape(tuple(_dim))
         else:
             self.__data = dim
             self._shape = (len(dim),)
             self._indices = (self._shape[0],)
+
+    @staticmethod
+    def _typedarray(dtype):
+        typedarray = {0: PyUint8ClampedArray,
+                      1: PyUint8Array,
+                      2: PyUint16Array,
+                      3: PyUint32Array,
+                      4: PyInt8Array,
+                      5: PyInt16Array,
+                      6: PyInt32Array,
+                      7: PyFloat32Array,
+                      8: PyFloat64Array}
+        return typedarray[dtype]
 
     @property
     def shape(self):        #not implemented in pyjs -O
@@ -1025,7 +1029,8 @@ class Ndarray(object):
         Return copy of array.
         Argument dtype is TypedArray data type.
         """
-        array = Ndarray.__typedarray[dtype](self.__data)
+        typedarray = self._typedarray(dtype)
+        array = typedarray(self.__data)
         ndarray = Ndarray(array, dtype)
         ndarray._shape = self._shape
         ndarray._indices = self._indices
