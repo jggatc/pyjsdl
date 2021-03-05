@@ -1051,6 +1051,9 @@ class Ndarray:
         return array
 
     def tolist(self):
+        """
+        Return array as a list.
+        """
         def to_list(array, l):
             if hasattr(array[0], '__iter__'):
                 if len(l) == 0:
