@@ -585,17 +585,50 @@ class Ndarray(object):
                 yield self.__data[index]
                 index += 1
 
+    def _array_dim(self):
+        if self._dtype < 7:
+            vmax = len(str(max(self.__data)))
+            vmin = len(str(min(self.__data)))
+            vlen = {True:vmax, False:vmin}[vmax>vmin]
+            vfmt = '%*d'
+        else:
+            vlen = max([len('%0.4f'%v) for v in self.__data])
+            vfmt = '%*.4f'
+        return vlen, vfmt
+
+    def _array_str(self, array, vlen, vfmt, vstr):
+        if len(array._shape) == 1:
+            s = [vfmt % (vlen,val) for val in array]
+            vstr.append('[%s]' % ' '.join(s))
+        else:
+            for i, a in enumerate(array):
+                if i == 0:
+                    vstr.append('[')
+                else:
+                    vstr.append(' '*(len(self._shape)-len(a._shape)))
+                self._array_str(a, vlen, vfmt, vstr)
+                if i < len(array)-1:
+                    vstr.append('\n')
+                else:
+                    if vstr[-1] == ']\n':
+                        vstr[-1] = ']'
+                    if array._shape != self._shape:
+                        vstr.append(']\n')
+                    else:
+                        vstr.append(']')
+        return vstr
+
     def __str__(self):
-        s = str(self.tolist())
-        s = s.replace(' [',' '*(len(self._shape)-1)+'[') \
-             .replace(']], ', ']],\n') \
-             .replace('],', '],\n') \
-             .replace(', ', ' ')
-        return s
+        vlen, vfmt = self._array_dim()
+        vstr = self._array_str(self, vlen, vfmt, [])
+        return ''.join(vstr)
 
     def __repr__(self):
-        s = 'Ndarray(%s, dtype=%d)'
-        return s % (str(self.tolist()), self._dtype)
+        s = str(self.tolist())
+        sl = len(self._shape)
+        for d in range(1, sl):
+            s = s.replace(' '+'['*d, '\n'+' '*(sl+8-d)+'['*d)
+        return 'Ndarray(%s, dtype=%d)' % (s, self._dtype)
 
     def __len__(self):
         return self._shape[0]
