@@ -633,305 +633,514 @@ class Ndarray(object):
     def __len__(self):
         return self._shape[0]
 
-    def __add__(self, other):
-        ndarray = self.copy()
+    def __lt__(self, other):
+        ndarray = Ndarray(len(self.__data), 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] + other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] < other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] < other_data[i]
+        return ndarray
+
+    def __le__(self, other):
+        ndarray = Ndarray(self._shape, 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] <= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] <= other_data[i]
+        return ndarray
+    
+    def __eq__(self, other):
+        ndarray = Ndarray(self._shape, 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] == other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] == other_data[i]
+        return ndarray
+    
+    def __ne__(self, other):
+        ndarray = Ndarray(self._shape, 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] != other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] != other_data[i]
+        return ndarray
+    
+    def __gt__(self, other):
+        ndarray = Ndarray(self._shape, 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] > other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] > other_data[i]
+        return ndarray
+
+    def __ge__(self, other):
+        ndarray = Ndarray(self._shape, 1)
+        ndarray._shape = self._shape
+        ndarray._indices = self._indices
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] >= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] >= other_data[i]
+        return ndarray
+
+    def __add__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] + other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] + other_data[i]
         return ndarray
 
     def __sub__(self, other):
-        ndarray = self.copy()
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] - other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] - other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] - other_data[i]
         return ndarray
 
     def __mul__(self, other):
-        ndarray = self.copy()
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] * other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] * other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] * other_data[i]
         return ndarray
 
     def __div__(self, other):
-        ndarray = self.copy()
+        return self.__truediv__(other)
+
+    def __truediv__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] / other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] / other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] / other_data[i]
         return ndarray
 
-    def add(self, other):
-        """
-        Add across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
+    def __floordiv__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] + other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] // other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] + other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] // other_data[i]
         return ndarray
 
-    def sub(self, other):
-        """
-        Subtract across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
+    def __divmod__(self, other):
+        return self.__floordiv__(other), self.__mod__(other)
+
+    def __mod__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] - other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] % other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] - other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] % other_data[i]
         return ndarray
 
-    def mul(self, other):
-        """
-        Multiply across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
+    def __pow__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] * other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] ** other
         else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] * other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] ** other_data[i]
         return ndarray
 
-    def div(self, other):
-        """
-        Divide across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
-        if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] / other
-        else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] / other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+    def __neg__(self):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        for i in range(len(data)):
+            ndarray_data[i] = -data[i]
         return ndarray
 
-    def iadd(self, other):
-        """
-        Add across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] + other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] + other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def isub(self, other):
-        """
-        Subtract across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] - other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] - other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def imul(self, other):
-        """
-        Multiply across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] * other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] * other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def idiv(self, other):
-        """
-        Divide across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] / other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] / other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def bitwise_and(self, other):
-        """
-        Bitwise AND across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
+    def __pos__(self):
         ndarray = self.copy()
-        if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] & other
-        else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] & other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
         return ndarray
 
-    def bitwise_or(self, other):
-        """
-        Bitwise OR across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
-        if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] | other
-        else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] | other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
+    def __abs__(self):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        for i in range(len(data)):
+            if data[i] < 0:
+                ndarray_data[i] = -data[i]
         return ndarray
 
-    def bitwise_xor(self, other):
-        """
-        Bitwise XOR across array elements.
-        Argument is a numeral or another array.
-        Return new array.
-        """
-        ndarray = self.copy()
-        if not hasattr(other, '__iter__'):
-            for i in range(len(ndarray.__data)):
-                ndarray.__data[i] = ndarray.__data[i] ^ other
-        else:
-            if ndarray._shape == other._shape:
-                for i in range(len(ndarray.__data)):
-                    ndarray.__data[i] = ndarray.__data[i] ^ other.__data[i]
+    def __matmul__(self, other):
+        _other = self._get_array(other)
+        x_dim = len(self._shape)
+        y_dim = len(_other._shape)
+        if x_dim != y_dim:
+            raise ValueError('incompatible array shapes for matmul')
+        if x_dim == 1:
+            if self._shape[0] == _other._shape[0]:
+                data = self.__data
+                other_data = _other.__data
+                result = 0
+                for i in range(len(data)):
+                    result += (data[i] * other_data[i])
+                return result
             else:
-                raise TypeError("array shapes are not compatible")
+                raise ValueError('incompatible array shapes for matmul')
+        xshape = self._shape[-2:]
+        yshape = _other._shape[-2:]
+        if xshape[1] == yshape[0]:
+            m = xshape[1]
+            n = xshape[0]
+            p = yshape[1]
+            d = self._shape[:-2]
+            d_len = 1
+            for v in d:
+                d_len*=v
+        else:
+            raise ValueError('incompatible array shapes for matmul')
+        _data = self.__data.__class__(d_len*n*p)
+        array = Ndarray(_data, self._dtype)
+        array.setshape(d+(n,p))
+        if x_dim == 2:
+            arrays = [(self, _other, array)]
+        elif x_dim == 3:
+            arrays = [(self[i], _other[i], array[i])
+              for i in range(d[0])]
+        elif x_dim == 4:
+            arrays = [(self[i,j], _other[i,j], array[i,j])
+              for i,j in [(i,j) for i in range(d[0]) for j in range(d[1])]]
+        elif x_dim == 5:
+            arrays = [(self[i,j,k], _other[i,j,k], array[i,j,k])
+              for i,j,k in [(i,j,k) for i in range(d[0]) for j in range(d[1]) for k in range(d[2])]]
+        else:
+            raise ValueError('incompatible array shapes for matmul')
+        for _x, _y, _array in arrays:
+            _x_data = _x.__data
+            _y_data = _y.__data
+            _array_data = _array.__data
+            for i in range(n):
+                for j in range(p):
+                    result = 0
+                    for k in range(m):
+                        result += (_x_data[i*m+k] * _y_data[k*p+j])
+                    _array_data[i*p+j] = result
+        return array
+
+    def __iadd__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] += other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] += other_data[i]
+        return self
+
+    def __isub__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] -= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] -= other_data[i]
+        return self
+
+    def __imul__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] *= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] *= other_data[i]
+        return self
+
+    def __idiv__(self, other):
+        return self.__itruediv__(other)
+
+    def __itruediv__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] /= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] /= other_data[i]
+        return self
+
+    def __ifloordiv__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] //= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] //= other_data[i]
+        return self
+
+    def __imod__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] %= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] %= other_data[i]
+        return self
+
+    def __ipow__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] **= other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] **= other_data[i]
+        return self
+
+    def __lshift__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] << other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] << other_data[i]
         return ndarray
 
-    def bitwise_iand(self, other):
-        """
-        Bitwise AND across array elements in-place.
-        Argument is a numeral or another array.
-        """
+    def __rshift__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
         if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] & other
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] >> other
         else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] & other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def bitwise_ior(self, other):
-        """
-        Bitwise OR across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] | other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] | other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def bitwise_ixor(self, other):
-        """
-        Bitwise XOR across array elements in-place.
-        Argument is a numeral or another array.
-        """
-        if not hasattr(other, '__iter__'):
-            for i in range(len(self.__data)):
-                self.__data[i] = self.__data[i] ^ other
-        else:
-            if self._shape == other._shape:
-                for i in range(len(self.__data)):
-                    self.__data[i] = self.__data[i] ^ other.__data[i]
-            else:
-                raise TypeError("array shapes are not compatible")
-        return None
-
-    def bitwise_not(self):
-        """
-        Bitwise NOT across array elements.
-        Return new array.
-        """
-        ndarray = self.copy()
-        for i in range(len(ndarray.__data)):
-            ndarray.__data[i] = ~self.__data[i]
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] >> other_data[i]
         return ndarray
+
+    def __and__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] & other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] & other_data[i]
+        return ndarray
+
+    def __or__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] | other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] | other_data[i]
+        return ndarray
+
+    def __xor__(self, other):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] ^ other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                ndarray_data[i] = data[i] ^ other_data[i]
+        return ndarray
+
+    def __ilshift__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] = data[i] << other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] = data[i] << other_data[i]
+        return self
+
+    def __irshift__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] = data[i] >> other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] = data[i] >> other_data[i]
+        return self
+
+    def __iand__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] = data[i] & other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] = data[i] & other_data[i]
+        return self
+
+    def __ior__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] = data[i] | other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] = data[i] | other_data[i]
+        return self
+
+    def __ixor__(self, other):
+        data = self.__data
+        if not hasattr(other, '__iter__'):
+            for i in range(len(data)):
+                data[i] = data[i] ^ other
+        else:
+            other_data = self._get_data(other)
+            for i in range(len(data)):
+                data[i] = data[i] ^ other_data[i]
+        return self
+
+    def __invert__(self):
+        ndarray = self.empty()
+        ndarray_data = ndarray.__data
+        data = self.__data
+        for i in range(len(data)):
+            ndarray_data[i] = ~data[i]
+        return ndarray
+
+    def _get_data(self, other):
+        if not isinstance(other, Ndarray):
+            if isinstance(other, list):
+                other = Ndarray(other, self._dtype)
+            else:
+                other = Ndarray(list(other), self._dtype)
+        if self._shape != other._shape:
+            raise TypeError("array shapes are not compatible")
+        return other.__data
+
+    def _get_array(self, other):
+        if not isinstance(other, Ndarray):
+            if isinstance(other, list):
+                other = Ndarray(other, self._dtype)
+            else:
+                other = Ndarray(list(other), self._dtype)
+        return other
+
+    def cmp(self, operator, other):
+        """
+        Comparison operation across array elements.
+        Arguments include operator ('=='...) and int/array.
+        Return comparison array.
+        """
+        ops = {'<':  lambda s,o:s.__lt__(o), '<=': lambda s,o:s.__le__(o),
+               '==': lambda s,o:s.__eq__(o), '!=': lambda s,o:s.__ne__(o),
+               '>':  lambda s,o:s.__gt__(o), '>=': lambda s,o:s.__ge__(o)}
+        return ops[operator](self, other)
+
+    def matmul(self, other):
+        """
+        Matrix multiplication.
+        Argument is an int or array.
+        Return matrix multiplied array.
+        """
+        return self.__matmul__(other)
 
     def setshape(self, *dim):
         """
@@ -1565,4 +1774,3 @@ class Pyjs_Mode(object):
             return False, True
 
 pyjs_mode = Pyjs_Mode()
-
