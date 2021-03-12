@@ -2,7 +2,12 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from pyjsdl.surface import Surface
-from pyjsdl.pyjsarray import PyUint8ClampedArray, PyUint8Array, PyUint32Array, Ndarray, PyImageData, PyImageMatrix
+from pyjsdl.pyjsarray import Ndarray
+from pyjsdl.pyjsarray import Uint8ClampedArray
+from pyjsdl.pyjsarray import Uint8Array
+from pyjsdl.pyjsarray import Uint32Array
+from pyjsdl.pyjsarray import ImageData
+from pyjsdl.pyjsarray import ImageMatrix
 import sys
 if sys.version_info < (3,):
     range = xrange
@@ -40,7 +45,7 @@ class Surfarray(object):
         Data array most consistent to ImageData format.
         """
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-        return PyImageMatrix(imagedata)
+        return ImageMatrix(imagedata)
 
     def array2d(self, surface, copydata=False):
         """
@@ -51,9 +56,9 @@ class Surfarray(object):
         """
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
         if not copydata:
-            return PyImageMatrixInteger(imagedata)
+            return ImageMatrixInteger(imagedata)
         else:
-            return PyImageInteger(imagedata)
+            return ImageInteger(imagedata)
 
     def array3d(self, surface, copydata=False):
         """
@@ -64,9 +69,9 @@ class Surfarray(object):
         """
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
         if not copydata:
-            return PyImageMatrixRGB(imagedata)
+            return ImageMatrixRGB(imagedata)
         else:
-            return PyImageRGB(imagedata)
+            return ImageRGB(imagedata)
 
     def array_alpha(self, surface, copydata=False):
         """
@@ -77,9 +82,9 @@ class Surfarray(object):
         """
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
         if not copydata:
-            return PyImageMatrixAlpha(imagedata)
+            return ImageMatrixAlpha(imagedata)
         else:
-            return PyImageAlpha(imagedata)
+            return ImageAlpha(imagedata)
 
     def make_surface(self, array):
         """
@@ -101,7 +106,7 @@ class Surfarray(object):
         except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
             imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
             if len(array._shape) == 2:
-                array2d = PyImageMatrix(imagedata)
+                array2d = ImageMatrix(imagedata)
                 for y in range(array2d.getHeight()):
                     for x in range(array2d.getWidth()):
                         value = array[x,y]
@@ -119,7 +124,7 @@ class Surfarray(object):
         self.use_arraytype = lambda *arg: None
 
 
-class PyImageMatrixRGB(PyImageMatrix):
+class ImageMatrixRGB(ImageMatrix):
     """
     Array consists of pixel data arranged by width/height in RGB format.
     Interface to ImageData.
@@ -129,29 +134,29 @@ class PyImageMatrixRGB(PyImageMatrix):
         index = list(index)
         index[0], index[1] = index[1], index[0]
         index = tuple(index)
-        return PyImageMatrix.__getitem__(self, index)
+        return ImageMatrix.__getitem__(self, index)
 
     def __setitem__(self, index, value):
         index = list(index)
         index[0], index[1] = index[1], index[0]
         index = tuple(index)
-        return PyImageMatrix.__setitem__(self, index, value)
+        return ImageMatrix.__setitem__(self, index, value)
 
 
-class PyImageRGB(Ndarray):
+class ImageRGB(Ndarray):
     """
     Array consists of pixel data arranged by width/height in RGB format.
     Array data derived from ImageData.
     """
 
     def __init__(self, imagedata):
-        self.__imagedata = PyImageData(imagedata)
+        self.__imagedata = ImageData(imagedata)
         array = Ndarray(self.__imagedata.data)
         array.setshape(self.__imagedata.height,self.__imagedata.width,4)
         try:
-            data = PyUint8ClampedArray(self.__imagedata.height*self.__imagedata.width*3)
+            data = Uint8ClampedArray(self.__imagedata.height*self.__imagedata.width*3)
         except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
-            data = PyUint8Array(self.__imagedata.height*self.__imagedata.width*3)
+            data = Uint8Array(self.__imagedata.height*self.__imagedata.width*3)
         index = 0
         for x in range(self.__imagedata.width):
             for y in range(self.__imagedata.height):
@@ -174,33 +179,33 @@ class PyImageRGB(Ndarray):
         return self.__imagedata.getImageData()
 
 
-class PyImageMatrixAlpha(PyImageMatrix):
+class ImageMatrixAlpha(ImageMatrix):
     """
     Array consists of pixel data arranged by width/height of pixel alpha value.
     Interface to ImageData.
     """
 
     def __getitem__(self, index):
-        return PyImageMatrix.__getitem__(self, (index[1],index[0],3))
+        return ImageMatrix.__getitem__(self, (index[1],index[0],3))
 
     def __setitem__(self, index, value):
-        return PyImageMatrix.__setitem__(self, (index[1],index[0],3), value)
+        return ImageMatrix.__setitem__(self, (index[1],index[0],3), value)
 
 
-class PyImageAlpha(Ndarray):
+class ImageAlpha(Ndarray):
     """
     Array consists of pixel data arranged by width/height of pixel alpha value.
     Array data derived from ImageData.
     """
 
     def __init__(self, imagedata):
-        self.__imagedata = PyImageData(imagedata)
+        self.__imagedata = ImageData(imagedata)
         array = Ndarray(self.__imagedata.data)
         array.setshape(self.__imagedata.height,self.__imagedata.width,4)
         try:
-            data = PyUint8ClampedArray(self.__imagedata.height*self.__imagedata.width)
+            data = Uint8ClampedArray(self.__imagedata.height*self.__imagedata.width)
         except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
-            data = PyUint8Array(self.__imagedata.height*self.__imagedata.width)
+            data = Uint8Array(self.__imagedata.height*self.__imagedata.width)
         index = 0
         for x in range(self.__imagedata.width):
             for y in range(self.__imagedata.height):
@@ -221,31 +226,31 @@ class PyImageAlpha(Ndarray):
         return self.__imagedata.getImageData()
 
 
-class PyImageMatrixInteger(PyImageMatrix):
+class ImageMatrixInteger(ImageMatrix):
     """
     Array consists of pixel data arranged by width/height in integer color format.
     Interface to ImageData.
     """
 
     def __getitem__(self, index):
-        value = PyImageMatrix.__getitem__(self, (index[1],index[0]))
+        value = ImageMatrix.__getitem__(self, (index[1],index[0]))
         return value[0]<<16 | value[1]<<8 | value[2] | value[3]<<24
 
     def __setitem__(self, index, value):
-        return PyImageMatrix.__setitem__(self, (index[1],index[0]), (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, value>>24 & 0xff))
+        return ImageMatrix.__setitem__(self, (index[1],index[0]), (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, value>>24 & 0xff))
 
 
-class PyImageInteger(Ndarray):
+class ImageInteger(Ndarray):
     """
     Array consists of pixel data arranged by width/height in integer color format.
     Array data derived from ImageData.
     """
 
     def __init__(self, imagedata):
-        self.__imagedata = PyImageData(imagedata)
+        self.__imagedata = ImageData(imagedata)
         array = Ndarray(self.__imagedata.data)
         array.setshape(self.__imagedata.height,self.__imagedata.width,4)
-        data = PyUint32Array(self.__imagedata.height*self.__imagedata.width)
+        data = Uint32Array(self.__imagedata.height*self.__imagedata.width)
         index = 0
         for x in range(self.__imagedata.width):
             for y in range(self.__imagedata.height):

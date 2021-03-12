@@ -26,33 +26,30 @@
 #Project Site: http://gatc.ca/
 
 from math import ceil as _ceil
-from __pyjamas__ import JS
+try:
+    from __pyjamas__ import JS
+except ImportError:
+    pass
 import sys
 if sys.version_info < (3,):
     range = xrange
 
 
-class PyTypedArray(object):
+class TypedArray(object):
 
     """
-    PyTypedArray is the base class that wraps the JavaScript TypedArray objects.
-    The derived objects provides an interface to the JavaScript array objects:
-        PyUint8ClampedArray     [Uint8ClampedArray]
-        PyUint8Array            [Uint8Array]
-        PyUint16Array           [Uint16Array]
-        PyUint32Array           [Uint32Array]
-        PyInt8Array             [Int8Array]
-        PyInt16Array            [Int16Array]
-        PyInt32Array            [Int32Array]
-        PyFloat32Array          [Float32Array]
-        PyFloat64Array          [Float64Array]
-     The PyTypedArray interface include index syntax, iteration, and math operations.
-     The module contains an Ndarray class to instantiate N-dimensional arrays, and PyImageData and PyImageMatrix classes that provide an interface to canvas ImageData.
+    TypedArray is the base class that wraps the JavaScript TypedArray objects.
+    The derived objects provides an interface to the JavaScript array objects.
+    Typedarray implemented: Uint8ClampedArray, Uint8Array, Uint16Array, Uint32Array, Int8Array, Int16Array, Int32Array, Float32Array, Float64Array.
+     The TypedArray interface include index syntax, iteration, and math operations.
+     The module contains an Ndarray class to instantiate N-dimensional arrays, ImageData and ImageMatrix classes that provide an interface to canvas ImageData, and BitSet classes that implement a bit array.
     """
+
+    _array = None
 
     def __init__(self, data=None, offset=None, length=None, typedarray=None):
         """
-        The PyTypedArray is instantiated with either the array size, an array of the TypedArray or Python type, or an existing ArrayBuffer to view, which creates a new TypedArray of size and included data as the specified type. Optional arguments include offset index at which ArrayBuffer data is inserted and length of an ArrayBuffer.
+        The TypedArray object is instantiated with either the array size, an array of TypedArray or Python type, or an existing ArrayBuffer to view, which creates a new TypedArray of size and included data as the specified type. Optional arguments include offset index at which ArrayBuffer data is inserted and length of an ArrayBuffer.
         """
         if data:
             if isinstance(data, int):
@@ -66,7 +63,7 @@ class PyTypedArray(object):
                 else:
                     data = [dat.valueOf() for dat in data]
                     self.__data = JS("""new @{{typedarray}}(@{{data}}['getArray']())""")
-            elif isinstance(data, PyTypedArray):
+            elif isinstance(data, TypedArray):
                 self.__data = JS("""new @{{typedarray}}(@{{data}}['__data'])""")
             else:   #TypedArray or ArrayBuffer
                 if offset is None and length is None:
@@ -81,15 +78,28 @@ class PyTypedArray(object):
         else:
             self.__data = None
 
+    @classmethod
+    def _init(cls):
+        if not cls._array:
+            cls._array = { 'Uint8ClampedArray': Uint8ClampedArray,
+                           'Uint8Array': Uint8Array,
+                           'Uint16Array': Uint16Array,
+                           'Uint32Array': Uint32Array,
+                           'Int8Array': Int8Array,
+                           'Int16Array': Int16Array,
+                           'Int32Array': Int32Array,
+                           'Float32Array': Float32Array,
+                           'Float64Array': Float64Array }
+
     def __str__(self):
         """
-        Return string representation of PyTypedArray object.
+        Return string representation of TypedArray object.
         """
         return self.__data.toString()
 
     def __iter__(self):
         """
-        Iterate over PyTypedArray object.
+        Iterate over TypedArray object.
         """
         index = 0
         while index < self.__data.length:
@@ -129,7 +139,7 @@ class PyTypedArray(object):
             else:
                 data = [dat.valueOf() for dat in data]
                 self.__data.set(data.getArray(), offset)
-        elif isinstance(data, PyTypedArray):
+        elif isinstance(data, TypedArray):
             self.__data.set(data.__data, offset)
 
     def subarray(self, begin=0, end=None):
@@ -187,14 +197,18 @@ class PyTypedArray(object):
         return None
 
 
-class PyUint8ClampedArray(PyTypedArray):
+TypedArray._init()
+
+
+class Uint8ClampedArray(TypedArray):
     """
-    Create a PyTypedArray interface to Uint8ClampedArray.
+    Create a TypedArray interface to Uint8ClampedArray.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Uint8ClampedArray)
+            typedarray = TypedArray._array['Uint8ClampedArray']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):     #-O/-S:TypeError/AttributeError
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -202,14 +216,15 @@ class PyUint8ClampedArray(PyTypedArray):
                 raise
 
 
-class PyUint8Array(PyTypedArray):
+class Uint8Array(TypedArray):
     """
-    Create a PyTypedArray interface to Uint8Array.
+    Create a TypedArray interface to Uint8Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Uint8Array)
+            typedarray = TypedArray._array['Uint8Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -217,14 +232,15 @@ class PyUint8Array(PyTypedArray):
                 raise
 
 
-class PyUint16Array(PyTypedArray):
+class Uint16Array(TypedArray):
     """
-    Create a PyTypedArray interface to Uint16Array.
+    Create a TypedArray interface to Uint16Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Uint16Array)
+            typedarray = TypedArray._array['Uint16Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -232,14 +248,15 @@ class PyUint16Array(PyTypedArray):
                 raise
 
 
-class PyUint32Array(PyTypedArray):
+class Uint32Array(TypedArray):
     """
-    Create a PyTypedArray interface to Uint32Array.
+    Create a TypedArray interface to Uint32Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Uint32Array)
+            typedarray = TypedArray._array['Uint32Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -247,14 +264,15 @@ class PyUint32Array(PyTypedArray):
                 raise
 
 
-class PyInt8Array(PyTypedArray):
+class Int8Array(TypedArray):
     """
-    Create a PyTypedArray interface to Int8Array.
+    Create a TypedArray interface to Int8Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Int8Array)
+            typedarray = TypedArray._array['Int8Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -262,14 +280,15 @@ class PyInt8Array(PyTypedArray):
                 raise
 
 
-class PyInt16Array(PyTypedArray):
+class Int16Array(TypedArray):
     """
-    Create a PyTypedArray interface to Int16Array.
+    Create a TypedArray interface to Int16Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Int16Array)
+            typedarray = TypedArray._array['Int16Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -277,14 +296,15 @@ class PyInt16Array(PyTypedArray):
                 raise
 
 
-class PyInt32Array(PyTypedArray):
+class Int32Array(TypedArray):
     """
-    Create a PyTypedArray interface to Int32Array.
+    Create a TypedArray interface to Int32Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Int32Array)
+            typedarray = TypedArray._array['Int32Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -292,35 +312,15 @@ class PyInt32Array(PyTypedArray):
                 raise
 
 
-class PyFloat32Array(PyTypedArray):
+class Float32Array(TypedArray):
     """
-    Create a PyTypedArray interface to Float32Array.
-    """
-
-    def __init__(self, data=None, offset=None, length=None):
-        try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Float32Array)
-        except (TypeError, AttributeError):
-            if isUndefined(typedarray):
-                raise NotImplementedError("TypedArray data type not implemented")
-            else:
-                raise
-
-    def __getitem__(self, index):
-        """
-        Get TypedArray element by index.
-        """
-        return JS("""@{{self}}['__data'][@{{index}}];""")
-
-
-class PyFloat64Array(PyTypedArray):
-    """
-    Create a PyTypedArray interface to Float64Array.
+    Create a TypedArray interface to Float32Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
         try:
-            PyTypedArray.__init__(self, data, offset, length, typedarray=Float64Array)
+            typedarray = TypedArray._array['Float32Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
         except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
@@ -334,22 +334,44 @@ class PyFloat64Array(PyTypedArray):
         return JS("""@{{self}}['__data'][@{{index}}];""")
 
 
-class PyCanvasPixelArray(PyTypedArray):
+class Float64Array(TypedArray):
     """
-    Create a PyTypedArray interface to CanvasPixelArray.
+    Create a TypedArray interface to Float64Array.
     """
 
     def __init__(self, data=None, offset=None, length=None):
-        PyTypedArray.__init__(self, data, offset, length)
+        try:
+            typedarray = TypedArray._array['Float64Array']
+            TypedArray.__init__(self, data, offset, length, typedarray)
+        except (TypeError, AttributeError):
+            if isUndefined(typedarray):
+                raise NotImplementedError("TypedArray data type not implemented")
+            else:
+                raise
+
+    def __getitem__(self, index):
+        """
+        Get TypedArray element by index.
+        """
+        return JS("""@{{self}}['__data'][@{{index}}];""")
+
+
+class CanvasPixelArray(TypedArray):
+    """
+    Create a TypedArray interface to CanvasPixelArray.
+    """
+
+    def __init__(self, data=None, offset=None, length=None):
+        TypedArray.__init__(self, data, offset, length)
         self._superArray = None
         self._superIndex = (0,0)
 
     def __iter__(self):
         """
-        Iterate over PyTypedArray object.
+        Iterate over TypedArray object.
         """
         if not self._superArray:
-            PyTypedArray.__iter__(self)
+            TypedArray.__iter__(self)
         else:
             index = self._superIndex[0]
             while index < self._superIndex[1]:
@@ -361,7 +383,7 @@ class PyCanvasPixelArray(PyTypedArray):
         Get TypedArray element by index.
         """
         if not self._superArray:
-            return PyTypedArray.__getitem__(self, index)
+            return TypedArray.__getitem__(self, index)
         else:
             return self._superArray.__getitem__(index+self._superIndex[0])
 
@@ -370,7 +392,7 @@ class PyCanvasPixelArray(PyTypedArray):
         Set TypedArray element by index.
         """
         if not self._superArray:
-            PyTypedArray.__setitem__(self, index, value)
+            TypedArray.__setitem__(self, index, value)
         else:
             self._superArray.__setitem__(index+self._superIndex[0], value)
         return None
@@ -450,15 +472,15 @@ class Ndarray(object):
 
     @staticmethod
     def _typedarray(dtype):
-        typedarray = {0: PyUint8ClampedArray,
-                      1: PyUint8Array,
-                      2: PyUint16Array,
-                      3: PyUint32Array,
-                      4: PyInt8Array,
-                      5: PyInt16Array,
-                      6: PyInt32Array,
-                      7: PyFloat32Array,
-                      8: PyFloat64Array}
+        typedarray = {0: Uint8ClampedArray,
+                      1: Uint8Array,
+                      2: Uint16Array,
+                      3: Uint32Array,
+                      4: Int8Array,
+                      5: Int16Array,
+                      6: Int32Array,
+                      7: Float32Array,
+                      8: Float64Array}
         return typedarray[dtype]
 
     @property
@@ -1205,16 +1227,16 @@ class Ndarray(object):
         """
         if isinstance(data, (list,tuple)):
             if pyjs_mode.optimized:
-                if isinstance(data[0], (list,tuple,PyTypedArray)):
+                if isinstance(data[0], (list,tuple,TypedArray)):
                     data = [value for dat in data for value in dat]
             else:
-                if not isinstance(data[0], (list,tuple,PyTypedArray)):
+                if not isinstance(data[0], (list,tuple,TypedArray)):
                     data = [dat.valueOf() for dat in data]
                 else:
                     data = [value.valueOf() for dat in data for value in dat]
             dataLn = len(data)
             data = data.getArray()
-        elif isinstance(data, (Ndarray,PyTypedArray)):
+        elif isinstance(data, (Ndarray,TypedArray)):
             data = data.getArray()
             dataLn = data.length
         else:
@@ -1340,7 +1362,7 @@ class NP(object):
         return array.swapaxes(axis1, axis2)
 
     def append(self, array, values):
-        if isinstance(values[0], (list,tuple,PyTypedArray)):
+        if isinstance(values[0], (list,tuple,TypedArray)):
             values = [value for dat in values for value in dat]
         newarray = Ndarray(len(array)+len(values), array._dtype)
         newarray.__data.set(array.__data)
@@ -1350,7 +1372,7 @@ class NP(object):
 np = NP()
 
 
-class PyImageData(object):
+class ImageData(object):
 
     def __init__(self, imagedata):
         """
@@ -1358,10 +1380,10 @@ class PyImageData(object):
         The argument required is the ImageData instance to be accessed.
         """
         self.__imagedata = imagedata
-        if not isUndefined(Uint8ClampedArray):
-            self.data = PyUint8ClampedArray()
+        if not isUndefined(TypedArray._array['Uint8ClampedArray']):
+            self.data = Uint8ClampedArray()
         else:
-            self.data = PyCanvasPixelArray()
+            self.data = CanvasPixelArray()
         self.data.__data = imagedata.data
         self.width = imagedata.width
         self.height = imagedata.height
@@ -1373,15 +1395,15 @@ class PyImageData(object):
         return self.__imagedata
 
 
-class PyImageMatrix(Ndarray):
+class ImageMatrix(Ndarray):
 
     def __init__(self, imagedata):
         """
         Provides an interface to canvas ImageData as an Ndarray array.
         The argument required is the ImageData instance to be accessed.
         """
-        self.__imagedata = PyImageData(imagedata)
-        if isinstance(self.__imagedata.data, PyUint8ClampedArray):
+        self.__imagedata = ImageData(imagedata)
+        if isinstance(self.__imagedata.data, Uint8ClampedArray):
             Ndarray.__init__(self, self.__imagedata.data, 0)
         else:     #ie10 supports typedarray, not uint8clampedarray
             Ndarray.__init__(self, self.__imagedata.data, 1)
@@ -1477,12 +1499,12 @@ class PyImageMatrix(Ndarray):
 class BitSet(object):
 
     """
-    BitSet provides a bitset object to use in a Python-to-JavaScript application. It uses the PyUint8Array implementation of the JavaScript Uint8Array 8-bit typedarray. BitSet16 and BitSet32 stores data in PyUint16Array (16-bit) and PyUint32Array (32-bit) that implement the Uint16Array and Uint32Array typedarray. The BitSet will dynamically expand to hold the bits required, an optional width argument define number of bits the BitSet instance will initially hold.
+    BitSet provides a bitset object to use in a Python-to-JavaScript application. The object stores data in a JavaScript Uint8Array 8-bit typedarray. BitSet16 and BitSet32 stores data in Uint16Array (16-bit) and Uint32Array (32-bit) typedarray. The BitSet will dynamically expand to hold the bits required, an optional width argument define number of bits the BitSet instance will initially hold.
     """
 
     __bit = 8
     __bitmask = None
-    __typedarray = PyUint8Array
+    __typedarray = Uint8Array
 
     def __init__(self, width=None):
         if not self.__class__.__bitmask:
@@ -1736,11 +1758,11 @@ class BitSet(object):
 
 class BitSet16(BitSet):
     """
-    BitSet using PyUint16Array.
+    BitSet using Uint16Array typedarray.
     """
     __bit = 16
     __bitmask = None
-    __typedarray = PyUint16Array
+    __typedarray = Uint16Array
 
     def __init__(self, width=None):
         BitSet.__init__(self, width)
@@ -1748,14 +1770,24 @@ class BitSet16(BitSet):
 
 class BitSet32(BitSet):
     """
-    BitSet using PyUint32Array.
+    BitSet using Uint32Array typedarray.
     """
     __bit = 32
     __bitmask = None
-    __typedarray = PyUint32Array
+    __typedarray = Uint32Array
 
     def __init__(self, width=None):
         BitSet.__init__(self, width)
+
+
+def typeOf(obj):
+    """
+    Return typeof obj.
+    """
+    if pyjs_mode.optimized:
+        return JS("""typeof @{{obj}};""")
+    else:
+        return JS("""typeof @{{obj}}['valueOf']();""")
 
 
 class Pyjs_Mode(object):
@@ -1774,3 +1806,20 @@ class Pyjs_Mode(object):
             return False, True
 
 pyjs_mode = Pyjs_Mode()
+
+
+#depreciated
+PyTypedArray = TypedArray
+PyUint8ClampedArray = Uint8ClampedArray
+PyUint8Array = Uint8Array
+PyUint16Array = Uint16Array
+PyUint32Array = Uint32Array
+PyInt8Array = Int8Array
+PyInt16Array = Int16Array
+PyInt32Array = Int32Array
+PyFloat32Array = Float32Array
+PyFloat64Array = Float64Array
+PyCanvasPixelArray = CanvasPixelArray
+PyImageData = ImageData
+PyImageMatrix = ImageMatrix
+
