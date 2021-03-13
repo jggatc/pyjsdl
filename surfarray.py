@@ -164,9 +164,9 @@ class ImageRGB(Ndarray):
                     data[index] = array[y,x,i]
                     index += 1
         try:
-            Ndarray.__init__(self, data, 0)
+            Ndarray.__init__(self, data, 'uint8c')
         except NotImplementedError:
-            Ndarray.__init__(self, data, 1)
+            Ndarray.__init__(self, data, 'uint8')
         self.setshape(self.__imagedata.width,self.__imagedata.height,3)
 
     def getImageData(self):
@@ -212,9 +212,9 @@ class ImageAlpha(Ndarray):
                 data[index] = array[y,x,3]
                 index += 1
         try:
-            Ndarray.__init__(self, data, 0)
+            Ndarray.__init__(self, data, 'uint8c')
         except NotImplementedError:
-            Ndarray.__init__(self, data, 1)
+            Ndarray.__init__(self, data, 'uint8')
         self.setshape(self.__imagedata.width,self.__imagedata.height)
 
     def getImageData(self):
@@ -256,7 +256,7 @@ class ImageInteger(Ndarray):
             for y in range(self.__imagedata.height):
                 data[index] = array[y,x,0]<<16 | array[y,x,1]<<8 | array[y,x,2] | array[y,x,3]<<24
                 index += 1
-        Ndarray.__init__(self, data, 3)
+        Ndarray.__init__(self, data, 'uint32')
         self.setshape(self.__imagedata.width,self.__imagedata.height)
 
     def getImageData(self):
