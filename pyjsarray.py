@@ -85,6 +85,16 @@ class TypedArray(object):
         else:
             self._data = None
 
+    filter = lambda self,func: self._array(self._data.filter(func))
+    map = lambda self,func: self._array(self._data.map(func))
+    reduce = lambda self,acc: self._array(self._data.reduce(acc))
+    slice = lambda self,i,j: self._array(self._data.slice(i,j))
+ 
+    def _array(self, array):
+        typedarray = self.__class__()
+        typedarray._data = array
+        return typedarray
+
     def __str__(self):
         """
         Return string representation of TypedArray object.
@@ -1503,9 +1513,9 @@ class BitSet(object):
     __typedarray = Uint8Array
 
     def __init__(self, width=None):
-        if not self.__class__._bitmask:
-            self.__class__._bitmask = dict([(self.__class__._bit-i-1,1<<i) for i in range(self.__class__._bit-1,-1,-1)])
-            self.__class__._bitmask[self.__class__._bit-1] = int(self.__class__._bitmask[self.__class__._bit-1])      #pyjs [1<<0] = 1L
+        if not self._bitmask:
+            self._bitmask = dict([(self._bit-i-1,1<<i) for i in range(self._bit-1,-1,-1)])
+            self._bitmask[self._bit-1] = int(self._bitmask[self._bit-1])      #pyjs [1<<0] = 1L
         if width:
             self._width = abs(width)
         else:
@@ -1516,7 +1526,13 @@ class BitSet(object):
         """
         Return string representation of BitSet object.
         """
-        return "%s" % self.__class__
+        v = {True:'1', False:'0'}
+        s = []
+        for i in range(self.size()):
+            s.append(v[self.get(i)])
+            if not (i+1)%64:
+                s.append('\n')
+        return ''.join(s)
 
     def __repr__(self):
         """
