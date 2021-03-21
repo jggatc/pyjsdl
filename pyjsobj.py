@@ -14,14 +14,15 @@ from pyjamas.ui import Event
 from pyjamas.ui.MouseListener import MouseWheelHandler
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
 from pyjamas.media.Audio import Audio
-from __pyjamas__ import JS, wnd
+try:
+    from __pyjamas__ import JS, wnd
+except ImportError:
+    pass
 
 
 def eventGetMouseWheelVelocityY(evt):
     #code from pyjs
-    JS("""
-    return Math['round'](-@{{evt}}['wheelDelta'] / 40) || 0;
-    """)
+    JS("return Math['round'](-@{{evt}}['wheelDelta'] / 40) || 0;")
 
 
 def requestAnimationFrameInit():

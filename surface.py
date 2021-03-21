@@ -4,7 +4,10 @@
 from pyjsdl.pyjsobj import HTML5Canvas
 from pyjsdl.rect import Rect, rectPool
 from pyjsdl.color import Color
-from __pyjamas__ import JS
+try:
+    from __pyjamas__ import JS
+except ImportError:
+    pass
 import sys
 if sys.version_info < (3,):
     range = xrange
@@ -191,11 +194,11 @@ class Surface(HTML5Canvas):
             return None
 
     def _getPixel(self, imagedata, index):
-        return JS("""imagedata.data[@{{index}}];""")
+        return JS("imagedata.data[@{{index}}];")
 
     def _setPixel(self, imagedata, index, dat):
         data = str(dat)
-        JS("""imagedata.data[@{{index}}]=@{{data}};""")
+        JS("imagedata.data[@{{index}}]=@{{data}};")
         return
 
     def replace_color(self, color, new_color=None):

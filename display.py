@@ -8,7 +8,6 @@ from pyjsdl.time import Time
 from pyjsdl.color import Color
 from pyjsdl import env
 from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event, requestAnimationFrameInit
-from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'
 

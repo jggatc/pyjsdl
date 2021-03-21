@@ -2,7 +2,10 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from pyjsdl import env
-from __pyjamas__ import JS
+try:
+    from __pyjamas__ import JS
+except ImportError:
+    pass
 
 __docformat__ = 'restructuredtext'
 
@@ -146,7 +149,7 @@ class Time(object):
         Code modified from pyjs.
         """
         run = lambda: obj.run()
-        JS("""$wnd['setTimeout'](function() {@{{run}}();}, @{{time}});""")
+        JS("$wnd['setTimeout'](function() {@{{run}}();}, @{{time}});")
 
 
 class _EventTimer:
@@ -169,11 +172,11 @@ class _EventTimer:
 
     def setTimeout(self):
         #Time.timeout
-        timer = JS("""$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);""")
+        timer = JS("$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);")
         self.timer = timer
 
     def clearTimeout(self):
-        JS("""$wnd['clearTimeout'](@{{self}}['timer']);""")
+        JS("$wnd['clearTimeout'](@{{self}}['timer']);")
         self.timer = None
 
     def run(self):

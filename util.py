@@ -3,7 +3,11 @@
 
 from pyjsdl.time import Time
 from pyjsdl import env
-from __pyjamas__ import JS
+try:
+    from __pyjamas__ import JS
+except ImportError:
+    pass
+
 
 class Timer(object):
     """
@@ -133,5 +137,5 @@ def call(obj, func, args=()):
     Argument obj is the object, func is the unbound method, and optional args is a tuple of arguments for the method.
     Returns the method's return value.
     """
-    return JS("""@{{func}}.apply(@{{obj}}, @{{args}}['getArray']());""")
+    return JS("@{{func}}.apply(@{{obj}}, @{{args}}['getArray']());")
 
