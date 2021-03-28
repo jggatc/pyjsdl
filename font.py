@@ -169,10 +169,10 @@ Example of font file declaration:
             self.render('x')
         self._nonimplemented_methods()
 
+    def __str__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
     def __repr__(self):
-        """
-        Return string representation of Font object.
-        """
         return "%s(%r)" % (self.__class__, self.__dict__)
 
     def render(self, text, antialias=True, color=(0,0,0), background=None, surface=None):      #optional surface for text rendering

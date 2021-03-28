@@ -49,9 +49,6 @@ class Key(object):
         return self.keyMod[self.alt][self.keyPress[self.alt]] | self.keyMod[self.ctrl][self.keyPress[self.ctrl]] | self.keyMod[self.shift][self.keyPress[self.shift]]
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.get_focused = lambda *arg: None
         self.get_pressed = lambda *arg: None
         self.set_mods = lambda *arg: None

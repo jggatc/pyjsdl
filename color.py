@@ -44,21 +44,12 @@ class Color(_Color):
             self.r,self.g,self.b,self.a = (_color>>16) & 0xff, (_color>>8) & 0xff, _color & 0xff, (_color>>24) & 0xff
 
     def __repr__(self):
-        """
-        Return string representation of Color object.
-        """
         return "(%d, %d, %d, %d)" % (self.r, self.g, self.b, self.a)
 
     def __str__(self):
-        """
-        Return string representation of Color object.
-        """
         return "rgba(%d, %d, %d, %f)" % (self.r, self.g, self.b, self.a/255.0)
 
     def __getitem__(self, index):
-        """
-        Get Color [r,g,b,a] attributes by index.
-        """
         return {0:self.r, 1:self.g, 2:self.b, 3:self.a}[index]
 
     def __setitem__(self, index, val):

@@ -118,9 +118,6 @@ class Surfarray(object):
         return None
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.use_arraytype = lambda *arg: None
 
 
@@ -170,6 +167,9 @@ class ImageRGB(Ndarray):
         self.setshape(self._imagedata.width,self._imagedata.height,3)
 
     def getImageData(self):
+        """
+        Get ImageData.
+        """
         index = 0
         for x in range(self._imagedata.height):
             for y in range(self._imagedata.width):
@@ -218,6 +218,9 @@ class ImageAlpha(Ndarray):
         self.setshape(self._imagedata.width,self._imagedata.height)
 
     def getImageData(self):
+        """
+        Get ImageData.
+        """
         index = 0
         for x in range(self._imagedata.height):
             for y in range(self._imagedata.width):
@@ -260,6 +263,9 @@ class ImageInteger(Ndarray):
         self.setshape(self._imagedata.width,self._imagedata.height)
 
     def getImageData(self):
+        """
+        Get ImageData.
+        """
         index = 0
         for x in range(self._imagedata.height):
             for y in range(self._imagedata.width):

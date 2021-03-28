@@ -221,9 +221,6 @@ class Mixer:
         self._sounds[sound._id] = sound
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.fadeout = lambda *arg: None
 
 
@@ -331,9 +328,6 @@ class Sound:
         return self._sound_object.getDuration()
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.fadeout = lambda *arg: None
         self.get_buffer = lambda *arg: None
 
@@ -475,9 +469,6 @@ class Channel:
         return self._sound
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.fadeout = lambda *arg: None
         self.queue = lambda *arg: None
         self.get_queue = lambda *arg: None

@@ -57,10 +57,10 @@ class Surface(HTML5Canvas):
         self._fill_style = None
         self._nonimplemented_methods()
 
+    def __str__(self):
+        return "%s(%d,%d)" % (self.__class__, self.width, self.height)
+
     def __repr__(self):
-        """
-        Return string representation of Surface object.
-        """
         return "%s(%d,%d)" % (self.__class__, self.width, self.height)
 
     def get_size(self):
@@ -82,6 +82,9 @@ class Surface(HTML5Canvas):
         return self.height
 
     def resize(self, width, height):
+        """
+        Resize surface.
+        """
         self.width = int(width)
         self.height = int(height)
         HTML5Canvas.resize(self, self.width, self.height)
@@ -322,9 +325,6 @@ class Surface(HTML5Canvas):
             return self.canvas.toDataURL(datatype)
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.convert = lambda *arg: self
         self.convert_alpha = lambda *arg: self
         self.set_alpha = lambda *arg: None

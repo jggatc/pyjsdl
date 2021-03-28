@@ -105,10 +105,10 @@ class Mask(object):
         for bitset in range(self.height):
             self.bit.append(BitSet(self.width))
 
+    def __str__(self):
+        return self.toString()
+
     def __repr__(self):
-        """
-        Return string representation of Mask object.
-        """
         return "%s(%r)" % (self.__class__, self.__dict__)
 
     def get_size(self):

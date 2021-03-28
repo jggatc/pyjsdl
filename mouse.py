@@ -123,9 +123,6 @@ class Mouse(object):
         return self._cursor
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.set_pos = lambda *arg: None
         self.get_focused = lambda *arg: True
 

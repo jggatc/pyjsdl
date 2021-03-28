@@ -120,30 +120,18 @@ class Rect(object):
             self.setSize(arg.width, arg.height)
 
     def __str__(self):
-        """
-        Return string representation of Rect object.
-        """
         return "<rect(%d, %d, %d, %d)>" % (self.x, self.y, self.width, self.height)
 
     def __repr__(self):
-        """
-        Return string representation of Rect object.
-        """
         return "%s(%d,%d,%d,%d)" % (self.__class__, self.x, self.y, self.width, self.height)
 
     def __getattr__(self, attr):   #not implemented in pyjs -O
-        """
-        Get Rect attributes.
-        """
         if attr in self._at:
             return self._at[attr](self)
         else:
             raise AttributeError
 
     def __setattr__(self, attr, val):   #not implemented in pyjs -O
-        """
-        Set Rect attributes.
-        """
         if attr in self._xy:
             self._xy[attr](self, val)
             return None
@@ -151,49 +139,28 @@ class Rect(object):
             raise AttributeError
 
     def __getitem__(self, key):
-        """
-        Get Rect [x,y,width,height] attributes by index.
-        """
         return [self.x, self.y, self.width, self.height][key]
 
     def __setitem__(self, key, val):
-        """
-        Set Rect [x,y,width,height] attributes by index.
-        """
         value = int(val)
         [lambda value: self.__setattr__("x", value), lambda value: self.__setattr__("y", value), lambda value: self.__setattr__("width", value), lambda value: self.__setattr__("height", value)][key](value)
 
     def __iter__(self):
-        """
-        Provides iterator to Rect.
-        """
         return iter([self.x, self.y, self.width, self.height])
 
     def __len__(self):
         return 4
 
     def __bool__(self):
-        """
-        Rect nonzero check.
-        """
         return self.width and self.height
 
     def __nonzero__(self):
-        """
-        Rect nonzero check.
-        """
         return self.width and self.height
 
     def __eq__(self, other):
-        """
-        Rects equality check.
-        """
         return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height    #pyjs compares rect==tuple not __eq__
 
     def __ne__(self, other):
-        """
-        Rects equality check.
-        """
         return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height   #pyjs compares rect==tuple not __eq__
 
     def setLocation(self, x, y):
@@ -253,6 +220,9 @@ class Rect(object):
         return None
 
     def clip(self, rect):
+        """
+        Return Rect representing this rect clipped by rect.
+        """
         if not self.intersects(rect):
             return Rect(0,0,0,0)
         else:
@@ -267,6 +237,9 @@ class Rect(object):
             return Rect(x, y, w, h)
 
     def intersection(self, rect):
+        """
+        Return Rect representing this rect clipped by rect.
+        """
         return self.clip(rect)
 
     def contains(self, rect):
@@ -276,6 +249,9 @@ class Rect(object):
         return (self.x <= rect.x and (self.x+self.width) >= (rect.x+rect.width) and self.y <= rect.y and (self.y+self.height) >= (rect.y+rect.height))
 
     def intersects(self, rect):
+        """
+        Check if rect intersects this rect.
+        """
         return (self.x < (rect.x+rect.width) and rect.x < (self.x+self.width) and self.y < (rect.y+rect.height) and rect.y < (self.y+self.height))
 
     def union(self, rect):

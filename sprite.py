@@ -40,10 +40,10 @@ class Sprite(object):
         if groups:
             self.add(*groups)
 
+    def __str__(self):
+        return "%s(in %d groups)" % (self.__class__, len(self._groups))
+
     def __repr__(self):
-        """
-        Return string representation of Sprite object.
-        """
         return "%s(in %d groups)" % (self.__class__, len(self._groups))
 
     def add(self, *groups):
@@ -143,28 +143,19 @@ class Group(object):
         self._clear_active = False
         self._sprites_drawn = {}
 
+    def __str__(self):
+        return "%s(%d sprites)" % (self.__class__, len(self._sprites))
+
     def __repr__(self):
-        """
-        Return string representation of Group object.
-        """
         return "%s(%d sprites)" % (self.__class__, len(self._sprites))
 
     def __iter__(self):
-        """
-        Provides iterator to sprites in Group.
-        """
         return self._sprites.itervalues()
 
     def __contains__(self, sprite):
-        """
-        Provides check if sprite is in Group.
-        """
         return id(sprite) in self._sprites
 
     def __len__(self):
-        """
-        Provides count of sprites in Group.
-        """
         return len(self._sprites)
 
     def sprites(self):
@@ -282,9 +273,6 @@ class GroupSingle(Group):
             Group.__init__(self)
 
     def __getattr__(self, attr):
-        """
-        Get Group.sprite.
-        """
         if attr == 'sprite':
             if self._sprites:
                 return self._sprites.values()[0]
@@ -378,9 +366,6 @@ class OrderedUpdates(RenderUpdates):
         RenderUpdates.__init__(self, *sprites)
 
     def __iter__(self):
-        """
-        Provides iterator to sprites in Group.
-        """
         if self.sort:
             order_sprite = iter(self.sort)
         else:

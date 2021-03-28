@@ -332,10 +332,10 @@ class UserEvent(object):
                 object.__setattr__(self, attr, self.attr[attr])
         env.event._register_event(eventType)
 
+    def __str__(self):
+        return self.toString()
+
     def __repr__(self):
-        """
-        Return string representation of Event object.
-        """
         return self.toString()
 
     def __getattr__(self, attr):
@@ -400,10 +400,10 @@ class JEvent(object):
                 object.__setattr__(self, attr, self.attr[attr])
         self.attr['event'] = event
 
+    def __str__(self):
+        return self.toString()
+
     def __repr__(self):
-        """
-        Return string representation of Event object.
-        """
         return self.toString()
 
     def __getattr__(self, attr):
