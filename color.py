@@ -43,11 +43,11 @@ class Color(_Color):
                 _color = '0x' + _color[1:]
             self.r,self.g,self.b,self.a = (_color>>16) & 0xff, (_color>>8) & 0xff, _color & 0xff, (_color>>24) & 0xff
 
-    def __repr__(self):
-        return "(%d, %d, %d, %d)" % (self.r, self.g, self.b, self.a)
-
     def __str__(self):
         return "rgba(%d, %d, %d, %f)" % (self.r, self.g, self.b, self.a/255.0)
+
+    def __repr__(self):
+        return "(%d, %d, %d, %d)" % (self.r, self.g, self.b, self.a)
 
     def __getitem__(self, index):
         return {0:self.r, 1:self.g, 2:self.b, 3:self.a}[index]
