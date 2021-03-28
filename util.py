@@ -109,7 +109,7 @@ class Timer(object):
                 self.log.setCursorPos(len(text))
 
 
-class Pyjs_Mode:
+class PyjsMode:
     """
     Check Pyjs mode used to compile application.
     Attributes included strict or optimized to specifying mode.
@@ -128,7 +128,7 @@ class Pyjs_Mode:
         else:
             return False, True
 
-env.pyjs_mode = Pyjs_Mode()
+env.set_env('pyjs_mode', PyjsMode())
 
 
 def call(obj, func, args=()):

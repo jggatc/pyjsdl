@@ -22,6 +22,7 @@
 #Pyjsdl version 0.22
 #Project Site: http://gatc.ca/
 
+from pyjsdl import env
 from pyjsdl import util
 from pyjsdl.display import Display
 from pyjsdl.surface import Surface
@@ -40,11 +41,10 @@ from pyjsdl import mask
 from pyjsdl import font
 from pyjsdl import sprite
 from pyjsdl import cursors
-from pyjsdl import env
 from pyjsdl.locals import *
 
 event = Event()
-env.event = event
+env.set_env('event', event)
 time = Time()
 display = Display()
 image = Image()

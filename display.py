@@ -344,9 +344,9 @@ class Display(object):
         Return a reference to the display Surface.
         """
         self.canvas = Canvas(size, buffered)
-        env.canvas = self.canvas
+        env.set_env('canvas', self.canvas)
         self.frame = Window.getDocumentRoot()
-        env.frame = self.frame
+        env.set_env('frame', self.frame)
         panel = FocusPanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
