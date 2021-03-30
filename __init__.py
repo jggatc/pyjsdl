@@ -57,7 +57,35 @@ key = Key()
 
 init = lambda:None
 
+def setup(callback, images=None):
+    """
+    Initialize module for script execution.
+    Argument include callback function to run and optional images list to preload.
+    Callback function can also be an object with a run method to call.
+    The images can be image URL, or file-like object or base64 data in format (name.ext,data).
+    """
+    display.setup(callback, images)
+
+def set_callback(callback):
+    """
+    Set callback function.
+    Argument callback function to run.
+    Callback function can also be an object with a run method to call.
+    """
+    display.set_callback(callback)
+
+def setup_images(images):
+    """
+    Add images to image preload list.
+    The argument is an image or list of images representing an image URL, or file-like object or base64 data in format (name.ext,data).
+    Image preloading occurs at setup call.
+    """
+    display.set_images(images)
+
 def quit():
+    """
+    Terminates canvas repaint and callback function.
+    """
     canvas = display.get_canvas()
     canvas.stop()
 
