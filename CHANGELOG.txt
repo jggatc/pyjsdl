@@ -6,7 +6,8 @@
 -update mask for optimization.
 -update ndarray and bitset for optimization.
 -update for python 2/3 compatibility.
--update time wait to properly delay callback. 
+-update time wait to properly delay callback.
+-revise requestanimationframe shim.
 
 0.22    2019-04-06
 -add display set_callback method.
