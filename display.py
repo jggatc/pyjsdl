@@ -56,6 +56,7 @@ class Canvas(Surface, MouseWheelHandler):
         self._rect_num = 0
         self._framerate = 0
         self._frametime = 0
+        self._calltime = 0
         self._canvas_init()
         self.initialized = False
 
@@ -266,7 +267,7 @@ class Canvas(Surface, MouseWheelHandler):
         if not self._repaint:
             self.callback.run()
             self._repaint = True
-        self.time.timeout(0, self)
+        self.time.timeout(self._calltime, self)
 
 
 def run(timestamp):

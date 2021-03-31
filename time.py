@@ -84,7 +84,6 @@ class Time(object):
     def __init__(self):
         self._time_init = self.time()
         self.run = lambda: self.wait()
-        self.framerate = None
         self.Clock = Clock
 
     def get_ticks(self):
@@ -100,27 +99,25 @@ class Time(object):
         **pyjsdl.time.delay**
         
         Pause for given time (in ms). Return ms paused.
+        Suspends the program, preferably use time.wait.
         """
         start = self.time()
-        while self.time() - start < time:   #Use Timer
-            pass
-        return self.time() - start
+        while True:
+            if self.time() - start > time:
+                return self.time() - start
 
     def wait(self, time=0):
         """
         **pyjsdl.time.wait**
         
-        Timeout program main loop for given time (in ms).
+        Timeout program callback for given time (in ms).
         """
         if time:
-            if self.framerate is None:
-                self.framerate = env.canvas._framerate
-                env.canvas._framerate = time*10
-                self.timeout(time, self)
+            env.canvas._calltime = time
+            self.timeout(time, self)
         else:
-            if self.framerate is not None:
-                env.canvas._framerate = self.framerate
-                self.framerate = None
+            env.canvas._calltime = 0
+        return time
 
     def set_timer(self, eventid, time):
         """
