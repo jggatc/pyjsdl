@@ -2,6 +2,7 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from pyjsdl import env
+from pyjsdl.pyjsobj import performanceNowInit
 try:
     from __pyjamas__ import JS
 except ImportError:
@@ -20,10 +21,9 @@ class Clock(object):
     * Clock.get_fps
     """
 
+    _wnd = None
+
     def __init__(self):
-        """
-        Return Clock.
-        """
         self._time = self.time()
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
@@ -73,18 +73,21 @@ class Clock(object):
         """
         **pyjsdl.time.time**
         
-        Return current computer time (in ms).
+        Return system time (in ms).
         """
-        ctime = JS("new Date()")
-        return ctime.getTime()
+        return self._wnd.performance.now()
 
 
 class Time(object):
 
+    _wnd = None
+
     def __init__(self):
+        self.Clock = Clock
+        Time._wnd = performanceNowInit()
+        Clock._wnd = Time._wnd
         self._time_init = self.time()
         self.run = lambda: self.wait()
-        self.Clock = Clock
 
     def get_ticks(self):
         """
@@ -134,17 +137,15 @@ class Time(object):
         """
         **pyjsdl.time.time**
         
-        Return current computer time (in ms).
+        Return system time (in ms).
         """
-        ctime = JS("new Date()")
-        return ctime.getTime()
+        return self._wnd.performance.now()
 
     def timeout(self, time=None, obj=None):
-        #Timer.schedule with callback Canvas self.run - 'TypeError: self is undefined'
         """
         Timeout time (in ms) before triggering obj.run method.
-        Code modified from pyjs.
         """
+        #code modified from pyjs
         run = lambda: obj.run()
         JS("$wnd['setTimeout'](function() {@{{run}}();}, @{{time}});")
 
