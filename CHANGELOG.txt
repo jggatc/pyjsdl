@@ -9,6 +9,7 @@
 -update time wait to properly delay callback.
 -revise requestanimationframe shim.
 -update clock with performance time.
+-update clock tick with performance time.
 
 0.22    2019-04-06
 -add display set_callback method.
