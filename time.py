@@ -40,7 +40,7 @@ class Clock(object):
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
         """
-        if self._framerate != framerate:
+        if self._framerate != framerate and not env.canvas._pause:
             self._framerate = framerate
             if framerate:
                 env.canvas._framerate = 1000/framerate
@@ -62,7 +62,10 @@ class Clock(object):
         """
         Return fps.
         """
-        return 1000/self._time_diff
+        if not env.canvas._pause:
+            return 1000/env.canvas._frametime
+        else:
+            return 0.0
 
     def time(self):
         """
@@ -82,6 +85,7 @@ class Time(object):
         Time._wnd = performanceNowInit()
         Clock._wnd = Time._wnd
         self._time_init = self.time()
+        self._framerate = 0
         self.run = lambda: self.wait()
 
     def get_ticks(self):
@@ -111,10 +115,16 @@ class Time(object):
         Timeout program callback for given time (in ms).
         """
         if time:
-            env.canvas._calltime = time
-            self.timeout(time, self)
+            if not env.canvas._pause:
+                self._framerate = env.canvas._framerate
+                env.canvas._framerate = time*10
+                env.canvas._pause = True
+                self.timeout(time, self)
         else:
-            env.canvas._calltime = 0
+            if env.canvas._pause:
+                env.canvas._framerate = self._framerate
+                env.canvas._rendertime = self.time()
+                env.canvas._pause = False
         return time
 
     def set_timer(self, eventid, time):

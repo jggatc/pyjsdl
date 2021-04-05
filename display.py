@@ -50,13 +50,13 @@ class Canvas(Surface, MouseWheelHandler):
         self.specialKey = env.event.specialKey
         self.event._initiate_touch_listener(self)
         self._touch_callback = self.event.touchlistener.callback
-        self._repaint = False
         self._rect_list = []
         self._rect_len = 0
         self._rect_num = 0
         self._framerate = 0
         self._frametime = 0
-        self._calltime = 0
+        self._rendertime = self.time.time()
+        self._pause = False
         self._canvas_init()
         self.initialized = False
 
@@ -248,7 +248,6 @@ class Canvas(Surface, MouseWheelHandler):
         if not self.initialized:
             self.initialized = True
             _wnd.requestAnimationFrame(run)
-            self.time.timeout(0, self)
 
     def stop(self):
         global run
@@ -263,24 +262,32 @@ class Canvas(Surface, MouseWheelHandler):
             self._rect_len += 1
             return self._rect_list[self._rect_num]
 
+    def update(self, timestamp):
+        if not self._framerate:
+            self._frametime = timestamp - self._rendertime
+            self.run()
+        else:
+            self._frametime += timestamp - self._rendertime
+            if self._frametime > self._framerate:
+                self.run()
+                self._frametime = 0
+        self._rendertime = timestamp
+
+    def render(self):
+        while self._rect_num:
+            rect = self._rect_list[self._rect_num-1]
+            x,y,width,height = rect.x,rect.y,rect.width,rect.height
+            _ctx.drawImage(_img, x,y,width,height, x,y,width,height)
+            self._rect_num -= 1
+
     def run(self):
-        if not self._repaint:
-            self.callback.run()
-            self._repaint = True
-        self.time.timeout(self._calltime, self)
+        self.callback.run()
 
 
 def run(timestamp):
     _wnd.requestAnimationFrame(run)
-    if _canvas._repaint:
-        if (timestamp-_canvas._frametime) >= _canvas._framerate:
-            _canvas._frametime = timestamp
-            while _canvas._rect_num:
-                rect = _canvas._rect_list[_canvas._rect_num-1]
-                _ctx.drawImage(_img, rect.x,rect.y,rect.width,rect.height,
-                                     rect.x,rect.y,rect.width,rect.height)
-                _canvas._rect_num -= 1
-            _canvas._repaint = False
+    _canvas.update(timestamp)
+    _canvas.render()
 
 
 class Callback(object):
