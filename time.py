@@ -127,16 +127,18 @@ class Time(object):
                 env.canvas._pause = False
         return time
 
-    def set_timer(self, eventid, time):
+    def set_timer(self, eventid, time, once=False):
         """
         **pyjsdl.time.set_timer**
 
         Events of type eventid placed on queue at time (ms) intervals.
-        Disable by time of 0.
+        Optional argument once set no timer repeat, defaults to False.
+        Disable timer with time of 0. 
         """
         if eventid not in _EventTimer.timers:
             _EventTimer.timers[eventid] = _EventTimer(eventid)
-        _EventTimer.timers[eventid].set_timer(time)
+        repeat = not once
+        _EventTimer.timers[eventid].set_timer(time, repeat)
 
     def time(self):
         """
@@ -152,7 +154,7 @@ class Time(object):
         """
         #code modified from pyjs
         run = lambda: obj.run()
-        JS("$wnd['setTimeout'](function() {@{{run}}();}, @{{time}});")
+        JS("$wnd['setTimeout'](@{{run}}, @{{time}});")
 
 
 class _EventTimer:
@@ -164,26 +166,27 @@ class _EventTimer:
         self.time = 0
         self.repeat = True
 
-    def set_timer(self, time):
+    def set_timer(self, time, repeat):
         if self.timer:
             self.repeat = False
-            self.clearTimeout()
+            self.clear_timeout()
         if time:
             self.time = time
-            self.repeat = True
-            self.setTimeout()
+            self.repeat = repeat
+            self.set_timeout()
 
-    def setTimeout(self):
+    def set_timeout(self):
         #Time.timeout
-        timer = JS("$wnd['setTimeout'](function() {@{{self}}['run']();}, @{{self}}['time']);")
+        run = lambda: self.run()
+        timer = JS("$wnd['setTimeout'](@{{run}}, @{{self}}['time']);")
         self.timer = timer
 
-    def clearTimeout(self):
+    def clear_timeout(self):
         JS("$wnd['clearTimeout'](@{{self}}['timer']);")
         self.timer = None
 
     def run(self):
         env.event.post(self.event)
         if self.repeat:
-            self.setTimeout()
+            self.set_timeout()
 
