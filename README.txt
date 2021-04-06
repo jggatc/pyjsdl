@@ -4,6 +4,6 @@ Pyjsdl module is modelled on Pygame/SDL commands that wraps JavaScript functiona
 
 Pyjsdl is released under the MIT License, see LICENSE.txt for further information.
 
-Pyjsdl page: http://gatc.ca/projects/pyjsdl/
-Pyjsdl docs: http://gatc.ca/projects/pyjsdl/doc/
+Pyjsdl page: https://gatc.ca/projects/pyjsdl/
+Pyjsdl docs: https://gatc.ca/projects/pyjsdl/doc/
 

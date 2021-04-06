@@ -1,9 +1,10 @@
-#Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl.pyjsarray import BitSet
 from pyjsdl.color import Color
 import sys
+
 if sys.version_info < (3,):
     range = xrange
 

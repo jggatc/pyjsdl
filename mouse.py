@@ -1,7 +1,6 @@
-#Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
-#from __future__ import division
 from pyjsdl import env
 from pyjsdl import cursors
 from pyjsdl.pyjsobj import DOM

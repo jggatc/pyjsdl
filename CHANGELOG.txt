@@ -1,16 +1,16 @@
-0.22-dev
+0.23    2021-04-06
 -update event handling.
 -update surface get_at to return color object.
 -refactor surface colorkey methods.
 -revise sprite blit process.
 -update mask for optimization.
 -update ndarray and bitset for optimization.
--update for python 2/3 compatibility.
 -update time wait to properly delay callback.
 -revise requestanimationframe shim.
 -update clock with performance time.
 -update clock tick with performance time.
 -update asynchronous loop process to optimize.
+-update for python 2/3 compatibility.
 
 0.22    2019-04-06
 -add display set_callback method.

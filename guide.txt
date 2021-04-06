@@ -4,5 +4,5 @@ Pyjsdl module is modelled on Pygame/SDL commands that wraps JavaScript functiona
 
 Python code using Pyjsdl is compiled to a JavaScript application with the Pyjs compiler (http://pyjs.org). Install Pyjs from https://github.com/pyjs/pyjs, check pyjs_changes.zip in module folder for required changes, and compile using pyjsbuild. Some additional changes to the Python script may be necessary for Pyjs compilation. A web application can be deployed following compilation to JavaScript, which can run in a web browser on a pc or mobile. The app can also run on the desktop using the app.py script, check instructions within the script.
 
-Further information is available on the Pyjsdl project page (http://gatc.ca/projects/pyjsdl/) and in the API documentation (http://gatc.ca/projects/pyjsdl/doc/).
+Further information is available on the Pyjsdl project page (https://gatc.ca/projects/pyjsdl/) and in the API documentation (https://gatc.ca/projects/pyjsdl/doc/).
 

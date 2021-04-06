@@ -1,5 +1,5 @@
-#Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
 #PyjsArray - Python-to-JavaScript TypedArray Module
 #Copyright (c) 2013 James Garnon
@@ -22,8 +22,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
-#PyjsArray version 0.53
-#Project Site: http://gatc.ca/
+#PyjsArray version 0.54
+#Project Site: https://gatc.ca/
 
 from math import ceil as _ceil
 try:
@@ -31,6 +31,7 @@ try:
 except ImportError:
     pass
 import sys
+
 if sys.version_info < (3,):
     range = xrange
 

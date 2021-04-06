@@ -1,5 +1,5 @@
-#Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from math import ceil as _ceil
 from pyjsdl.surface import Surface
@@ -286,9 +286,6 @@ Example of font file declaration:
         return int(self.fontsize*1.2)
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.metrics = lambda *arg: []
         self.get_height = lambda *arg: 0
         self.get_ascent = lambda *arg: 0

@@ -20,6 +20,7 @@ import webkit, gtk
 import multiprocessing
 import os.path
 import sys
+
 if sys.version_info.major >= 3:
     from socketserver import TCPServer
     from http.server import SimpleHTTPRequestHandler

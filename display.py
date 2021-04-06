@@ -1,5 +1,5 @@
-#Pyjsdl - Copyright (C) 2013 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
 import base64
 from pyjsdl.surface import Surface
@@ -96,7 +96,7 @@ class Canvas(Surface, MouseWheelHandler):
     def onMouseWheel(self, sender, velocity):
         event = DOM.eventGetCurrentEvent()
         if event.type == 'mousewheel':
-            #TODO: update for changes in mousewheel implementation
+            #update for changes in mousewheel implementation
             if hasattr(event, 'wheelDeltaX'):
                 self.onMouseWheel = self._onMouseWheel
                 self._onMouseWheel(sender, velocity)
