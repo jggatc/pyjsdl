@@ -139,3 +139,26 @@ def call(obj, func, args=()):
     """
     return JS("@{{func}}.apply(@{{obj}}, @{{args}}['getArray']());")
 
+
+#code modified from pyjs
+class _dict(dict):
+
+    def values(self):
+        return dict.values(self).__iter__()
+
+    def keys(self):
+        return dict.__iter__(self)
+
+    def items(self):
+        return dict.items(self).__iter__()
+
+
+def _next(obj):
+    return obj.next()
+
+
+try:
+    _range = xrange
+except NameError:
+    _range = range
+

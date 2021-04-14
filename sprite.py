@@ -6,7 +6,9 @@ from pyjsdl import mask
 import sys
 
 if sys.version_info < (3,):
-    range = xrange
+    from pyjsdl.util import _range as range
+    from pyjsdl.util import _dict as dict
+    from pyjsdl.util import _next as next
 
 __docformat__ = 'restructuredtext'
 
@@ -37,7 +39,7 @@ class Sprite(object):
         """
         self._identity = Sprite._identity
         Sprite._identity += 1
-        self._groups = {}
+        self._groups = dict()
         if groups:
             self.add(*groups)
 
@@ -73,7 +75,7 @@ class Sprite(object):
         """
         Remove sprite from all member groups.
         """
-        for group in self._groups.values():
+        for group in list(self._groups.values()):
             group.remove(self)
         return None
 
@@ -90,7 +92,7 @@ class Sprite(object):
         """
         Return list of groups that sprite is a member.
         """
-        return self._groups.values()
+        return list(self._groups.values())
 
     def update(self, *args):
         """
@@ -138,11 +140,11 @@ class Group(object):
         """
         self._identity = Group._identity
         Group._identity += 1
-        self._sprites = {}
+        self._sprites = dict()
         if sprites:
             self.add(*sprites)
         self._clear_active = False
-        self._sprites_drawn = {}
+        self._sprites_drawn = dict()
 
     def __str__(self):
         return "%s(%d sprites)" % (self.__class__, len(self._sprites))
@@ -151,7 +153,7 @@ class Group(object):
         return "%s(%d sprites)" % (self.__class__, len(self._sprites))
 
     def __iter__(self):
-        return self._sprites.itervalues()
+        return iter(self._sprites.values())
 
     def __contains__(self, sprite):
         return id(sprite) in self._sprites
@@ -163,7 +165,7 @@ class Group(object):
         """
         Return list of sprites in the group.
         """
-        return self._sprites.values()
+        return list(self._sprites.values())
 
     def copy(self):
         """
@@ -218,9 +220,9 @@ class Group(object):
         """
         Draw sprite on surface.
         """
-        surface._blits((sprite.image,sprite.rect) for sprite in self._sprites.itervalues())
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.values()])
         if self._clear_active:
-            rectPool.extend(self._sprites_drawn.itervalues())
+            rectPool.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
             for sprite in self._sprites:
                 self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
@@ -233,7 +235,7 @@ class Group(object):
         """
         self._clear_active = True
         if hasattr(background, 'width'):
-            surface._blit_clear(background, self._sprites_drawn.itervalues())
+            surface._blit_clear(background, self._sprites_drawn.values())
         else:
             for sprite in self._sprites_drawn:
                 background(surface, self._sprites_drawn[sprite])
@@ -242,7 +244,7 @@ class Group(object):
         """
         Empty group.
         """
-        for sprite in self._sprites.itervalues():
+        for sprite in self._sprites.values():
             del sprite._groups[id(self)]
         self._sprites.clear()
         return None
@@ -251,7 +253,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.itervalues():
+        for sprite in list(self._sprites.values()):
             sprite.update(*args)
         return None
 
@@ -276,7 +278,7 @@ class GroupSingle(Group):
     def __getattr__(self, attr):
         if attr == 'sprite':
             if self._sprites:
-                return self._sprites.values()[0]
+                return list(self._sprites.values())[0]
             else:
                 return None
 
@@ -294,7 +296,7 @@ class GroupSingle(Group):
         Update sprite by calling Sprite.update.
         """
         if self._sprites:
-            self._sprites.values()[0].update(*args)
+            list(self._sprites.values())[0].update(*args)
         return None
 
 
@@ -318,7 +320,7 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        surface._blits((sprite.image,sprite.rect) for sprite in self._sprites.itervalues())
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.values()])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
@@ -330,14 +332,14 @@ class RenderUpdates(Group):
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self.changed_areas.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
             for sprite in self._sprites:
                 self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
         else:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
-            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.itervalues()])
+            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.values()])
         return self.changed_areas
 
 
@@ -353,15 +355,15 @@ class OrderedUpdates(RenderUpdates):
         Return OrderedUpdates, a RenderUpdates subclass that maintains order of sprites.
         Can optionally be called with sprite(s) to add.
         """
-        self.order = {}
-        self.place = {}
+        self.order = dict()
+        self.place = dict()
         self.range = 1000
         self.index = iter(range(self.range))
         self.sort = None
         for sprite in sprites:
             if sprite not in self._sprites:
                 spriteID = id(sprite)
-                index = self.index.next()
+                index = next(self.index)
                 self.order[index] = spriteID
                 self.place[spriteID] = index
         RenderUpdates.__init__(self, *sprites)
@@ -370,7 +372,7 @@ class OrderedUpdates(RenderUpdates):
         if self.sort:
             order_sprite = iter(self.sort)
         else:
-            keys = self.order.keys()
+            keys = list(self.order.keys())
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = iter(self.sort)
@@ -383,7 +385,7 @@ class OrderedUpdates(RenderUpdates):
         if self.sort:
             order_sprite = self.sort[:]
         else:
-            keys = self.order.keys()
+            keys = list(self.order.keys())
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = self.sort[:]
@@ -412,19 +414,19 @@ class OrderedUpdates(RenderUpdates):
                     self.order[index] = spriteID
                     self.place[spriteID] = index
                 else:
-                    keys = self.order.keys()
+                    keys = list(self.order.keys())
                     keys.sort()
                     if len(keys)*2 > self.range:
                         self.range = len(keys)*2
                     self.index = iter(range(self.range))
                     order = self.order
-                    self.order = {}
-                    self.place = {}
+                    self.order = dict()
+                    self.place = dict()
                     for key in keys:
-                        index = self.index.next()
+                        index = next(self.index)
                         self.order[index] = order[key]
                         self.place[order[key]] = index
-                    index = self.index.next()
+                    index = next(self.index)
                     spriteID = id(sprite)
                     self.order[index] = spriteID
                     self.place[spriteID] = index
@@ -434,7 +436,7 @@ class OrderedUpdates(RenderUpdates):
 
     def _get_index(self):
         try:
-            return self.index.next()
+            return next(self.index)
         except StopIteration:
             return None
 
@@ -455,8 +457,8 @@ class OrderedUpdates(RenderUpdates):
         """
         Empty group.
         """
-        self.order = {}
-        self.place = {}
+        self.order = dict()
+        self.place = dict()
         self.index = iter(range(self.range))
         self.sort = None
         RenderUpdates.empty(self)
@@ -468,7 +470,7 @@ class OrderedUpdates(RenderUpdates):
         if self.sort:
             order_sprite = iter(self.sort)
         else:
-            keys = self.order.keys()
+            keys = list(self.order.keys())
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = iter(self.sort)
@@ -484,14 +486,14 @@ class OrderedUpdates(RenderUpdates):
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self.changed_areas.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
             for sprite in self._sprites:
                 self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
         else:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
-            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.itervalues()])
+            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.values()])
         return self.changed_areas
 
 

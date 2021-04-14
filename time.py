@@ -43,9 +43,9 @@ class Clock(object):
         if self._framerate != framerate and not env.canvas._pause:
             self._framerate = framerate
             if framerate:
-                env.canvas._framerate = 1000/framerate
+                env.canvas._framerate = 1000.0/framerate
             else:
-                env.canvas._framerate = 0
+                env.canvas._framerate = 0.0
         self._time = self.time()
         self._time_diff = self._time-self._time_init
         self._time_init = self._time
@@ -63,7 +63,7 @@ class Clock(object):
         Return fps.
         """
         if not env.canvas._pause:
-            return 1000/env.canvas._frametime
+            return 1000.0/env.canvas._frametime
         else:
             return 0.0
 
