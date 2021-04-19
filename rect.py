@@ -189,34 +189,47 @@ class Rect(object):
         """
         return Rect(self.x, self.y, self.width, self.height)
 
-    def move(self, x, y):
+    def move(self, *offset):
         """
         Return Rect of same dimension at position offset by x,y.
         """
+        if len(offset) == 2:
+            x, y = offset
+        else:
+            x, y = offset[0]
         return Rect(self.x+x, self.y+y, self.width, self.height)
 
-    def move_ip(self, *pos):
+    def move_ip(self, *offset):
         """
         Moves this rect to position offset by x,y.
         """
-        if len(pos) == 2:
-            self.setLocation(self.x+pos[0], self.y+pos[1])
+        if len(offset) == 2:
+            x, y = offset
         else:
-            self.setLocation(self.x+pos[0][0], self.y+pos[0][1])
+            x, y = offset[0]
+        self.setLocation(self.x+x, self.y+y)
         return None
 
-    def inflate(self, x, y):
+    def inflate(self, *offset):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x-int(float(x)/2), self.y-int(float(y)/2), self.width+x, self.height+y)
+        if len(offset) == 2:
+            x, y = offset
+        else:
+            x, y = offset[0]
+        return Rect(self.x-x//2, self.y-y//2, self.width+x, self.height+y)
 
-    def inflate_ip(self, x, y):
+    def inflate_ip(self, *offset):
         """
         Change size of this rect offset by x,y.
         """
+        if len(offset) == 2:
+            x, y = offset
+        else:
+            x, y = offset[0]
         self.setSize(self.width+x, self.height+y)
-        self.setLocation(self.x-int(float(x)/2), self.y-int(float(y)/2))
+        self.setLocation(self.x-x//2, self.y-y//2)
         return None
 
     def clip(self, rect):
