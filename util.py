@@ -2,6 +2,7 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl.time import Time
+from pyjsdl.rect import Rect
 from pyjsdl import env
 try:
     from __pyjamas__ import JS
@@ -112,21 +113,35 @@ class Timer(object):
 class PyjsMode:
     """
     Check Pyjs mode used to compile application.
-    Attributes included strict or optimized to specifying mode.
+    Attributes:
+        strict/optimized to specify mode
+        getattr_call/eq_call to specify functionality
     """
-
     def __init__(self):
-        self.strict, self.optimized = self._setmode()
+        self.getattr_call = self.test_getattr()
+        self.eq_call = self.test_eq()
+        self.strict, self.optimized = self.test_mode()
 
-    def __getattr__(self, attr):
-        if attr == '__strict_mode':
-            return True
-
-    def _setmode(self):
-        if self.__strict_mode == True:
+    def test_mode(self):
+        """
+        Test if build mode is strict or optimized.
+        """
+        if self.getattr_call and self.eq_call:
             return True, False
         else:
             return False, True
+
+    def test_getattr(self):
+        """
+        Test if object __getattr__ method is called.
+        """
+        return (Rect(0,0,20,20).center == (10,10))
+
+    def test_eq(self):
+        """
+        Test if object __eq__ method is called.
+        """
+        return (Rect(0,0,20,20) == Rect(0,0,20,20))
 
 env.set_env('pyjs_mode', PyjsMode())
 

@@ -1,8 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from pyjsdl import env
-
 __docformat__ = 'restructuredtext'
 
 
@@ -33,72 +31,32 @@ class Rect(object):
 
     __slots__ = ['x', 'y', 'width', 'height']
 
-    _xy = {
-        'center': lambda self,val: self.setLocation( val[0]-int(self.width/2), val[1]-int(self.height/2) ),
-        'centerx': lambda self,val: self.setLocation( val-int(self.width/2), self.y ),
-        'centery': lambda self,val: self.setLocation( self.x, val-int(self.height/2) ),
-        'top': lambda self,val: self.setLocation( self.x, val ),
-        'left': lambda self,val: self.setLocation( val, self.y ),
-        'bottom': lambda self,val: self.setLocation( self.x, val-self.height ),
-        'right': lambda self,val: self.setLocation( val-self.width, self.y ),
-        'topleft': lambda self,val: self.setLocation( val[0], val[1] ),
-        'bottomleft': lambda self,val: self.setLocation( val[0], val[1]-self.height ),
-        'topright': lambda self,val: self.setLocation( val[0]-self.width, val[1] ),
-        'bottomright': lambda self,val: self.setLocation( val[0]-self.width, val[1]-self.height ),
-        'midtop': lambda self,val: self.setLocation( val[0]-int(self.width/2), val[1] ),
-        'midleft': lambda self,val: self.setLocation( val[0], val[1]-int(self.height/2) ),
-        'midbottom': lambda self,val: self.setLocation( val[0]-int(self.width/2), val[1]-self.height ),
-        'midright': lambda self,val: self.setLocation( val[0]-self.width, val[1]-int(self.height/2) ),
-        'size': lambda self,val: self.setSize( val[0], val[1] ),
-        'width': lambda self,val: self.setSize( val, self.height ),
-        'height':lambda self,val: self.setSize( self.width, val ),
-        'w': lambda self,val: self.setSize( val, self.height ),
-        'h': lambda self,val: self.setSize( self.width, val ),
-        'x': lambda self,val: self.setLocation( val, self.y ),
-        'y': lambda self,val: self.setLocation( self.x, val )
-          }
-    _at = {
-        'center': lambda self: (self.x+int(self.width/2), self.y+int(self.height/2)),
-        'centerx': lambda self: self.x+int(self.width/2),
-        'centery': lambda self: self.y+int(self.height/2),
-        'top': lambda self: self.y,
-        'left': lambda self: self.x,
-        'bottom': lambda self: self.y+self.height,
-        'right': lambda self: self.x+self.width,
-        'topleft': lambda self: (self.x, self.y),
-        'bottomleft': lambda self: (self.x, self.y+self.height),
-        'topright': lambda self: (self.x+self.width, self.y),
-        'bottomright': lambda self: (self.x+self.width, self.y+self.height),
-        'midtop': lambda self: (self.x+int(self.width/2), self.y),
-        'midleft': lambda self: (self.x, self.y+int(self.height/2)),
-        'midbottom': lambda self: (self.x+int(self.width/2), self.y+self.height),
-        'midright': lambda self: (self.x+self.width, self.y+int(self.height/2)),
-        'size': lambda self: (self.width, self.height),
-        'w': lambda self: self.width,
-        'h': lambda self: self.height
-          }
-
     def __init__(self, *args):
         """
         Return Rect object.
         
         Alternative arguments:
         
-        * x,y,w,h
-        * (x,y),(w,h)
-        * (x,y,w,h)
+        * x, y, width, height
+        * (x, y), (width, height)
+        * (x, y, width, height)
         * Rect
         * Obj with rect attribute
 
         Rect has the attributes::
         
-            x, y, width, height
-        
-        Additional Rect attributes::
-        
-            top, left, bottom, right, topleft, bottomleft, topright, bottomright,
-            midtop, midleft, midbottom, midright, center, centerx, centery,
-            size, w, h.
+        x, y, width, height
+        top, left, bottom, right
+        topleft, bottomleft, topright, bottomright
+        midtop, midleft, midbottom, midright
+        center, centerx, centery
+        size, w, h
+
+        Attribute access is functional in strict mode (-S),
+        while in optimized mode (-O) direct access can be used
+        with x/y/width/height whereas other attributes can be
+        accessed with getattr/setattr functions or build with
+        the --enable-descriptor-proto option.
         
         Module initialization places pyjsdl.Rect in module's namespace.
         """
@@ -108,42 +66,36 @@ class Rect(object):
             arg = args
         ln = len(arg)
         if ln == 4:
-            self.setLocation(arg[0], arg[1])
-            self.setSize(arg[2], arg[3])
+            x, y, width, height = arg[0], arg[1], arg[2], arg[3]
         elif ln == 2:
-            self.setLocation(arg[0][0], arg[0][1])
-            self.setSize(arg[1][0], arg[1][1])
+            x, y, width, height = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
         else:
             if hasattr(arg, 'rect'):
                 arg = arg.rect
-            self.setLocation(arg.x, arg.y)
-            self.setSize(arg.width, arg.height)
+            x, y, width, height = arg.x, arg.y, arg.width, arg.height
+        object.__setattr__(self, 'x', int(x))
+        object.__setattr__(self, 'y', int(y))
+        object.__setattr__(self, 'width', int(width))
+        object.__setattr__(self, 'height', int(height))
 
     def __str__(self):
-        return "<rect(%d, %d, %d, %d)>" % (self.x, self.y, self.width, self.height)
+        return "<rect(%s, %s, %s, %s)>" % (self.x, self.y, self.width, self.height)
 
     def __repr__(self):
-        return "%s(%d,%d,%d,%d)" % (self.__class__, self.x, self.y, self.width, self.height)
-
-    def __getattr__(self, attr):   #not implemented in pyjs -O
-        if attr in self._at:
-            return self._at[attr](self)
-        else:
-            raise AttributeError
+        return "%s(%s,%s,%s,%s)" % (self.__class__, self.x, self.y, self.width, self.height)
 
     def __setattr__(self, attr, val):   #not implemented in pyjs -O
-        if attr in self._xy:
-            self._xy[attr](self, val)
-            return None
-        else:
-            raise AttributeError
+        try:
+            getattr(self, '_set_'+attr)(val)
+        except AttributeError:
+            msg = 'Rect object has no attribute %s' % attr
+            raise AttributeError(msg)
 
     def __getitem__(self, key):
-        return [self.x, self.y, self.width, self.height][key]
+        return getattr(self, ('x','y','width','height')[key])
 
     def __setitem__(self, key, val):
-        value = int(val)
-        [lambda value: self.__setattr__("x", value), lambda value: self.__setattr__("y", value), lambda value: self.__setattr__("width", value), lambda value: self.__setattr__("height", value)][key](value)
+        setattr(self, ('x','y','width','height')[key], val)
 
     def __iter__(self):
         return iter([self.x, self.y, self.width, self.height])
@@ -164,23 +116,13 @@ class Rect(object):
         return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height   #pyjs compares rect==tuple not __eq__
 
     def setLocation(self, x, y):
-        self.x = int(x)
-        self.y = int(y)
+        object.__setattr__(self, 'x', int(x))
+        object.__setattr__(self, 'y', int(y))
         return None
 
-    def setSize(self, w, h):
-        self.width = int(w)
-        self.height = int(h)
-        return None
-
-    def _setLocation(self, x, y):
-        super(Rect, self).__setattr__('x', int(x))
-        super(Rect, self).__setattr__('y', int(y))
-        return None
-
-    def _setSize(self, w, h):
-        super(Rect, self).__setattr__('width', int(w))
-        super(Rect, self).__setattr__('height', int(h))
+    def setSize(self, width, height):
+        object.__setattr__(self, 'width', int(width))
+        object.__setattr__(self, 'height', int(height))
         return None
 
     def copy(self):
@@ -410,16 +352,17 @@ class Rect(object):
             arg = args
         ln = len(arg)
         if ln == 4:
-            self.setLocation(arg[0], arg[1])
-            self.setSize(arg[2], arg[3])
+            x, y, width, height = arg[0], arg[1], arg[2], arg[3]
         elif ln == 2:
-            self.setLocation(arg[0][0], arg[0][1])
-            self.setSize(arg[1][0], arg[1][1])
+            x, y, width, height = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
         else:
             if hasattr(arg, 'rect'):
                 arg = arg.rect
-            self.setLocation(arg.x, arg.y)
-            self.setSize(arg.width, arg.height)
+            x, y, width, height = arg.x, arg.y, arg.width, arg.height
+        object.__setattr__(self, 'x', int(x))
+        object.__setattr__(self, 'y', int(y))
+        object.__setattr__(self, 'width', int(width))
+        object.__setattr__(self, 'height', int(height))
 
     def collidepoint(self, *point):
         """
@@ -474,10 +417,144 @@ class Rect(object):
                 collided.append((rect,rects[rect]))
         return collided
 
+    def _get_center(self):
+        return (self.x+(self.width//2), self.y+(self.height//2))
 
-if env.pyjs_mode.strict:
-    Rect.setLocation = Rect._setLocation
-    Rect.setSize = Rect._setSize
+    def _get_centerx(self):
+        return self.x+(self.width//2)
+
+    def _get_centery(self):
+        return self.y+(self.height//2)
+
+    def _get_top(self):
+        return self.y
+
+    def _get_left(self):
+        return self.x
+
+    def _get_bottom(self):
+        return self.y+self.height
+
+    def _get_right(self):
+        return self.x+self.width
+
+    def _get_topleft(self):
+        return (self.x, self.y)
+
+    def _get_bottomleft(self):
+        return (self.x, self.y+self.height)
+
+    def _get_topright(self):
+        return (self.x+self.width, self.y)
+
+    def _get_bottomright(self):
+        return (self.x+self.width, self.y+self.height)
+
+    def _get_midtop(self):
+        return (self.x+(self.width//2), self.y)
+
+    def _get_midleft(self):
+        return (self.x, self.y+(self.height//2))
+
+    def _get_midbottom(self):
+        return (self.x+(self.width//2), self.y+self.height)
+
+    def _get_midright(self):
+        return (self.x+self.width, self.y+(self.height//2))
+
+    def _get_size(self):
+        return (self.width, self.height)
+
+    def _get_w(self):
+        return self.width
+
+    def _get_h(self):
+        return self.height
+
+    def _set_x(self, val):
+        object.__setattr__(self, 'x', int(val))
+
+    def _set_y(self, val):
+        object.__setattr__(self, 'y', int(val))
+
+    def _set_width(self, val):
+        object.__setattr__(self, 'width', int(val))
+
+    def _set_height(self, val):
+        object.__setattr__(self, 'height', int(val))
+
+    def _set_center(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1]-(self.height//2))
+
+    def _set_centerx(self, val):
+        self.setLocation(val-(self.width//2), self.y)
+
+    def _set_centery(self, val):
+        self.setLocation(self.x, val-(self.height//2))
+
+    def _set_top(self, val):
+        self.setLocation(self.x, val)
+
+    def _set_left(self, val):
+        self.setLocation(val, self.y)
+
+    def _set_bottom(self, val):
+        self.setLocation(self.x, val-self.height)
+
+    def _set_right(self, val):
+        self.setLocation(val-self.width, self.y)
+
+    def _set_topleft(self, val):
+        self.setLocation(val[0], val[1])
+
+    def _set_bottomleft(self, val):
+        self.setLocation(val[0], val[1]-self.height)
+
+    def _set_topright(self, val):
+        self.setLocation(val[0]-self.width, val[1])
+
+    def _set_bottomright(self, val):
+        self.setLocation(val[0]-self.width, val[1]-self.height)
+
+    def _set_midtop(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1])
+
+    def _set_midleft(self, val):
+        self.setLocation(val[0], val[1]-(self.height//2))
+
+    def _set_midbottom(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1]-self.height)
+
+    def _set_midright(self, val):
+        self.setLocation(val[0]-self.width, val[1]-(self.height//2))
+
+    def _set_size(self, val):
+        self.setSize(val[0], val[1])
+
+    def _set_w(self, val):
+        self.setSize(val, self.height)
+
+    def _set_h(self, val):
+        self.setSize(self.width, val)
+
+    size = property(_get_size, _set_size)
+    center = property(_get_center, _set_center)
+    centerx = property(_get_centerx, _set_centerx)
+    centery = property(_get_centery, _set_centery)
+    top = property(_get_top, _set_top)
+    left = property(_get_left, _set_left)
+    bottom = property(_get_bottom, _set_bottom)
+    right = property(_get_right, _set_right)
+    topleft = property(_get_topleft, _set_topleft)
+    bottomleft = property(_get_bottomleft, _set_bottomleft)
+    topright = property(_get_topright, _set_topright)
+    bottomright = property(_get_bottomright, _set_bottomright)
+    midtop = property(_get_midtop, _set_midtop)
+    midleft = property(_get_midleft, _set_midleft)
+    midbottom = property(_get_midbottom, _set_midbottom)
+    midright = property(_get_midright, _set_midright)
+    w = property(_get_w, _set_w)
+    h = property(_get_h, _set_h)
 
 
 class RectPool(list):

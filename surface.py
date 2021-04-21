@@ -97,7 +97,7 @@ class Surface(HTML5Canvas):
         """
         rect = Rect(0, 0, self.width, self.height)
         for key in attr:
-            rect.__setattr__(key,attr[key])
+            setattr(rect, key, attr[key])
         return rect
 
     def copy(self):
