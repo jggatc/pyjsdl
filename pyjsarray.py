@@ -1124,16 +1124,27 @@ class Ndarray(object):
                 other = Ndarray(list(other), self._dtype)
         return other
 
+    def op(self, operator, other):
+        """
+        Arithemtic operation across array elements.
+        Arguments include operator and int/array.
+        Operators: 'add', 'sub', 'mul', 'div', etc.
+        Return array of the operation.
+        Note: operator special methods not called in
+        Pyjs --optimized mode unless build with
+        the --enable-operator-funcs option.
+        """
+        return getattr(self, '__'+operator+'__')(other)
+
     def cmp(self, operator, other):
         """
         Comparison operation across array elements.
-        Arguments include operator ('=='...) and int/array.
+        Arguments include operator and int/array.
+        Operators: 'lt', 'le', 'eq', 'ne', 'gt', 'ge'.
         Return comparison array.
+        Note: comparison special methods not called.
         """
-        ops = {'<':  lambda s,o:s.__lt__(o), '<=': lambda s,o:s.__le__(o),
-               '==': lambda s,o:s.__eq__(o), '!=': lambda s,o:s.__ne__(o),
-               '>':  lambda s,o:s.__gt__(o), '>=': lambda s,o:s.__ge__(o)}
-        return ops[operator](self, other)
+        return getattr(self, '__'+operator+'__')(other)
 
     def matmul(self, other):
         """
