@@ -128,6 +128,8 @@ class ImageMatrixRGB(ImageMatrix):
     Interface to ImageData.
     """
 
+    shape = ImageMatrix.shape
+
     def __getitem__(self, index):
         index = list(index)
         index[0], index[1] = index[1], index[0]
@@ -167,6 +169,8 @@ class ImageRGB(Ndarray):
             Ndarray.__init__(self, data, 'uint8')
         self.setshape(self._imagedata.width,self._imagedata.height,3)
 
+    shape = Ndarray.shape
+
     def getImageData(self):
         """
         Get ImageData.
@@ -185,6 +189,8 @@ class ImageMatrixAlpha(ImageMatrix):
     Array consists of pixel data arranged by width/height of pixel alpha value.
     Interface to ImageData.
     """
+
+    shape = ImageMatrix.shape
 
     def __getitem__(self, index):
         return ImageMatrix.__getitem__(self, (index[1],index[0],3))
@@ -218,6 +224,8 @@ class ImageAlpha(Ndarray):
             Ndarray.__init__(self, data, 'uint8')
         self.setshape(self._imagedata.width,self._imagedata.height)
 
+    shape = Ndarray.shape
+
     def getImageData(self):
         """
         Get ImageData.
@@ -235,6 +243,8 @@ class ImageMatrixInteger(ImageMatrix):
     Array consists of pixel data arranged by width/height in integer color format.
     Interface to ImageData.
     """
+
+    shape = ImageMatrix.shape
 
     def __getitem__(self, index):
         value = ImageMatrix.__getitem__(self, (index[1],index[0]))
@@ -262,6 +272,8 @@ class ImageInteger(Ndarray):
                 index += 1
         Ndarray.__init__(self, data, 'uint32')
         self.setshape(self._imagedata.width,self._imagedata.height)
+
+    shape = Ndarray.shape
 
     def getImageData(self):
         """

@@ -462,24 +462,41 @@ class Ndarray(object):
             self._shape = (len(dim),)
             self._indices = (self._shape[0],)
 
-    @property
-    def shape(self):        #not implemented in pyjs -O
+    def getshape(self):
         """
         Return array shape.
-        Ndarray.shape accessible with compilation in --strict mode.
+        Ndarray.shape accessible with compilation in --strict mode,
+        and with --enable-descriptor-proto option in --optimized mode.
         """
         return self._shape
 
-    @shape.setter
-    def shape(self, dim):    #not implemented in pyjs -O
+    def setshape(self, *dim):
         """
         Set shape of array.
         Argument is new shape.
         Raises TypeError if shape is not appropriate.
-        Ndarray.shape accessible with compilation in --strict mode.
+        Ndarray.shape accessible with compilation in --strict mode,
+        and with --enable-descriptor-proto option in --optimized mode.
         """
-        self.setshape(dim)
+        if isinstance(dim[0], tuple):
+            dim = dim[0]
+        size = 1
+        for i in dim:
+            size *= i
+        array_size = 1
+        for i in self._shape:
+            array_size *= i
+        if size != array_size:
+            raise TypeError("array size cannot change")
+        self._shape = dim
+        indices = []
+        for i in self._shape:
+            size /= i
+            indices.append(size)
+        self._indices = tuple(indices)
         return None
+
+    shape = property(getshape, setshape)
 
     def _lflatten(self, l):
         for el in l:
@@ -1154,38 +1171,6 @@ class Ndarray(object):
         """
         return self.__matmul__(other)
 
-    def setshape(self, *dim):
-        """
-        Set shape of array.
-        Argument is new shape.
-        Raises TypeError if shape is not appropriate.
-        Ndarray.shape accessible with compilation in --strict mode.
-        """
-        if isinstance(dim[0], tuple):
-            dim = dim[0]
-        size = 1
-        for i in dim:
-            size *= i
-        array_size = 1
-        for i in self._shape:
-            array_size *= i
-        if size != array_size:
-            raise TypeError("array size cannot change")
-        self._shape = dim
-        indices = []
-        for i in self._shape:
-            size /= i
-            indices.append(size)
-        self._indices = tuple(indices)
-        return None
-
-    def getshape(self):
-        """
-        Return array shape.
-        Ndarray.shape accessible with compilation in --strict mode.
-        """
-        return self._shape
-
     def reshape(self, dim):
         """
         Return view of array with new shape.
@@ -1405,6 +1390,8 @@ class ImageMatrix(Ndarray):
         else:     #ie10 supports typedarray, not uint8clampedarray
             Ndarray.__init__(self, self._imagedata.data, 'uint8')
         self.setshape(self._imagedata.height,self._imagedata.width,4)
+
+    shape = Ndarray.shape
 
     def getWidth(self):
         """

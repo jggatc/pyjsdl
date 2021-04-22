@@ -1,6 +1,7 @@
 0.23_dev
 -revise rect move/inflate args processing.
 -revise rect attributes.
+-revise ndarray shape for inheritance.
 -update for python 2/3 compatibility.
 
 0.23    2021-04-06
