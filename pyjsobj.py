@@ -14,10 +14,7 @@ from pyjamas.ui import Event
 from pyjamas.ui.MouseListener import MouseWheelHandler
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
 from pyjamas.media.Audio import Audio
-try:
-    from __pyjamas__ import JS, wnd
-except ImportError:
-    pass
+from __pyjamas__ import JS, wnd
 
 
 def eventGetMouseWheelVelocityY(evt):

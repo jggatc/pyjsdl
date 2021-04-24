@@ -4,10 +4,7 @@
 from pyjsdl.pyjsobj import HTML5Canvas
 from pyjsdl.rect import Rect, rectPool
 from pyjsdl.color import Color
-try:
-    from __pyjamas__ import JS
-except ImportError:
-    pass
+from __pyjamas__ import JS
 import sys
 
 if sys.version_info < (3,):

@@ -26,10 +26,7 @@
 #Project Site: https://gatc.ca/
 
 from math import ceil as _ceil
-try:
-    from __pyjamas__ import JS
-except ImportError:
-    pass
+from __pyjamas__ import JS
 import sys
 
 if sys.version_info < (3,):

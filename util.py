@@ -4,10 +4,7 @@
 from pyjsdl.time import Time
 from pyjsdl.rect import Rect
 from pyjsdl import env
-try:
-    from __pyjamas__ import JS
-except ImportError:
-    pass
+from __pyjamas__ import JS
 
 
 class Timer(object):

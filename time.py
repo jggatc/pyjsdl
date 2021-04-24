@@ -3,10 +3,7 @@
 
 from pyjsdl import env
 from pyjsdl.pyjsobj import performanceNowInit
-try:
-    from __pyjamas__ import JS
-except ImportError:
-    pass
+from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'
 
