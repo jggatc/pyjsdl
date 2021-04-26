@@ -3,6 +3,7 @@
 -revise rect attributes.
 -revise ndarray shape for inheritance.
 -add env check.
+-revise quit method to stop mixer.
 -update for python 2/3 compatibility.
 
 0.23    2021-04-06
