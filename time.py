@@ -74,6 +74,17 @@ class Clock(object):
 
 
 class Time(object):
+    """
+    **pyjsdl.time**
+    
+    * time.get_ticks
+    * time.delay
+    * time.wait
+    * time.set_timer
+    * time.time
+    * time.timeout
+    * time.Clock
+    """
 
     _wnd = None
 
@@ -83,6 +94,7 @@ class Time(object):
         Clock._wnd = Time._wnd
         self._time_init = self.time()
         self._framerate = 0
+        self._timers = {}
         self.run = lambda: self.wait()
 
     def get_ticks(self):
@@ -124,22 +136,29 @@ class Time(object):
                 env.canvas._pause = False
         return time
 
-    def set_timer(self, eventid, time, once=False):
+    def set_timer(self, event, time, once=False):
         """
         **pyjsdl.time.set_timer**
 
-        Events of type eventid placed on queue at time (ms) intervals.
+        Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.
         Disable timer with time of 0. 
         """
-        if eventid not in _EventTimer.timers:
-            _EventTimer.timers[eventid] = _EventTimer(eventid)
+        if hasattr(event, 'type'):
+            eventType = event.type
+            if eventType not in self._timers:
+                self._timers[eventType] = _EventTimer(event)
+        else:
+            eventType = event
+            if eventType not in self._timers:
+                evt = env.event.Event(eventType)
+                self._timers[eventType] = _EventTimer(evt)
         repeat = not once
-        _EventTimer.timers[eventid].set_timer(time, repeat)
+        self._timers[eventType].set_timer(time, repeat)
 
     def _stop_timers(self):
-        for eventid in _EventTimer.timers:
-            _EventTimer.timers[eventid].set_timer(0, False)
+        for eventType in self._timers:
+            self._timers[eventType].set_timer(0, False)
 
     def time(self):
         """
@@ -159,10 +178,9 @@ class Time(object):
 
 
 class _EventTimer:
-    timers = {}
 
-    def __init__(self, eventid):
-        self.event = env.event.Event(eventid)
+    def __init__(self, event):
+        self.event = event
         self.timer = None
         self.time = 0
         self.repeat = True
