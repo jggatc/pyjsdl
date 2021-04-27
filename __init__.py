@@ -89,6 +89,7 @@ def quit():
     canvas = display.get_canvas()
     canvas.stop()
     mixer.quit()
+    time._stop_timers()
 
 class error(RuntimeError):
     pass

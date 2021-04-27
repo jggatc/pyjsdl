@@ -137,6 +137,10 @@ class Time(object):
         repeat = not once
         _EventTimer.timers[eventid].set_timer(time, repeat)
 
+    def _stop_timers(self):
+        for eventid in _EventTimer.timers:
+            _EventTimer.timers[eventid].set_timer(0, False)
+
     def time(self):
         """
         **pyjsdl.time.time**
