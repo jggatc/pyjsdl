@@ -1,4 +1,4 @@
-0.23_dev
+0.24    2021-04-28
 -revise rect move/inflate args processing.
 -revise rect attributes.
 -revise ndarray shape for inheritance.
