@@ -6,6 +6,7 @@
 -revise quit method to stop mixer.
 -revise quit method to stop timers.
 -update time set_timer for event argument.
+-revise app to use webkit2.
 -update for python 2/3 compatibility.
 
 0.23    2021-04-06

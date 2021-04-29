@@ -6,17 +6,19 @@
 """
 Pyjsdl App
 
-Script launches HTML app on desktop using Webkit.
-To use, copy script and run once to create app.ini.
-Edit app.ini with the necessary information:
-app_name, app_size, server_ip, server_port.
+Script launches HTML app on desktop using Gtk/Webkit.
+Copy app script to the application root and optionally rename.
+Run the script once to create an ini file and edit to configure.
 
-Tested under Linux, required python-webkit installation.
+Tested under Linux Gnome desktop with the installed packages:
+gir1.2-webkit2-4.0, python-gi (py2), python3-gi (py3).
 On other OS, additional installation steps may be required.
 """
 
-
-import webkit, gtk
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('WebKit2', '4.0')
+from gi.repository import Gtk, WebKit2
 import multiprocessing
 import os.path
 import sys
@@ -45,30 +47,52 @@ class Server(TCPServer):
         self.process.terminate()
 
 
+class QuietServer(Server):
+    def __init__(self, port):
+        TCPServer.__init__(self, ("", port), QuietHandler)
+        self.process = multiprocessing.Process(target=self.serve_forever)
+
+
+class QuietHandler(SimpleHTTPRequestHandler):
+
+    def log_message(self, format, *args):
+        pass
+
+
 class App(object):
 
     def __init__(self, config):
         self.config = config
-        self.window = gtk.Window()
-        w, h = self.config.app_size
-        self.window.resize(w,h)
-        self.window.connect('destroy', lambda w: gtk.main_quit())
-        self.scroller = gtk.ScrolledWindow()
-        self.window.add(self.scroller)
+        self.window = Gtk.Window()
+        self.window.resize(self.config.width+16,self.config.height+16)
+        if self.config.app_name is not None:
+            self.window.set_title(self.config.app_name)
+        else:
+            title = self.config.app_uri.split('/')[-1].split('.')[0]
+            self.window.set_title(title.capitalize())
+        self.window.connect('destroy', Gtk.main_quit)
         self.web = None
         self.server = None
 
+    def webview_setup(self):
+        self.web = WebKit2.WebView()
+        uri = 'http://%s:%d/%s' % (self.config.server_ip,
+                                   self.config.server_port,
+                                   self.config.app_uri)
+        self.web.load_uri(uri)
+        self.window.add(self.web)
+
     def webview(self):
-        self.web = webkit.WebView()
-        url = 'http://%s:%d/%s' % (self.config.server_ip, self.config.server_port, self.config.app_name)
-        self.web.open(url)
-        self.scroller.add(self.web)
+        self.webview_setup()
         self.window.show_all()
-        gtk.main()
+        Gtk.main()
 
     def server_enable(self):
         if not self.server:
-            self.server = Server(self.config.server_port)
+            if self.config.server_log:
+                self.server = Server(self.config.server_port)
+            else:
+                self.server = QuietServer(self.config.server_port)
             self.server.initiate()
 
     def server_disable(self):
@@ -79,38 +103,55 @@ class App(object):
 class Config(object):
 
     def __init__(self):
-        if os.path.exists('app.ini'):
+        self.server_ip = 'localhost'
+        self.server_port = 8000
+        self.server_log = False
+        self.app_uri = None
+        self.app_name = None
+        self.width = 500
+        self.height = 500
+        self.config_name = sys.argv[0].split('.')[0]+'.ini'
+        if os.path.exists(self.config_name):
             cfg_setting = self.read_ini()
         else:
             self.create_ini()
-            print('Enter configuration info in app.ini.')
+            print('Enter configuration info in %s.' % self.config_name)
             sys.exit()
         for setting in cfg_setting:
+            if setting == 'app_uri':
+                self.app_uri = cfg_setting['app_uri'].strip()
             if setting == 'app_name':
                 self.app_name = cfg_setting['app_name'].strip()
-            if setting == 'app_size':
-                size = cfg_setting['app_size'].strip().split('x')
-                self.app_size = (int(size[0].strip()),int(size[1].strip()))
+            if setting == 'window_width':
+                self.width = int(cfg_setting['window_width'].strip())
+            if setting == 'window_height':
+                self.height = int(cfg_setting['window_height'].strip())
             if setting == 'server_ip':
                 self.server_ip = cfg_setting['server_ip'].strip()
             if setting == 'server_port':
                 self.server_port = int(cfg_setting['server_port'].strip())
+            if setting == 'server_log':
+                server_log = cfg_setting['server_log'].strip().lower()
+                self.server_log = {'true':True, 'false':False}[server_log]
 
     def create_ini(self):
-        f = open('app.ini', 'w')
+        f = open(self.config_name, 'w')
         f.write('#App Configuration\n\n')
-        f.write('app_name output/app.html\n\n')
-        f.write('app_size 500x500\n\n')
+        f.write('app_uri output/app.html\n\n')
+        f.write('app_name App\n\n')
+        f.write('window_width 500\n\n')
+        f.write('window_height 500\n\n')
         f.write('server_ip localhost\n\n')
         f.write('server_port 8000\n\n')
+        f.write('server_log false\n\n')
         f.close()
 
     def read_ini(self):
-        config_file = open('app.ini')
-        cfg_setting = [line.strip().split(' ',1) for line in config_file if line[:1].isalpha()]
-        cfg_setting = dict(cfg_setting)
-        config_file.close()
-        return cfg_setting
+        cfg_file = open(self.config_name)
+        cfg = [ln.strip().split(' ',1) for ln in cfg_file if ln[:1].isalpha()]
+        cfg = dict(cfg)
+        cfg_file.close()
+        return cfg
 
 
 def main():
