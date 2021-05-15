@@ -258,6 +258,24 @@ class Group(object):
         return None
 
 
+class RenderPlain(Group):
+    """
+    **pyjsdl.sprite.RenderPlain**
+
+    Same as sprite.Group.
+    """
+    pass
+
+
+class RenderClear(Group):
+    """
+    **pyjsdl.sprite.RenderClear**
+
+    Same as sprite.Group.
+    """
+    pass
+
+
 class GroupSingle(Group):
     """
     **pyjsdl.sprite.GroupSingle**
