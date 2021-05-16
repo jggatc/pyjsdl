@@ -554,15 +554,17 @@ def spritecollide(sprite, group, dokill, collided=None):
     An optional collided is a callback function taking two sprites and return bool collision.
     """
     collide = []
-    for sprites in group:
-        if sprite.rect.intersects(sprites.rect):
+    collision = False
+    for _sprite in group:
+        if sprite.rect.intersects(_sprite.rect):
             if collided:
-                if not collided(sprite,sprites):
+                if not collided(sprite,_sprite):
                     continue
-            collide.append(sprites)
-    if collide and dokill:
-        for sprite in collide:
-            sprite.kill()
+            collide.append(_sprite)
+            collision = True
+    if collision and dokill:
+        for _sprite in collide:
+            _sprite.kill()
     return collide
 
 
@@ -698,13 +700,15 @@ def groupcollide(group1, group2, dokill1, dokill2):
     The dokill argument is a bool, True removes sprites that collide from all groups.
     """
     collide = {}
+    collision = False
     for sprite1 in group1:
         for sprite2 in group2:
             if sprite1.rect.intersects(sprite2.rect):
                 if sprite1 not in collide:
                     collide[sprite1] = []
                 collide[sprite1].append(sprite2)
-    if collide:
+                collision = True
+    if collision:
         if dokill1:
             for sprite1 in collide:
                 sprite1.kill()
@@ -721,8 +725,8 @@ def spritecollideany(sprite, group):
     
     Check if sprite intersect with any sprites in group.
     """
-    for sprites in group:
-        if sprite.rect.intersects(sprites.rect):
+    for _sprite in group:
+        if sprite.rect.intersects(_sprite.rect):
             return True
     return False
 
