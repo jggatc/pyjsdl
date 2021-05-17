@@ -56,10 +56,11 @@ class Surface(HTML5Canvas):
         self._nonimplemented_methods()
 
     def __str__(self):
-        return "%s(%d,%d)" % (self.__class__, self.width, self.height)
+        s = "<%s(%dx%d)>"
+        return s % (self.__class__.__name__, self.width, self.height)
 
     def __repr__(self):
-        return "%s(%d,%d)" % (self.__class__, self.width, self.height)
+        return self.__str__()
 
     def get_size(self):
         """
