@@ -222,7 +222,7 @@ class Group(object):
         """
         Draw sprite on surface.
         """
-        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.values()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self])
         if self._clear_active:
             rectPool.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
@@ -340,7 +340,7 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.values()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
@@ -375,46 +375,24 @@ class OrderedUpdates(RenderUpdates):
         Return OrderedUpdates, a RenderUpdates subclass that maintains order of sprites.
         Can optionally be called with sprite(s) to add.
         """
-        self.order = dict()
-        self.place = dict()
-        self.range = 1000
-        self.index = iter(range(self.range))
-        self.sort = None
+        self._orderedsprites = []
         RenderUpdates.__init__(self, *sprites)
 
     def __iter__(self):
-        if self.sort:
-            order_sprite = iter(self.sort)
-        else:
-            keys = list(self.order.keys())
-            keys.sort()
-            self.sort = [self._sprites[self.order[key]] for key in keys]
-            order_sprite = iter(self.sort)
-        return order_sprite
+        return iter(self._orderedsprites)
 
     def sprites(self):
         """
         Return ordered list of sprites in the group.
         """
-        if self.sort:
-            order_sprite = self.sort[:]
-        else:
-            keys = list(self.order.keys())
-            keys.sort()
-            self.sort = [self._sprites[self.order[key]] for key in keys]
-            order_sprite = self.sort[:]
-        return order_sprite
+        return self._orderedsprites[:]
 
     def copy(self):
         """
         Return copy of group.
         """
         newgroup = RenderUpdates.copy(self)
-        if self.sprites():
-            newgroup.order = self.order.copy()
-            newgroup.place = self.place.copy()
-            newgroup.range = self.range
-            newgroup.index = iter(range(max(self.order.keys())+1,self.range))
+        newgroup._orderedsprites = self._orderedsprites[:]
         return newgroup
 
     def add(self, *sprites):
@@ -427,34 +405,10 @@ class OrderedUpdates(RenderUpdates):
                 if spriteID not in self._sprites:
                     self._sprites[spriteID] = sprite
                     sprite._groups[id(self)] = self
-                    index = self._get_index()
-                    self.order[index] = spriteID
-                    self.place[spriteID] = index
+                    self._orderedsprites.append(sprite)
             else:
                 self.add(*sprite)
-        self.sort = None
         return None
-
-    def _get_index(self):
-        try:
-            return next(self.index)
-        except StopIteration:
-            self._reset_index()
-            return next(self.index)
-
-    def _reset_index(self):
-        keys = list(self.order.keys())
-        keys.sort()
-        if len(keys)*2 > self.range:
-            self.range = len(keys)*2
-        self.index = iter(range(self.range))
-        order = self.order
-        self.order = dict()
-        self.place = dict()
-        for key in keys:
-            index = next(self.index)
-            self.order[index] = order[key]
-            self.place[order[key]] = index
 
     def remove(self, *sprites):
         """
@@ -466,55 +420,17 @@ class OrderedUpdates(RenderUpdates):
                 if spriteID in self._sprites:
                     del self._sprites[spriteID]
                     del sprite._groups[id(self)]
-                    del self.order[self.place[spriteID]]
-                    del self.place[spriteID]
+                    self._orderedsprites.remove(sprite)
             else:
                 self.remove(*sprite)
-        self.sort = None
         return None
 
     def empty(self):
         """
         Empty group.
         """
-        self.order = dict()
-        self.place = dict()
-        self.index = iter(range(self.range))
-        self.sort = None
+        self._orderedsprites[:] = []
         RenderUpdates.empty(self)
-
-    def draw(self, surface):
-        """
-        Draw sprite on surface in order of addition.
-        """
-        if self.sort:
-            order_sprite = iter(self.sort)
-        else:
-            keys = list(self.order.keys())
-            keys.sort()
-            self.sort = [self._sprites[self.order[key]] for key in keys]
-            order_sprite = iter(self.sort)
-        surface._blits((sprite.image,sprite.rect) for sprite in order_sprite)
-        if self._clear_active:
-            rectPool.extend(self.changed_areas)
-            self.changed_areas[:] = []
-            for sprite in self._sprites:
-                if sprite in self._sprites_drawn:
-                    if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
-                        self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
-                    else:
-                        self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-                else:
-                    self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-            self.changed_areas.extend(list(self._sprites_drawn.values()))
-            self._sprites_drawn.clear()
-            for sprite in self._sprites:
-                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
-        else:
-            rectPool.extend(self.changed_areas)
-            self.changed_areas[:] = []
-            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.values()])
-        return self.changed_areas
 
 
 class LayeredUpdates(OrderedUpdates):
