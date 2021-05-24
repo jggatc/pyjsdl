@@ -441,11 +441,230 @@ class LayeredUpdates(OrderedUpdates):
     * subclass not implemented
     """
 
-    def __init__(self, *sprites):
+    def __init__(self, *sprites, **kwargs):
         """
-        Return OrderedUpdates - subclass not implemented.
+        Return LayeredUpdates
+        Optional argument sprites to add to group.
+        If sprite has a _layer attribute, it will be added to that layer,
+        otherwise it will be added to the default layer.
+        If provided a default_layer keyword argument, this will be used
+        as default, otherwise default_layer will be 0.
+        If provided a layer keyword argument, then sprites will be
+        added to that layer regardless of the sprite _layer attribute.
         """
-        OrderedUpdates(self, *sprites)
+        self._layer = {}
+        self._layers = []
+        if 'default_layer' not in kwargs:
+            self._default_layer = 0
+        else:
+            self._default_layer = kwargs['default_layer']
+        if 'layer' not in kwargs:
+            self._override_layer = None
+        else:
+            self._override_layer = kwargs['layer']
+        OrderedUpdates.__init__(self, *sprites)
+
+    def copy(self):
+        """
+        Return copy of group.
+        """
+        newgroup = OrderedUpdates.copy(self)
+        for layer in self._layer:
+            layer_data = {}
+            layer_data['sprite'] = set()
+            for spriteID in self._layer[layer]['sprite']:
+                layer_data['sprite'].add(spriteID)
+            layer_data['index'] = self._layer[layer]['index'][:]
+            newgroup._layer[layer] = layer_data
+        newgroup._layers = self._layers[:]
+        newgroup._default_layer = self._default_layer
+        return newgroup
+
+    def add(self, *sprites, **kwargs):
+        """
+        Add sprite(s) to group, maintaining order based on layer of sprite,
+        derived from sprite _layer attribute or if absent default layer. 
+        If layer keyword argument is provided it is used.
+        """
+        if 'layer' in kwargs:
+            self._override_layer = kwargs['layer']
+        for sprite in sprites:
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID not in self._sprites:
+                    self._sprites[spriteID] = sprite
+                    sprite._groups[id(self)] = self
+                    if self._override_layer is not None:
+                        layer = self._override_layer
+                    elif hasattr(sprite, '_layer'):
+                        layer = sprite._layer
+                    else:
+                        layer = self._default_layer
+                    if layer not in self._layer:
+                        self._add_layer(layer)
+                    self._layer[layer]['sprite'].add(spriteID)
+                    i = self._layer[layer]['index'][1]
+                    self._layer[layer]['index'][1] += 1
+                    index = self._layers.index(layer)
+                    if self._layers[index:]:
+                        for _layer in self._layers[index+1:]:
+                            self._layer[_layer]['index'][0] += 1
+                            self._layer[_layer]['index'][1] += 1
+                    self._orderedsprites.insert(i, sprite)
+            else:
+                if self._override_layer is not None:
+                    kwargs['layer'] = self._override_layer
+                self.add(*sprite, **kwargs)
+        self._override_layer = None
+        return None
+
+    def _add_layer(self, layer):
+        self._layers.append(layer)
+        self._layers.sort()
+        index = self._layers.index(layer)
+        if self._layers[:index]:
+            prelayer = self._layers[index-1]
+            i = self._layer[prelayer]['index'][1]
+        else:
+            i = 0
+        self._layer[layer] = {'sprite':set(), 'index':[i,i]}
+
+    def remove(self, *sprites):
+        """
+        Remove sprite(s) from group.
+        """
+        for sprite in sprites:
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID in self._sprites:
+                    del self._sprites[spriteID]
+                    del sprite._groups[id(self)]
+                    for layer in self._layers:
+                        if str(spriteID) in self._layer[layer]['sprite']:
+                            break
+                    self._layer[layer]['sprite'].remove(spriteID)
+                    i = self._layer[layer]['index'][1]
+                    self._layer[layer]['index'][1] -= 1
+                    index = self._layers.index(layer)
+                    if self._layers[index:]:
+                        for _layer in self._layers[index+1:]:
+                            self._layer[_layer]['index'][0] -= 1
+                            self._layer[_layer]['index'][1] -= 1
+                    if (self._layer[layer]['index'][0]
+                            == self._layer[layer]['index'][1]):
+                        del self._layer[layer]
+                        self._layers.remove(layer)
+                    self._orderedsprites.remove(sprite)
+            else:
+                self.remove(*sprite)
+        return None
+
+    def empty(self):
+        """
+        Empty group.
+        """
+        self._layers[:] = []
+        self._layer.clear()
+        OrderedUpdates.empty(self)
+
+    def get_sprites_at(self, position):
+        """
+        Return sprites at position.
+        """
+        colliding_sprites = []
+        for sprite in self._orderedsprites:
+            if sprite.rect.collidepoint(position):
+                colliding_sprites.append(sprite)
+        return colliding_sprites
+
+    def get_sprite(self, index):
+        """
+        Return sprite at sprites index.
+        """
+        return self._orderedsprites[index]
+
+    def remove_sprites_of_layer(self, layer):
+        """
+        Return sprites removed from layer.
+        """
+        i,j = self._layer[layer]['index']
+        sprites = self._orderedsprites[i:j]
+        for sprite in sprites:
+            self.remove(sprite)
+        return sprites
+
+    def layers(self):
+        """
+        Return list of group layers.
+        """
+        return self._layers[:]
+
+    def change_layer(self, sprite, new_layer):
+        """
+        Move sprite to new layer.
+        """
+        self.remove(sprite)
+        self.add(sprite, layer=new_layer)
+        return None
+
+    def get_layer_of_sprite(self, sprite):
+        """
+        Return layer of sprite.
+        """
+        for layer in self._layers:
+            if str(id(sprite)) in self._layer[layer]['sprite']:
+                return layer
+
+    def get_top_layer(self):
+        """
+        Return top layer of group.
+        """
+        return self._layers[-1]
+
+    def get_bottom_layer(self):
+        """
+        Return bottom layer of group.
+        """
+        return self._layers[0]
+
+    def move_to_front(self, sprite):
+        """
+        Move sprite to top layer.
+        """
+        self.remove(sprite)
+        self.add(sprite, layer=self._layers[-1])
+        return None
+
+    def move_to_back(self, sprite):
+        """
+        Move sprite to layer under bottom layer.
+        """
+        new_layer = self._layers[0]-1
+        self.remove(sprite)
+        self.add(sprite, layer=new_layer)
+        return None
+
+    def get_top_sprite(self):
+        """
+        Return sprite at top.
+        """
+        return self._orderedsprites[-1]
+
+    def get_sprites_from_layer(self, layer):
+        """
+        Return sprites on layer.
+        """
+        i,j = self._layer[layer]['index']
+        return self._orderedsprites[i:j]
+
+    def switch_layer(self, layer1, layer2):
+        """
+        Move sprites to new layer.
+        """
+        sprites1 = self.remove_sprites_of_layer(layer1)
+        sprites2 = self.remove_sprites_of_layer(layer2)
+        self.add(sprites1, layer=layer2)
+        self.add(sprites2, layer=layer1)
 
 
 class LayeredDirty(LayeredUpdates):
