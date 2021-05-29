@@ -15,116 +15,100 @@ if sys.version_info < (3,):
 
 __docformat__ = 'restructuredtext'
 
+__doc__ = 'Surface pixel manipulation'
 
-class Surfarray(object):
+
+def array(surface):
     """
-    **pyjsdl.surfarray**
-
-    * pyjsdl.surfarray.array
-    * pyjsdl.surfarray.array2d
-    * pyjsdl.surfarray.array3d
-    * pyjsdl.surfarray.array_alpha
-    * pyjsdl.surfarray.make_surface
-    * pyjsdl.surfarray.blit_array
+    Return data array of the Surface argument.
+    Array consists of pixel data arranged by [y,x] in RGBA format.
+    Data array most consistent to ImageData format.
     """
+    imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
+    return ImageMatrix(imagedata)
 
-    def __init__(self):
-        """
-        Provides image pixel manipulation method.
-        ImageData can be retrieved as Ndarray data in different pixel format.
-        The array can be passed as ImageData to a Surface.
 
-        Module initialization creates pyjsdl.surfarray instance.
-        """
-        self.initialized = False
-        self._nonimplemented_methods()
+def array2d(surface, copydata=False):
+    """
+    Return data array of the Surface argument.
+    Array consists of pixel data arranged by [x,y] in integer color format.
+    Provides an interface to ImageData format.
+    Creates a new formatted array if optional copydata argument is True.
+    """
+    imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
+    if not copydata:
+        return ImageMatrixInteger(imagedata)
+    else:
+        return ImageInteger(imagedata)
 
-    def array(self, surface):
-        """
-        Return data array of the Surface argument.
-        Array consists of pixel data arranged by [y,x] in RGBA format.
-        Data array most consistent to ImageData format.
-        """
+
+def array3d(surface, copydata=False):
+    """
+    Return data array of the Surface argument.
+    Array consists of pixel data arranged by [x,y] in RGB format.
+    Provides an interface to ImageData format.
+    Creates a new formatted array if optional copydata argument is True.
+    """
+    imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
+    if not copydata:
+        return ImageMatrixRGB(imagedata)
+    else:
+        return ImageRGB(imagedata)
+
+
+def array_alpha(surface, copydata=False):
+    """
+    Return data array of the Surface argument.
+    Array consists of pixel data arranged by [x,y] of pixel alpha value.
+    Provides an interface to ImageData format.
+    Creates a new formatted array if optional copydata argument is True.
+    """
+    imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
+    if not copydata:
+        return ImageMatrixAlpha(imagedata)
+    else:
+        return ImageAlpha(imagedata)
+
+
+def make_surface(array):
+    """
+    Generates image pixels from array data.
+    Argument array containing image data.
+    Return Surface generated from array.
+    """
+    surface = Surface((array._imagedata.width,array._imagedata.height))
+    blit_array(surface, array)
+    return surface
+
+
+def blit_array(surface, array):
+    """
+    Generates image pixels from array data.
+    Arguments include destination Surface and array containing image data.
+    """
+    try:
+        imagedata = array.getImageData()
+    except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-        return ImageMatrix(imagedata)
-
-    def array2d(self, surface, copydata=False):
-        """
-        Return data array of the Surface argument.
-        Array consists of pixel data arranged by [x,y] in integer color format.
-        Provides an interface to ImageData format.
-        Alternatively, creates a new formatted array if optional copydata argument is True.
-        """
-        imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-        if not copydata:
-            return ImageMatrixInteger(imagedata)
+        if len(array._shape) == 2:
+            array2d = ImageMatrix(imagedata)
+            for y in range(array2d.getHeight()):
+                for x in range(array2d.getWidth()):
+                    value = array[x,y]
+                    array2d[y,x] = (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, 255)
+            imagedata = array2d.getImageData()
         else:
-            return ImageInteger(imagedata)
+            imagedata.data.set(array.getArray())
+    surface.impl.putImageData(imagedata, 0, 0, 0, 0, surface.width, surface.height)
+    return None
 
-    def array3d(self, surface, copydata=False):
-        """
-        Return data array of the Surface argument.
-        Array consists of pixel data arranged by [x,y] in RGB format.
-        Provides an interface to ImageData format.
-        Alternatively, creates a new formatted array if optional copydata argument is True.
-        """
-        imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-        if not copydata:
-            return ImageMatrixRGB(imagedata)
-        else:
-            return ImageRGB(imagedata)
 
-    def array_alpha(self, surface, copydata=False):
-        """
-        Return data array of the Surface argument.
-        Array consists of pixel data arranged by [x,y] of pixel alpha value.
-        Provides an interface to ImageData format.
-        Alternatively, creates a new formatted array if optional copydata argument is True.
-        """
-        imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-        if not copydata:
-            return ImageMatrixAlpha(imagedata)
-        else:
-            return ImageAlpha(imagedata)
-
-    def make_surface(self, array):
-        """
-        Generates image pixels from array data.
-        Argument array containing image data.
-        Return Surface generated from array.
-        """
-        surface = Surface((array._imagedata.width,array._imagedata.height))
-        self.blit_array(surface, array)
-        return surface
-
-    def blit_array(self, surface, array):
-        """
-        Generates image pixels from array data.
-        Arguments include surface to generate the image, and array containing image data.
-        """
-        try:
-            imagedata = array.getImageData()
-        except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
-            imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
-            if len(array._shape) == 2:
-                array2d = ImageMatrix(imagedata)
-                for y in range(array2d.getHeight()):
-                    for x in range(array2d.getWidth()):
-                        value = array[x,y]
-                        array2d[y,x] = (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, 255)
-                imagedata = array2d.getImageData()
-            else:
-                imagedata.data.set(array.getArray())
-        surface.impl.putImageData(imagedata, 0, 0, 0, 0, surface.width, surface.height)
-        return None
-
-    def _nonimplemented_methods(self):
-        self.use_arraytype = lambda *arg: None
+use_arraytype = lambda *arg: None
 
 
 class ImageMatrixRGB(ImageMatrix):
     """
-    Array consists of pixel data arranged by width/height in RGB format.
+    Array of pixel data arranged by width/height in RGB format.
     Interface to ImageData.
     """
 
@@ -145,7 +129,7 @@ class ImageMatrixRGB(ImageMatrix):
 
 class ImageRGB(Ndarray):
     """
-    Array consists of pixel data arranged by width/height in RGB format.
+    Array of pixel data arranged by width/height in RGB format.
     Array data derived from ImageData.
     """
 
@@ -186,7 +170,7 @@ class ImageRGB(Ndarray):
 
 class ImageMatrixAlpha(ImageMatrix):
     """
-    Array consists of pixel data arranged by width/height of pixel alpha value.
+    Array of pixel data arranged by width/height of pixel alpha value.
     Interface to ImageData.
     """
 
@@ -201,7 +185,7 @@ class ImageMatrixAlpha(ImageMatrix):
 
 class ImageAlpha(Ndarray):
     """
-    Array consists of pixel data arranged by width/height of pixel alpha value.
+    Array of pixel data arranged by width/height of pixel alpha value.
     Array data derived from ImageData.
     """
 
@@ -240,7 +224,7 @@ class ImageAlpha(Ndarray):
 
 class ImageMatrixInteger(ImageMatrix):
     """
-    Array consists of pixel data arranged by width/height in integer color format.
+    Array of pixel data arranged by width/height in integer color format.
     Interface to ImageData.
     """
 
@@ -256,7 +240,7 @@ class ImageMatrixInteger(ImageMatrix):
 
 class ImageInteger(Ndarray):
     """
-    Array consists of pixel data arranged by width/height in integer color format.
+    Array of pixel data arranged by width/height in integer color format.
     Array data derived from ImageData.
     """
 

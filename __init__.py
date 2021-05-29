@@ -28,15 +28,15 @@ from pyjsdl.display import Display
 from pyjsdl.surface import Surface
 from pyjsdl.rect import Rect
 from pyjsdl.image import Image
-from pyjsdl.draw import Draw
 from pyjsdl.event import Event
 from pyjsdl.key import Key
 from pyjsdl.mouse import Mouse
-from pyjsdl.transform import Transform
-from pyjsdl.surfarray import Surfarray
 from pyjsdl.color import Color
 from pyjsdl.mixer import Mixer
 from pyjsdl.time import Time
+from pyjsdl import draw
+from pyjsdl import transform
+from pyjsdl import surfarray
 from pyjsdl import mask
 from pyjsdl import font
 from pyjsdl import sprite
@@ -48,9 +48,6 @@ env.set_env('event', event)
 time = Time()
 display = Display()
 image = Image()
-draw = Draw()
-transform = Transform()
-surfarray = Surfarray()
 mixer = Mixer()
 mouse = Mouse()
 key = Key()
