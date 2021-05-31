@@ -1,18 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-"""
-CCS Cursor API
-https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-
-TYPES = ['default', 'auto', 'none', 'context-menu', 'help', 'pointer',
-'progress', 'wait', 'cell', 'crosshair', 'text', 'vertical-text', 'alias',
-'copy', 'move', 'no-drop', 'not-allowed', 'e-resize', 'n-resize', 'ne-resize',
-'nw-resize', 's-resize', 'se-resize', 'sw-resize', 'w-resize', 'ew-resize',
-'ns-resize', 'nesw-resize', 'nwse-resize', 'col-resize', 'row-resize',
-'all-scroll', 'zoom-in', 'zoom-out', 'grab', 'grabbing']
-"""
-
 from pyjsdl.surface import Surface
 from pyjsdl.color import Color
 from pyjsdl import locals as Const
@@ -76,4 +64,13 @@ def create_cursor(size, data, mask):
             x = 0
             y += 1
     return surface
+
+
+def get_cursor_types():
+    #https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+    """
+    Return list of cursor types from CSS Cursor API.
+    """
+    types = ['default', 'auto', 'none', 'context-menu', 'help', 'pointer', 'progress', 'wait', 'cell', 'crosshair', 'text', 'vertical-text', 'alias', 'copy', 'move', 'no-drop', 'not-allowed', 'e-resize', 'n-resize', 'ne-resize', 'nw-resize', 's-resize', 'se-resize', 'sw-resize', 'w-resize', 'ew-resize', 'ns-resize', 'nesw-resize', 'nwse-resize', 'col-resize', 'row-resize', 'all-scroll', 'zoom-in', 'zoom-out', 'grab', 'grabbing']
+    return types
 
