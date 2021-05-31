@@ -43,16 +43,29 @@ from pyjsdl import sprite
 from pyjsdl import cursors
 from pyjsdl.locals import *
 
-event = Event()
-env.set_env('event', event)
-time = Time()
-display = Display()
-image = Image()
-mixer = Mixer()
-mouse = Mouse()
-key = Key()
 
-init = lambda:None
+_initialized = False
+
+def init():
+    """
+    Initialize module.
+    """
+    global time, display, image, event, key, mouse, mixer, _initialized
+    if _initialized:
+        return
+    else:
+        _initialized = True
+    event = Event()
+    env.set_env('event', event)
+    time = Time()
+    display = Display()
+    image = Image()
+    mixer = Mixer()
+    mouse = Mouse()
+    key = Key()
+
+init()
+
 
 def setup(callback, images=None):
     """
@@ -63,6 +76,7 @@ def setup(callback, images=None):
     """
     display.setup(callback, images)
 
+
 def set_callback(callback):
     """
     Set callback function.
@@ -70,6 +84,7 @@ def set_callback(callback):
     Callback function can also be an object with a run method to call.
     """
     display.set_callback(callback)
+
 
 def setup_images(images):
     """
@@ -79,6 +94,7 @@ def setup_images(images):
     """
     display.set_images(images)
 
+
 def quit():
     """
     Terminates canvas repaint and callback function.
@@ -87,6 +103,7 @@ def quit():
     canvas.stop()
     mixer.quit()
     time._stop_timers()
+
 
 class error(RuntimeError):
     pass
