@@ -29,8 +29,13 @@ from math import ceil as _ceil
 from __pyjamas__ import JS
 import sys
 
-if sys.version_info < (3,):
+
+def _compat():
+    global range
     range = xrange
+
+if sys.version_info < (3,):
+    _compat()
 
 
 class TypedArray(object):

@@ -8,7 +8,7 @@ from __pyjamas__ import JS
 import sys
 
 if sys.version_info < (3,):
-    range = xrange
+    from pyjsdl.util import _range as range
 
 __docformat__ = 'restructuredtext'
 

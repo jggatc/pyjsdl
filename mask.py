@@ -6,7 +6,7 @@ from pyjsdl.color import Color
 import sys
 
 if sys.version_info < (3,):
-    range = xrange
+    from pyjsdl.util import _range as range
 
 __docformat__ = 'restructuredtext'
 
