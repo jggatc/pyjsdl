@@ -46,6 +46,7 @@ class Canvas(Surface, MouseWheelHandler):
         self.addMouseWheelListener(self)
         self.addKeyboardListener(self)
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
+        self.preventContextMenu()
         self.modKey = env.event.modKey
         self.specialKey = env.event.specialKey
         self.event._initiate_touch_listener(self)
@@ -203,6 +204,11 @@ class Canvas(Surface, MouseWheelHandler):
     def onTouchCancel(self, event):
         for callback in self._touch_callback:
             callback.onTouchCancel(event)
+
+    def preventContextMenu(self):
+        element = self.getElement()
+        callback = lambda event: event.preventDefault()
+        element.addEventListener('contextmenu', callback)
 
     def resize(self, width, height):
         Surface.resize(self, width, height)
