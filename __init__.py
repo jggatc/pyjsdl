@@ -34,6 +34,7 @@ from pyjsdl.mouse import Mouse
 from pyjsdl.color import Color
 from pyjsdl.mixer import Mixer
 from pyjsdl.time import Time
+from pyjsdl.vector import Vector2
 from pyjsdl import draw
 from pyjsdl import transform
 from pyjsdl import surfarray
