@@ -271,13 +271,14 @@ class Vector2(object):
         vx = vector[0]/vmag
         vy = vector[1]/vmag
         theta = atan2(vy, vx) - atan2(sy, sx)
-        if -0.000001 < abs(theta)-pi < 0.000001: 
+        _theta = abs(theta)
+        if _theta-pi > 0.000001:
+            theta -= (2*pi) * (theta/_theta)
+        elif -0.000001 < _theta-pi < 0.000001:
             raise ValueError('Cannot use slerp on 180 degrees')
         if t < 0.0:
             t = -t
-            theta -= 2*pi
-        if (sx * vy) < (sy * vx):
-            theta = -theta
+            theta -= (2*pi) * (theta/abs(theta))
         sin_theta = sin(theta)
         if sin_theta:
             a = sin((1.0-t)*theta) / sin_theta
