@@ -14,7 +14,7 @@ class Vector2(object):
     To enable type enforcement use --enable-descriptor-proto,
     however doing so has a moderate performance impact.
     To enable arithmetic operation functionality, use
-    --enable-operator-funcs with mimimal performance impact.
+    --enable-operator-funcs with minimal performance impact.
     """
 
     __slots__ = ['x', 'y']
@@ -627,7 +627,6 @@ class _Vector2(Vector2):
 
 
 if env.pyjs_mode.test_getattr():
-    print('proto')
     #-S mode or -O --enable-descriptor-proto mode.
     Vector2 = _Vector2
 
