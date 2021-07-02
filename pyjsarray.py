@@ -88,11 +88,6 @@ class TypedArray(object):
         else:
             self._data = None
 
-    filter = lambda self,func: self._array(self._data.filter(func))
-    map = lambda self,func: self._array(self._data.map(func))
-    reduce = lambda self,acc: self._array(self._data.reduce(acc))
-    slice = lambda self,i,j: self._array(self._data.slice(i,j))
- 
     def _array(self, array):
         typedarray = self.__class__()
         typedarray._data = array
@@ -120,6 +115,30 @@ class TypedArray(object):
 
     def __len__(self):
         return self._data.length
+
+    def filter(self, function):
+        """
+        Return typedarray filtered by function parameter.
+        """
+        return self._array(self._data.filter(function))
+
+    def map(self, function):
+        """
+        Return typedarray of applying function across elements.
+        """
+        return self._array(self._data.map(function))
+
+    def reduce(self, function):
+        """
+        Return result of applying accumlator function parameter.
+        """
+        return self._array(self._data.reduce(function))
+
+    def slice(self, i, j):
+        """
+        Return typedarray from indices i,j.
+        """
+        return self._array(self._data.slice(i,j))
 
     def set(self, data, offset=0):
         """
@@ -198,7 +217,7 @@ class Uint8ClampedArray(TypedArray):
         try:
             typedarray = TypedArray.__obj['Uint8ClampedArray']
             TypedArray.__init__(self, data, offset, length, typedarray)
-        except (TypeError, AttributeError):     #-O/-S:TypeError/AttributeError
+        except (TypeError, AttributeError):
             if isUndefined(typedarray):
                 raise NotImplementedError("TypedArray data type not implemented")
             else:
@@ -1389,7 +1408,7 @@ class ImageMatrix(Ndarray):
         self._imagedata = ImageData(imagedata)
         if isinstance(self._imagedata.data, Uint8ClampedArray):
             Ndarray.__init__(self, self._imagedata.data, 'uint8c')
-        else:     #ie10 supports typedarray, not uint8clampedarray
+        else:
             Ndarray.__init__(self, self._imagedata.data, 'uint8')
         self.setshape(self._imagedata.height,self._imagedata.width,4)
 
