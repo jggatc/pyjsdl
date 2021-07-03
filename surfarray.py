@@ -88,7 +88,7 @@ def blit_array(surface, array):
     """
     try:
         imagedata = array.getImageData()
-    except (TypeError, AttributeError):     #-O/-S: TypeError/AttributeError
+    except (TypeError, AttributeError):
         imagedata = surface.impl.getImageData(0, 0, surface.width, surface.height)
         if len(array._shape) == 2:
             array2d = ImageMatrix(imagedata)
@@ -124,7 +124,8 @@ class ImageMatrixRGB(ImageMatrix):
         index = list(index)
         index[0], index[1] = index[1], index[0]
         index = tuple(index)
-        return ImageMatrix.__setitem__(self, index, value)
+        ImageMatrix.__setitem__(self, index, value)
+        return None
 
 
 class ImageRGB(Ndarray):
@@ -139,7 +140,7 @@ class ImageRGB(Ndarray):
         array.setshape(self._imagedata.height,self._imagedata.width,4)
         try:
             data = Uint8ClampedArray(self._imagedata.height*self._imagedata.width*3)
-        except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
+        except NotImplementedError:
             data = Uint8Array(self._imagedata.height*self._imagedata.width*3)
         index = 0
         for x in range(self._imagedata.width):
@@ -180,7 +181,8 @@ class ImageMatrixAlpha(ImageMatrix):
         return ImageMatrix.__getitem__(self, (index[1],index[0],3))
 
     def __setitem__(self, index, value):
-        return ImageMatrix.__setitem__(self, (index[1],index[0],3), value)
+        ImageMatrix.__setitem__(self, (index[1],index[0],3), value)
+        return None
 
 
 class ImageAlpha(Ndarray):
@@ -195,7 +197,7 @@ class ImageAlpha(Ndarray):
         array.setshape(self._imagedata.height,self._imagedata.width,4)
         try:
             data = Uint8ClampedArray(self._imagedata.height*self._imagedata.width)
-        except NotImplementedError:     #ie10 supports typedarray, not uint8clampedarray
+        except NotImplementedError:
             data = Uint8Array(self._imagedata.height*self._imagedata.width)
         index = 0
         for x in range(self._imagedata.width):
@@ -235,7 +237,8 @@ class ImageMatrixInteger(ImageMatrix):
         return value[0]<<16 | value[1]<<8 | value[2] | value[3]<<24
 
     def __setitem__(self, index, value):
-        return ImageMatrix.__setitem__(self, (index[1],index[0]), (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, value>>24 & 0xff))
+        ImageMatrix.__setitem__(self, (index[1],index[0]), (value>>16 & 0xff, value>>8 & 0xff, value & 0xff, value>>24 & 0xff))
+        return None
 
 
 class ImageInteger(Ndarray):
@@ -266,7 +269,11 @@ class ImageInteger(Ndarray):
         index = 0
         for x in range(self._imagedata.height):
             for y in range(self._imagedata.width):
-                self._imagedata.data[index], self._imagedata.data[index+1], self._imagedata.data[index+2], self._imagedata.data[index+3] = self[y,x]>>16 & 0xff, self[y,x]>>8 & 0xff, self[y,x] & 0xff, self[y,x]>>24 & 0xff
+                dat = self[y,x]
+                self._imagedata.data[index] = dat>>16 & 0xff
+                self._imagedata.data[index+1] = dat>>8 & 0xff
+                self._imagedata.data[index+2] = dat & 0xff
+                self._imagedata.data[index+3] =  dat>>24 & 0xff
                 index += 4
         return self._imagedata.getImageData()
 
