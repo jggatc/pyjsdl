@@ -23,6 +23,7 @@ class Mixer:
     * pyjsdl.mixer.get_busy
     * pyjsdl.mixer.Sound
     * pyjsdl.mixer.Channel
+    * pyjsdl.mixer.music
     """
 
     def __init__(self):
@@ -36,6 +37,7 @@ class Mixer:
         self._channel_active = []
         self._channel_reserved = []
         self._channel_reserved_num = 0
+        self.music = Music()
         self._active = False
         self._initialized = True
         self._nonimplemented_methods()
@@ -60,6 +62,7 @@ class Mixer:
         Stop mixer processing and release resources.
         """
         self.stop()
+        self.music._channel.stop()
         self._initialized = False
         return None
 
@@ -77,7 +80,8 @@ class Mixer:
         Stop mixer channels.
         """
         for id in self._channel_active:
-            self._channels[id].stop()
+            if id > -1:
+                self._channels[id].stop()
         return None
 
     def pause(self):
@@ -85,7 +89,8 @@ class Mixer:
         Pause mixer channels.
         """
         for id in self._channel_active:
-            self._channels[id].pause()
+            if id > -1:
+                self._channels[id].pause()
         return None
 
     def unpause(self):
@@ -93,7 +98,8 @@ class Mixer:
         Unpause mixer channels.
         """
         for id in self._channel_active:
-            self._channels[id].unpause()
+            if id > -1:
+                self._channels[id].unpause()
         return None
 
     def set_num_channels(self, count):
@@ -161,7 +167,7 @@ class Mixer:
             if id > self._channel_reserved_num-1:
                 longest = id
                 break
-            else:
+            elif id > -1:
                 if longest_reserved is None:
                     longest_reserved = id
         if longest is not None:
@@ -189,14 +195,15 @@ class Mixer:
         Check if mixer channels are actively processing.
         """
         for id in self._channel_active:
-            if self._channels[id]._active:
-               return True
+            if id > -1:
+                if self._channels[id]._active:
+                    return True
         return False
 
     def _activate_channel(self, id):
         if id > self._channel_reserved_num-1:
             self._channel_available.remove(id)
-        else:
+        elif id > -1:
             self._channel_reserved.remove(id)
         self._channel_active.append(id)
         self._active = True
@@ -209,7 +216,7 @@ class Mixer:
     def _restore_channel(self, id):
         if id > self._channel_reserved_num-1:
             self._channel_available.append(id)
-        else:
+        elif id > -1:
             self._channel_reserved.append(id)
 
     def _get_channel(self, id):
@@ -278,11 +285,12 @@ class Sound(object):
         """
         channels = self._mixer._channels
         for id in self._mixer._channel_active:
-            try:
-                if channels[id]._sound._id == self._id:
-                    channels[id].stop()
-            except AttributeError:
-                continue
+            if id > -1:
+                try:
+                    if channels[id]._sound._id == self._id:
+                        channels[id].stop()
+                except AttributeError:
+                    continue
         return None
 
     def set_volume(self, volume):
@@ -310,11 +318,12 @@ class Sound(object):
         channels = self._mixer._channels
         channel = 0
         for id in self._mixer._channel_active:
-            try:
-                if channels[id]._sound._id == self._id:
-                    channel += 1
-            except AttributeError:
-                continue
+            if id > -1:
+                try:
+                    if channels[id]._sound._id == self._id:
+                        channel += 1
+                except AttributeError:
+                    continue
         return channel
 
     def get_length(self):
@@ -477,4 +486,88 @@ class Channel(object):
         self.get_queue = lambda *arg: None
         self.set_endevent = lambda *arg: None
         self.get_endevent = lambda *arg: 0
+
+
+class Music(object):
+    """
+    **pyj2d.mixer.music**
+
+    * music.load
+    * music.unload
+    * music.play
+    * music.stop
+    * music.pause
+    * music.unpause
+    * music.set_volume
+    * music.get_volume
+    * music.get_busy
+    """
+
+    def __init__(self):
+        self._channel = Channel(-1)
+        self._sound = None
+
+    def load(self, sound_file):
+        """
+        Load music file.
+        """
+        self._sound = Sound(sound_file)
+        return None
+
+    def unload(self):
+        """
+        Unload music file.
+        """
+        self._channel.stop()
+        self._sound = None
+        return None
+
+    def play(self, loops=0, maxtime=0, fade_ms=0):
+        """
+        Play music.
+        Argument loops is number of repeats or -1 for continuous.
+        """
+        self._channel.play(self._sound, loops)
+        return None
+
+    def stop(self):
+        """
+        Stop music.
+        """
+        self._channel.stop()
+        return None
+
+    def pause(self):
+        """
+        Pause music.
+        """
+        self._channel.pause()
+        return None
+
+    def unpause(self):
+        """
+        Unpause music.
+        """
+        self._channel.unpause()
+        return None
+
+    def set_volume(self, volume):
+        """
+        Set music volume.
+        Argument volume of value 0.0 to 1.0.
+        """
+        self._sound.set_volume(volume)
+        return None
+
+    def get_volume(self):
+        """
+        Get volume for current music.
+        """
+        return self._sound.get_volume()
+
+    def get_busy(self):
+        """
+        Check if music playing.
+        """
+        return self._channel.get_busy()
 

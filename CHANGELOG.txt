@@ -7,6 +7,7 @@
 -add canvas contextmenu handler.
 -add vector object.
 -revise mixer processing.
+-add mixer music object.
 
 0.24    2021-04-28
 -revise rect move/inflate args processing.
