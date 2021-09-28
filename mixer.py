@@ -2,7 +2,6 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl.pyjsobj import Audio
-from pyjsdl.time import Time
 
 __docformat__ = 'restructuredtext'
 
@@ -30,16 +29,14 @@ class Mixer:
         Sound._mixer = self
         Channel._mixer = self
         self.Sound = Sound
-        self.Channel = Channel
+        self.Channel = self._get_channel
         self._channel_max = 8
         self._channels = {}
-        self._sounds = {}
+        self._channel_available = [id for id in range(self._channel_max-1,-1,-1)]
+        self._channel_active = []
         self._channel_reserved = []
-        self._channel_paused = []
-        self._channel_reserves = [id for id in range(self._channel_max-1,-1,-1)]
-        self._channel_pool = []
-        self._lines = {}
-        self._line_num = 0
+        self._channel_reserved_num = 0
+        self._active = False
         self._initialized = True
         self._nonimplemented_methods()
 
@@ -64,6 +61,7 @@ class Mixer:
         """
         self.stop()
         self._initialized = False
+        return None
 
     def get_init(self):
         """
@@ -78,7 +76,7 @@ class Mixer:
         """
         Stop mixer channels.
         """
-        for id in self._channel_pool:
+        for id in self._channel_active:
             self._channels[id].stop()
         return None
 
@@ -86,22 +84,16 @@ class Mixer:
         """
         Pause mixer channels.
         """
-        for id in self._channel_pool:
-            try:
-                if self._channels[id]._active:
-                    self._channel_paused.append(id)
-                    self._channels[id].pause()
-            except AttributeError:
-                continue
+        for id in self._channel_active:
+            self._channels[id].pause()
         return None
 
     def unpause(self):
         """
         Unpause mixer channels.
         """
-        for id in self._channel_paused:
+        for id in self._channel_active:
             self._channels[id].unpause()
-        self.channel_paused = []
         return None
 
     def set_num_channels(self, count):
@@ -111,13 +103,17 @@ class Mixer:
         """
         if count >= self._channel_max:
             for id in range(self._channel_max, count):
-                self._channels[id] = None
+                self._channel_available.insert(0, id)
             self._channel_max = count
         elif count >= 0:
-                for id in range(count, self._channel_max):
-                    self._channels[id].stop()
+            for id in range(count, self._channel_max):
+                if id in self._channels:
+                    if self._channels[id] is not None:
+                        self._channels[id].stop()
                     del self._channels[id]
-                self._channel_max = count
+                if id in self._channel_available:
+                    self._channel_available.remove(id)
+            self._channel_max = count
         return None
 
     def get_num_channels(self):
@@ -133,26 +129,14 @@ class Mixer:
         """
         if count > self._channel_max:
             count = self._channel_max
-        reserved_len = len(self._channel_reserved)
-        if reserved_len:
-            if reserved_len >= count:
-                for i in range(reserved_len-count):
-                    id = self._channel_reserved.pop()
-                    self._channels[id]._reserved = False
-                    self._channel_pool.append(id)
-                count = 0
-            else:
-                count -= len(self._channel_reserved)
-        for id in range(reserved_len, count+reserved_len):
-            try:
-                self._channels[id]._reserved = True
-            except AttributeError:
-                self._channels[id] = Channel(id)
-            try:
-                self._channel_pool.remove(id)
-            except ValueError:
-                pass
+        elif count < 0:
+            count = 0
+        self._channel_reserved_num = count
+        self._channel_reserved = []
+        for id in range(self._channel_reserved_num):
             self._channel_reserved.append(id)
+            if id in self._channel_available:
+                self._channel_available.remove(id)
         return None
 
     def find_channel(self, force=False):
@@ -160,71 +144,92 @@ class Mixer:
         Get an inactive mixer channel.
         Optional force attribute return longest running channel if all active.
         """
-        if self._channel_reserves:
-            channel = self._channel_reserves.pop()
-            if channel in self._channels:
-                return self._channels[channel]
+        if self._channel_available:
+            id = self._channel_available.pop()
+            self._channel_available.insert(0, id)
+            return self._get_channel(id)
+        if self._channel_reserved_num:
+            if self._channel_reserved:
+                id = self._channel_reserved.pop()
+                self._channel_reserved.insert(0, id)
+                return self._get_channel(id)
+        if not force:
+            return None
+        longest = None
+        longest_reserved = None
+        for id in self._channel_active:
+            if id > self._channel_reserved_num-1:
+                longest = id
+                break
             else:
-                channel = Channel(channel)
-                return channel
+                if longest_reserved is None:
+                    longest_reserved = id
+        if longest is not None:
+            channel = longest
         else:
-            for id in self._channel_pool:
-                if not self._channels[id]._active:
-                    return self._channels[id]
+            if longest_reserved is not None:
+                channel = longest_reserved
             else:
-                if force:
-                    channel = None
-                    longest = 0
-                    for id in self._channel_pool:
-                        if self._channels[id]._sound and not self._channels[id].isPaused():
-                            duration = self._channels[id]._sound._sound_object.getCurrentTime()
-                            if duration > longest:
-                                longest = duration
-                                channel = self._channels[id]
-                        else:
-                            channel = self._channels[id]
-                            break
-                    if channel:
-                        channel.stop()
-                        return channel
-                    else:
-                        return None
-                else:
-                    return None
+                channel = 0
+        channel = self._get_channel(channel)
+        return channel
+
+    def _retrieve_channel(self):
+        if self._channel_available:
+            id = self._channel_available.pop()
+            channel = self._get_channel(id)
+            self._channel_active.append(id)
+            self._active = True
+        else:
+            channel = None
+        return channel
 
     def get_busy(self):
         """
         Check if mixer channels are actively processing.
         """
-        for id in self._channel_pool:
-            try:
-                if self._channels[id]._active:
-                    return True
-            except AttributeError:
-                continue
+        for id in self._channel_active:
+            if self._channels[id]._active:
+               return True
         return False
+
+    def _activate_channel(self, id):
+        if id > self._channel_reserved_num-1:
+            self._channel_available.remove(id)
+        else:
+            self._channel_reserved.remove(id)
+        self._channel_active.append(id)
+        self._active = True
+
+    def _deactivate_channel(self, id):
+        self._channel_active.remove(id)
+        if not self._channel_active:
+            self._active = False
+
+    def _restore_channel(self, id):
+        if id > self._channel_reserved_num-1:
+            self._channel_available.append(id)
+        else:
+            self._channel_reserved.append(id)
+
+    def _get_channel(self, id):
+        if id in self._channels:
+            return self._channels[id]
+        else:
+            return Channel(id)
 
     def _register_channel(self, channel):
         id = channel._id
         if id < self._channel_max:
-            try:
-                if self._channels[id]._sound:
-                    channel._sound = self._channels[id]._sound
-                    self._channels[id] = channel
-            except KeyError:
-                self._channels[id] = channel
-                self._channel_pool.append(id)
+            self._channels[id] = channel
         else:
             raise AttributeError("Channel not available.")
-
-    def _register_sound(self, sound):
-        self._sounds[sound._id] = sound
 
     def _nonimplemented_methods(self):
         self.fadeout = lambda *arg: None
 
 
-class Sound:
+class Sound(object):
     """
     **pyjsdl.mixer.Sound**
     
@@ -243,7 +248,6 @@ class Sound:
         if id is None:
             self._id = Sound._id
             Sound._id += 1
-            self._mixer._register_sound(self)
         else:
             self._id = id
         if isinstance(sound_file, str):
@@ -251,8 +255,8 @@ class Sound:
         else:
             self._sound_object = sound_file
         self._sound_objects = []
+        self._sound_objects.append(self._sound_object)
         self._channel = None
-        self._ch = None
         self._volume = 1.0
         self._nonimplemented_methods()
 
@@ -261,33 +265,25 @@ class Sound:
         Play sound on mixer channel.
         Argument loops is number of repeats or -1 for continuous.
         """
-        if not self._channel:
-            self._channel = self._mixer.find_channel()
-            if self._channel:
-                self._channel._set_sound(self)
-            else:
-                return None
-        if self._sound_object.isPaused():
-            self._ch = self._channel
-        else:
-            self._ch = self._mixer.find_channel()
-            if self._ch:
-                sound = Sound(self._sound_object.getSrc(), self._id)
-                self._ch._set_sound(sound)
-            else:
-                return None
-        if not loops:
-            self._ch._play()
-        else:
-            self._ch._play_repeat(loops)
-        return self._ch
+        self._channel = self._mixer._retrieve_channel()
+        if self._channel:
+            self._channel._set_sound(self)
+            self._channel._loops = loops
+            self._channel._play()
+        return self._channel
 
     def stop(self):
         """
-        Stop sound on mixer channel.
+        Stop sound on active channels.
         """
-        if self._channel:
-            self._channel.stop()
+        channels = self._mixer._channels
+        for id in self._mixer._channel_active:
+            try:
+                if channels[id]._sound._id == self._id:
+                    channels[id].stop()
+            except AttributeError:
+                continue
+        return None
 
     def set_volume(self, volume):
         """
@@ -299,7 +295,6 @@ class Sound:
         elif volume > 1.0:
             volume = 1.0
         self._volume = volume
-        self._sound_object.setVolume(self._volume)
         return None
 
     def get_volume(self):
@@ -312,10 +307,11 @@ class Sound:
         """
         Get number of channels sound is active.
         """
+        channels = self._mixer._channels
         channel = 0
-        for id in self._mixer._channel_pool:
+        for id in self._mixer._channel_active:
             try:
-                if self._mixer._channels[id]._sound._id == self._id:
+                if channels[id]._sound._id == self._id:
                     channel += 1
             except AttributeError:
                 continue
@@ -327,12 +323,19 @@ class Sound:
         """
         return self._sound_object.getDuration()
 
+    def get_sound_object(self):
+        if self._sound_objects:
+            sound_object = self._sound_objects.pop()
+        else:
+            sound_object = Audio(self._sound_object.getSrc())
+        return sound_object
+
     def _nonimplemented_methods(self):
         self.fadeout = lambda *arg: None
         self.get_buffer = lambda *arg: None
 
 
-class Channel:
+class Channel(object):
     """
     **pyjsdl.mixer.Channel**
     
@@ -351,6 +354,7 @@ class Channel:
     def __init__(self, id):
         self._id = id
         self._sound = None
+        self._sound_object = None
         self._active = False
         self._pause = False
         self._loops = 0
@@ -358,28 +362,21 @@ class Channel:
         self._lvolume = 1.0
         self._rvolume = 1.0
         self._mixer._register_channel(self)
-        self._time = Time()
+        self._ended_handler = lambda event: self._onended(event)
         self._nonimplemented_methods()
 
     def _set_sound(self, sound):
-        if self._sound:
-            self._sound._channel = None
         self._sound = sound
+        self._sound_object = self._sound.get_sound_object()
+        self._sound_object.element.onended = self._ended_handler
 
     def _play(self):
-        self._volume = 1.0
-        self._lvolume = 1.0
-        self._rvolume = 1.0
-        self._active = True
-        self._sound._sound_object.play()
-        self._time.timeout(self._sound._sound_object.getDuration()*1000, self)
-
-    def _play_repeat(self, loops):
-        if loops > 0:
-            self._loops = loops
+        self._sound_object.element.volume = self._volume * self._sound._volume
+        self._sound_object.element.play()
+        if self._sound_object.element.paused:
+            self.stop()
         else:
-            self._loops = -1
-        self._play()
+            self._active = True
 
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
@@ -387,17 +384,18 @@ class Channel:
         Argument sound to play and loops is number of repeats or -1 for continuous.
         """
         if self._sound:
+            volume = self._volume
             self.stop()
+            self._volume = volume
         self._set_sound(sound)
-        if not loops:
-            self._play()
-        else:
-            self._play_repeat(loops)
+        self._loops = loops
+        self._mixer._activate_channel(self._id)
+        self._play()
         return None
 
-    def run(self):
+    def _onended(self, event):
         if not self._loops:
-            self._active = False
+            self.stop()
         else:
             if self._loops > 0:
                 self._loops -= 1
@@ -408,11 +406,20 @@ class Channel:
         Stop sound on channel.
         """
         if self._sound:
-            self._sound._sound_object.pause()
-            self._sound._sound_object.setCurrentTime(0)
+            self._active = False
+            self._mixer._deactivate_channel(self._id)
+            self._sound_object.element.onended = None
+            self._sound_object.element.pause()
+            self._sound_object.element.currentTime = 0
+            self._sound._sound_objects.append(self._sound_object)
+            self._sound = None
+            self._sound_object = None
             self._pause = False
             self._loops = 0
-            self._active = False
+            self._volume = 1.0
+            self._lvolume = 1.0
+            self._rvolume = 1.0
+            self._mixer._restore_channel(self._id)
         return None
 
     def pause(self):
@@ -421,7 +428,7 @@ class Channel:
         """
         if self._sound:
             if not self._pause:
-                self._sound._sound_object.pause()
+                self._sound_object.pause()
                 self._pause = True
         return None
 
@@ -431,7 +438,7 @@ class Channel:
         """
         if self._sound:
             if self._pause:
-                self._sound._sound_object.play()
+                self._sound_object.play()
                 self._pause = False
         return None
 
@@ -444,10 +451,6 @@ class Channel:
         elif volume > 1.0:
             volume = 1.0
         self._volume = volume
-        if self._sound:
-            self._sound._sound_object.setVolume(self._volume * self._sound._sound_object._volume)
-        else:
-            self._volume = 1.0
         return None
 
     def get_volume(self):
