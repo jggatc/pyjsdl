@@ -37,6 +37,8 @@ class Mixer:
         self._channel_active = []
         self._channel_reserved = []
         self._channel_reserved_num = 0
+        for id in range(self._channel_max):
+            self._get_channel(id)
         self.music = Music()
         self._active = False
         self._initialized = True
@@ -109,6 +111,7 @@ class Mixer:
         """
         if count >= self._channel_max:
             for id in range(self._channel_max, count):
+                self._get_channel(id)
                 self._channel_available.insert(0, id)
             self._channel_max = count
         elif count >= 0:
@@ -153,12 +156,12 @@ class Mixer:
         if self._channel_available:
             id = self._channel_available.pop()
             self._channel_available.insert(0, id)
-            return self._get_channel(id)
+            return self._channels[id]
         if self._channel_reserved_num:
             if self._channel_reserved:
                 id = self._channel_reserved.pop()
                 self._channel_reserved.insert(0, id)
-                return self._get_channel(id)
+                return self._channels[id]
         if not force:
             return None
         longest = None
@@ -177,18 +180,7 @@ class Mixer:
                 channel = longest_reserved
             else:
                 channel = 0
-        channel = self._get_channel(channel)
-        return channel
-
-    def _retrieve_channel(self):
-        if self._channel_available:
-            id = self._channel_available.pop()
-            channel = self._get_channel(id)
-            self._channel_active.append(id)
-            self._active = True
-        else:
-            channel = None
-        return channel
+        return self._channels[channel]
 
     def get_busy(self):
         """
@@ -218,6 +210,15 @@ class Mixer:
             self._channel_available.append(id)
         elif id > -1:
             self._channel_reserved.append(id)
+
+    def _retrieve_channel(self):
+        if self._channel_available:
+            id = self._channel_available.pop()
+            self._channel_active.append(id)
+            self._active = True
+            return self._channels[id]
+        else:
+            return None
 
     def _get_channel(self, id):
         if id in self._channels:
