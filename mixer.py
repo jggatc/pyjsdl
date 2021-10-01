@@ -461,6 +461,8 @@ class Channel(object):
         elif volume > 1.0:
             volume = 1.0
         self._volume = volume
+        if self._active:
+            self._sound_object.element.volume = self._volume * self._sound._volume
         return None
 
     def get_volume(self):
@@ -507,6 +509,7 @@ class Music(object):
     def __init__(self):
         self._channel = Channel(-1)
         self._sound = None
+        self._volume = 1.0
 
     def load(self, sound_file):
         """
@@ -528,6 +531,7 @@ class Music(object):
         Play music.
         Argument loops is number of repeats or -1 for continuous.
         """
+        self._channel.set_volume(self._volume)
         self._channel.play(self._sound, loops)
         return None
 
@@ -557,14 +561,20 @@ class Music(object):
         Set music volume.
         Argument volume of value 0.0 to 1.0.
         """
-        self._sound.set_volume(volume)
+        if volume < 0.0:
+            volume = 0.0
+        elif volume > 1.0:
+            volume = 1.0
+        self._volume = volume
+        if self._channel.get_busy():
+            self._channel.set_volume(volume)
         return None
 
     def get_volume(self):
         """
         Get volume for current music.
         """
-        return self._sound.get_volume()
+        return self._volume
 
     def get_busy(self):
         """
