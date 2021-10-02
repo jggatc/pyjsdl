@@ -9,6 +9,7 @@
 -revise mixer processing.
 -add mixer music object.
 -add mixer channel endevent.
+-add mixer channel queue.
 
 0.24    2021-04-28
 -revise rect move/inflate args processing.
