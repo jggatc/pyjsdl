@@ -44,7 +44,6 @@ class Mixer:
         self.music = Music()
         self._active = False
         self._initialized = True
-        self._nonimplemented_methods()
 
     def init(self, *args, **kwargs):
         """
@@ -235,9 +234,6 @@ class Mixer:
         else:
             raise AttributeError("Channel not available.")
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-
 
 class Sound(object):
     """
@@ -268,7 +264,6 @@ class Sound(object):
         self._sound_objects.append(self._sound_object)
         self._channel = None
         self._volume = 1.0
-        self._nonimplemented_methods()
 
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
@@ -342,10 +337,6 @@ class Sound(object):
             sound_object = Audio(self._sound_object.getSrc())
         return sound_object
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-        self.get_buffer = lambda *arg: None
-
 
 class Channel(object):
     """
@@ -381,12 +372,22 @@ class Channel(object):
         self._endevent = None
         self._mixer._register_channel(self)
         self._ended_handler = lambda event: self._onended(event)
-        self._nonimplemented_methods()
 
     def _set_sound(self, sound):
         self._sound = sound
         self._sound_object = self._sound.get_sound_object()
         self._sound_object.element.onended = self._ended_handler
+
+    def _reset_sound(self):
+        self._active = False
+        restart = not self._pause
+        if not self._sound:
+            return
+        self._sound_object.element.pause()
+        self._sound_object.element.currentTime = 0
+        if restart:
+            self._sound_object.play()
+        self._active = True
 
     def _play(self):
         self._sound_object.element.volume = self._volume * self._sound._volume
@@ -533,9 +534,6 @@ class Channel(object):
         else:
             return Const.NOEVENT
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-
 
 class Music(object):
     """
@@ -544,6 +542,7 @@ class Music(object):
     * music.load
     * music.unload
     * music.play
+    * music.rewind
     * music.stop
     * music.pause
     * music.unpause
@@ -565,6 +564,8 @@ class Music(object):
         """
         Load music file.
         """
+        if self._channel.get_busy():
+            self._channel.stop()
         self._sound = Sound(sound_file)
         return None
 
@@ -588,6 +589,13 @@ class Music(object):
             self._sound = self._queue
             self._queue = None
         return None
+
+    def rewind(self):
+        """
+        Rewind music.
+        """
+        if self._channel.get_busy():
+            self._channel._reset_sound()
 
     def stop(self):
         """
