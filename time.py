@@ -82,7 +82,10 @@ class Time(object):
     * time.wait
     * time.set_timer
     * time.time
-    * time.timeout
+    * time.set_timeout
+    * time.clear_timeout
+    * time.set_interval
+    * time.clear_interval
     * time.Clock
     """
 
@@ -168,13 +171,39 @@ class Time(object):
         """
         return self._wnd.performance.now()
 
-    def timeout(self, time=None, obj=None):
+    def set_timeout(self, obj, time):
         """
         Timeout time (in ms) before triggering obj.run method.
+        Return timer id.
         """
-        #code modified from pyjs
         run = lambda: obj.run()
-        JS("$wnd['setTimeout'](@{{run}}, @{{time}});")
+        id = JS("$wnd['setTimeout'](@{{run}}, @{{time}});")
+        return id
+
+    def clear_timeout(self, id):
+        """
+        Clear timer.
+        Argument timer id of set_timeout.
+        """
+        JS("$wnd['clearTimeout'](@{{id}});")
+        return None
+
+    def set_interval(self, obj, time):
+        """
+        Recurring timeout time (in ms) before triggering obj.run method.
+        Return timer id.
+        """
+        run = lambda: obj.run()
+        id = JS("$wnd['setInterval'](@{{run}}, @{{time}});")
+        return id
+
+    def clear_interval(self, id):
+        """
+        Clear timer.
+        Argument timer id of set_interval.
+        """
+        JS("$wnd['clearInterval'](@{{id}});")
+        return None
 
 
 class _EventTimer:
@@ -195,7 +224,6 @@ class _EventTimer:
             self.set_timeout()
 
     def set_timeout(self):
-        #Time.timeout
         run = lambda: self.run()
         timer = JS("$wnd['setTimeout'](@{{run}}, @{{self}}['time']);")
         self.timer = timer
