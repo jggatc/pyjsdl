@@ -1,4 +1,4 @@
-0.24-dev
+0.25    2021-10-26
 -revise sprite orderedupdates.
 -add sprite group alias.
 -refactor sprite collide methods.
