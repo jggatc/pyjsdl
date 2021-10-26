@@ -2,6 +2,7 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl.pyjsobj import Audio
+from pyjsdl.time import Time
 from pyjsdl import env
 from pyjsdl import locals as Const
 
@@ -18,6 +19,7 @@ class Mixer:
     * pyjsdl.mixer.stop
     * pyjsdl.mixer.pause
     * pyjsdl.mixer.unpause
+    * pyjsdl.mixer.fadeout
     * pyjsdl.mixer.set_num_channels
     * pyjsdl.mixer.get_num_channels
     * pyjsdl.mixer.set_reserved
@@ -39,9 +41,14 @@ class Mixer:
         self._channel_active = []
         self._channel_reserved = []
         self._channel_reserved_num = 0
+        self._channel_process = set()
+        self._channel_process_end = set()
         for id in range(self._channel_max):
             self._get_channel(id)
         self.music = Music()
+        self._time = Time()
+        self._timerid = 0
+        self._processing = False
         self._active = False
         self._initialized = True
 
@@ -85,6 +92,15 @@ class Mixer:
         for id in self._channel_active:
             if id > -1:
                 self._channels[id].stop()
+        return None
+
+    def fadeout(self, time):
+        """
+        Fadeout mixer channels in given time.
+        """
+        for id in self._channel_active:
+            if id > -1:
+                self._channels[id].fadeout(time)
         return None
 
     def pause(self):
@@ -193,6 +209,32 @@ class Mixer:
                     return True
         return False
 
+    def _process(self, id):
+        self._channel_process.add(id)
+        if not self._processing:
+            self._processing = True
+            self._timerid = self._time.set_interval(self, 10)
+
+    def run(self):
+        if self._active:
+            for id in self._channel_process:
+                complete = self._channels[id]._process()
+                if complete:
+                    self._channel_process_end.add(id)
+            if self._channel_process_end:
+                for i in range(len(self._channel_process_end)):
+                    id = self._channel_process_end.pop()
+                    self._channel_process.discard(id)
+                if not self._channel_process:
+                    self._processing = False
+                    self._time.clear_interval(self._timerid)
+        else:
+            if self._channel_process:
+                for i in range(len(self._channel_process)):
+                    self._channel_process.pop()
+            self._processing = False
+            self._time.clear_interval(self._timerid)
+
     def _activate_channel(self, id):
         if id > self._channel_reserved_num-1:
             self._channel_available.remove(id)
@@ -241,6 +283,7 @@ class Sound(object):
     
     * Sound.play
     * Sound.stop
+    * Sound.fadeout
     * Sound.set_volume
     * Sound.get_volume
     * Sound.get_num_channels
@@ -268,13 +311,12 @@ class Sound(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on mixer channel.
-        Argument loops is number of repeats or -1 for continuous.
+        Argument loops is repeat number or -1 for continuous,
+        maxtime is maximum play time, and fade_ms is fade-in time.
         """
         self._channel = self._mixer._retrieve_channel()
         if self._channel:
-            self._channel._set_sound(self)
-            self._channel._loops = loops
-            self._channel._play()
+            self._channel._play(self, loops, maxtime, fade_ms)
         return self._channel
 
     def stop(self):
@@ -287,6 +329,20 @@ class Sound(object):
                 try:
                     if channels[id]._sound._id == self._id:
                         channels[id].stop()
+                except AttributeError:
+                    continue
+        return None
+
+    def fadeout(self, time):
+        """
+        Fadeout sound on active channels in given time.
+        """
+        channels = self._mixer._channels
+        for id in self._mixer._channel_active:
+            if id > -1:
+                try:
+                    if channels[id]._sound._id == self._id:
+                        channels[id].fadeout(time)
                 except AttributeError:
                     continue
         return None
@@ -346,6 +402,7 @@ class Channel(object):
     * Channel.stop
     * Channel.pause
     * Channel.unpause
+    * Channel.fadeout
     * Channel.set_volume
     * Channel.get_volume
     * Channel.get_busy
@@ -370,6 +427,12 @@ class Channel(object):
         self._rvolume = 1.0
         self._queue = None
         self._endevent = None
+        self._time = 0
+        self._maxtime = 0
+        self._fadein = 0
+        self._fadeout = 0
+        self._dvol = 1.0
+        self._timerid = 0
         self._mixer._register_channel(self)
         self._ended_handler = lambda event: self._onended(event)
 
@@ -389,7 +452,55 @@ class Channel(object):
             self._sound_object.play()
         self._active = True
 
-    def _play(self):
+    def play(self, sound, loops=0, maxtime=0, fade_ms=0):
+        """
+        Play sound on channel.
+        Argument sound to play, loops is repeat number or -1 for continuous,
+        maxtime is maximum play time, and fade_ms is fade-in time.
+        """
+        if self._sound:
+            volume = self._volume
+            self.stop()
+            self._volume = volume
+        self._set_sound(sound)
+        self._mixer._activate_channel(self._id)
+        self._loops = loops
+        if maxtime:
+            self._maxtime = maxtime / 1000.0
+            self._timerid = self._mixer._time.set_timeout(self, maxtime)
+        if fade_ms:
+            self._fadein = fade_ms / 1000.0
+            self._mixer._process(self._id)
+            self._sound_object.element.volume = 0.01
+        else:
+            self._sound_object.element.volume = self._volume * self._sound._volume
+        self._sound_object.element.play()
+        if self._sound_object.element.paused:
+            self.stop()
+        else:
+            self._active = True
+        return None
+
+    def _play(self, sound, loops, maxtime, fade_ms):
+        self._set_sound(sound)
+        self._loops = loops
+        if maxtime:
+            self._maxtime = maxtime / 1000.0
+            self._timerid = self._mixer._time.set_timeout(self, maxtime)
+        if fade_ms:
+            self._fadein = fade_ms / 1000.0
+            self._mixer._process(self._id)
+            self._sound_object.element.volume = 0.01
+        else:
+            self._sound_object.element.volume = self._volume * self._sound._volume
+        self._sound_object.element.play()
+        if self._sound_object.element.paused:
+            self.stop()
+        else:
+            self._active = True
+        return None
+
+    def _replay(self):
         self._sound_object.element.volume = self._volume * self._sound._volume
         self._sound_object.element.play()
         if self._sound_object.element.paused:
@@ -397,20 +508,44 @@ class Channel(object):
         else:
             self._active = True
 
-    def play(self, sound, loops=0, maxtime=0, fade_ms=0):
-        """
-        Play sound on channel.
-        Argument sound to play and loops is number of repeats or -1 for continuous.
-        """
-        if self._sound:
-            volume = self._volume
-            self.stop()
-            self._volume = volume
-        self._set_sound(sound)
-        self._loops = loops
-        self._mixer._activate_channel(self._id)
-        self._play()
-        return None
+    def _process(self):
+        if self._active:
+            complete = False
+        else:
+            complete = True
+            return complete
+        self._time = self._sound_object.element.currentTime
+        complete = False
+        if self._fadein:
+            if self._time < self._fadein:
+                self._dvol = self._time / self._fadein
+                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+            else:
+                self._fadein = 0
+                complete = True
+                self._sound_object.element.volume = self._volume * self._sound._volume
+        elif self._fadeout:
+            if self._time < self._fadeout:
+                self._dvol = 1.0 - (self._time / self._fadeout)
+                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+            else:
+                self._fadeout = 0
+                complete = True
+                self._dvol = 0.01
+                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+                self._loops = 0
+                self._onended()
+        return complete
+
+    def run(self):
+        time = self._sound_object.element.currentTime
+        if self._maxtime:
+            if time > self._maxtime:
+                self._maxtime = 0
+                self._loops = 0
+                self.stop()
+            else:
+                self._timerid = self._mixer._time.set_timeout(self, 10)
 
     def _onended(self, event):
         if not self._loops:
@@ -421,7 +556,7 @@ class Channel(object):
         else:
             if self._loops > 0:
                 self._loops -= 1
-            self._play()
+            self._replay()
 
     def stop(self):
         """
@@ -439,6 +574,11 @@ class Channel(object):
             self._queue = None
             self._pause = False
             self._loops = 0
+            if self._maxtime:
+                self._mixer._time.clear_timeout(self._timerid)
+                self._maxtime = 0
+            self._fadein = 0
+            self._fadeout = 0
             self._volume = 1.0
             self._lvolume = 1.0
             self._rvolume = 1.0
@@ -465,6 +605,15 @@ class Channel(object):
             if self._pause:
                 self._sound_object.play()
                 self._pause = False
+        return None
+
+    def fadeout(self, time):
+        """
+        Stop sound after fade out time.
+        """
+        if self._sound:
+            self._fadeout = self._sound_object.element.currentTime + (time/1000.0)
+            self._mixer._process(self._id)
         return None
 
     def set_volume(self, volume):
@@ -537,7 +686,7 @@ class Channel(object):
 
 class Music(object):
     """
-    **pyj2d.mixer.music**
+    **pyjsdl.mixer.music**
 
     * music.load
     * music.unload
@@ -546,6 +695,7 @@ class Music(object):
     * music.stop
     * music.pause
     * music.unpause
+    * music.fadeout
     * music.set_volume
     * music.get_volume
     * music.get_busy
@@ -580,10 +730,11 @@ class Music(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play music.
-        Argument loops is number of repeats or -1 for continuous.
+        Argument loops is repeat number or -1 for continuous,
+        maxtime is maximum play time, and fade_ms is fade-in time.
         """
         self._channel.set_volume(self._volume)
-        self._channel.play(self._sound, loops)
+        self._channel.play(self._sound, loops, maxtime, fade_ms)
         if self._queue:
             self._channel.queue(self._queue)
             self._sound = self._queue
@@ -616,6 +767,13 @@ class Music(object):
         Unpause music.
         """
         self._channel.unpause()
+        return None
+
+    def fadeout(self, time):
+        """
+        Stop music after fade out time.
+        """
+        self._channel.fadeout(time)
         return None
 
     def set_volume(self, volume):
