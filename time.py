@@ -131,7 +131,7 @@ class Time(object):
                 self._framerate = env.canvas._framerate
                 env.canvas._framerate = time*10
                 env.canvas._pause = True
-                self.timeout(time, self)
+                self.set_timeout(self, time)
         else:
             if env.canvas._pause:
                 env.canvas._framerate = self._framerate
