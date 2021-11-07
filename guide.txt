@@ -2,7 +2,21 @@ Pyjsdl Module Guide
 
 Pyjsdl module is modelled on Pygame/SDL commands that wraps JavaScript functionality including HTML5 canvas. To use Pyjsdl module, place pyjsdl folder in the script folder or on the module path. Import pyjsdl into the Python script, or use the statement 'import pyjsdl as pygame' to maintain the Pygame commands. During pyjsdl initiation, use the statement pyjsdl.display.setup(run, images) to provide the canvas the main function to execute at a timed interval and program images to preload, where the 'run' function contains statements derived from the main loop to be repeated each frame and 'images' is a list of image paths in the form ['./images/img.png'].
 
-Python code using Pyjsdl is compiled to a JavaScript application with the Pyjs compiler (http://pyjs.org). Install Pyjs from https://github.com/pyjs/pyjs, check pyjs_changes.zip in module folder for required changes, and compile using pyjsbuild. Some additional changes to the Python script may be necessary for Pyjs compilation. A web application can be deployed following compilation to JavaScript, which can run in a web browser on a pc or mobile. The app can also run on the desktop using the app.py script, check instructions within the script.
+Python code using Pyjsdl is compiled to a JavaScript application with the Pyjs compiler (http://pyjs.org). Install Pyjs from https://github.com/pyjs/pyjs repository, for instance to install into a virtualenv:
+
+virtualenv -p python2 env
+source env/bin/activate
+pip install git+https://github.com/pyjs/pyjs.git#egg=pyjs
+
+After installation, check pyjs_changes.zip in the package for required changes. Compile the Python code using pyjsbuild. The code can be compiled in strict (-S) mode for maximum Python compatibility:
+
+pyjsbuild -S --dynamic-link script.py -o output
+
+The code can be compiled in optimized (-O) mode for enhanced performance with reduced Python compatibility, optionally with --enable-descriptor-proto/--enable-operator-funcs:
+
+pyjsbuild -O --dynamic-link script.py -o output
+
+Some additional changes to the Python script may be necessary for Pyjs compilation. A web application can be deployed following compilation to JavaScript, which can run in a web browser on a pc or mobile. To run on a local HTTP server, use command 'python3 -m http.server' and browse to localhost:8000. During development, use the web browser devtools console that displays print and error output, and to maintain updated development changes set devtools to open with cache disabled. The app can also run on the desktop using the app.py script, check instructions within the script.
 
 Further information is available on the Pyjsdl project page (https://gatc.ca/projects/pyjsdl/) and in the API documentation (https://gatc.ca/projects/pyjsdl/doc/).
 
