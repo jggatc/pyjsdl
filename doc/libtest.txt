@@ -1,0 +1,16 @@
+Libtest
+
+The libtest script tests the functionality of the Pyjsdl library, capable of running with Pyjs/Pyjsdl or Python/Pygame. To test Pyjsdl, the system should have Pyjs installed and the pyjsdl folder on script path. The libtest.py script in package root executes the tests in the test folder. Pyjs compiled code is run in web browser from libtest.html in output folder with local server running. Tests are compiled with Pyjs in strict mode for maximum Python compatibility, optimized for reduced Python compatibility with performance, or optimized mode with --enable-descriptor-proto/--enable-operator-funcs options to restore some Python compatibility.
+
+Build in strict mode:
+
+'pyjsbuild -S --dynamic-link libtest.py -o outputs'
+
+Build in optimized mode: 
+
+'pyjsbuild -O --dynamic-link libtest.py -o outputo'
+
+Build in optimized mode with feature options:
+
+'pyjsbuild -O --dynamic-link --enable-descriptor-proto --enable-operator-funcs libtest.py -o outputopf'
+
