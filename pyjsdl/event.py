@@ -50,7 +50,7 @@ class Event(object):
         self.eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp','mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
         self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION:[Const.MOUSEMOTION,'mousemove'], Const.MOUSEBUTTONDOWN:[Const.MOUSEBUTTONDOWN,'mousedown','wheel','mousewheel', 'DOMMouseScroll'], Const.MOUSEBUTTONUP:[Const.MOUSEBUTTONUP,'mouseup'], Const.KEYDOWN:[Const.KEYDOWN,'keydown','keypress'], Const.KEYUP:[ Const.KEYUP,'keyup']}
+        self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']), Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN, 'mousedown', 'wheel', 'mousewheel',  'DOMMouseScroll']), Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']), Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']), Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
             self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
@@ -252,9 +252,10 @@ class Event(object):
         """
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
-                self.events = self.events.difference(set(eventType))
+                for evtType in eventType:
+                    self.events = self.events.difference(self.eventTypes[evtType])
             else:
-                self.events = self.events.difference(set([eventType]))
+                self.events = self.events.difference(self.eventTypes[eventType])
         else:
             self.events = set(self.eventType)
         return None
@@ -265,9 +266,10 @@ class Event(object):
         """
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
-                self.events = self.events.union(set(eventType))
+                for evtType in eventType:
+                    self.events = self.events.union(self.eventTypes[evtType])
             else:
-                self.events = self.events.union(set[eventType])
+                self.events = self.events.union(self.eventTypes[eventType])
         else:
             self.events.clear()
         return None
