@@ -1,3 +1,8 @@
+0.25.1  minor updates
+-revise event set_blocked processing.
+-revise event object for performance.
+
+
 0.25    2021-11-07
 -revise sprite orderedupdates.
 -add sprite group alias.

@@ -50,7 +50,7 @@ class Event(object):
         self.eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp','mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
         self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']), Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN, 'mousedown', 'wheel', 'mousewheel',  'DOMMouseScroll']), Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']), Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']), Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
+        self.eventTypes = {Const.MOUSEMOTION:[Const.MOUSEMOTION,'mousemove'], Const.MOUSEBUTTONDOWN:[Const.MOUSEBUTTONDOWN,'mousedown','wheel','mousewheel', 'DOMMouseScroll'], Const.MOUSEBUTTONUP:[Const.MOUSEBUTTONUP,'mouseup'], Const.KEYDOWN:[Const.KEYDOWN,'keydown','keypress'], Const.KEYUP:[ Const.KEYUP,'keyup']}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
             self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
@@ -252,10 +252,9 @@ class Event(object):
         """
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
-                for evtType in eventType:
-                    self.events = self.events.difference(self.eventTypes[evtType])
+                self.events = self.events.difference(set(eventType))
             else:
-                self.events = self.events.difference(self.eventTypes[eventType])
+                self.events = self.events.difference(set([eventType]))
         else:
             self.events = set(self.eventType)
         return None
@@ -266,10 +265,9 @@ class Event(object):
         """
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
-                for evtType in eventType:
-                    self.events = self.events.union(self.eventTypes[evtType])
+                self.events = self.events.union(set(eventType))
             else:
-                self.events = self.events.union(self.eventTypes[eventType])
+                self.events = self.events.union(set[eventType])
         else:
             self.events.clear()
         return None
@@ -360,6 +358,8 @@ class JEvent(object):
     _mouse_pos = (0, 0)
     _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
     _charCode = {33:Const.K_EXCLAIM, 34:Const.K_QUOTEDBL, 35:Const.K_HASH, 36:Const.K_DOLLAR, 38:Const.K_AMPERSAND, 39:Const.K_QUOTE, 40:Const.K_LEFTPAREN, 41:Const.K_RIGHTPAREN, 42:Const.K_ASTERISK, 43:Const.K_PLUS, 44:Const.K_COMMA, 45:Const.K_MINUS, 46:Const.K_PERIOD, 97:Const.K_a, 98:Const.K_b, 99:Const.K_c, 100:Const.K_d, 101:Const.K_e, 102:Const.K_f, 103:Const.K_g, 104:Const.K_h, 105:Const.K_i, 106:Const.K_j, 107:Const.K_k, 108:Const.K_l, 109:Const.K_m, 110:Const.K_n, 111:Const.K_o, 112:Const.K_p, 113:Const.K_q, 114:Const.K_r, 115:Const.K_s, 116:Const.K_t, 117:Const.K_u, 118:Const.K_v, 119:Const.K_w, 120:Const.K_x, 121:Const.K_y, 122:Const.K_z}
+
+    __slots__ = ['type', 'attr']
 
     def __init__(self, event):
         """
