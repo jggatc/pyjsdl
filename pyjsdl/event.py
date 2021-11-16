@@ -121,7 +121,7 @@ class Event(object):
             return self.queueNil
         self._lock()
         if not eventType:
-            self.queue = [event for event in self.eventQueue[0:self.eventNum]]
+            self.queue = self.eventQueue[0:self.eventNum]
             self.eventNum = 0
         else:
             self.queue = []
@@ -352,7 +352,6 @@ class UserEvent(object):
     def toString(self):
         event_name = env.event.event_name(self.type)
         return "<Event(%s-%s %r)>" % (self.type, event_name, self.attr)
-
 
 
 class JEvent(object):
