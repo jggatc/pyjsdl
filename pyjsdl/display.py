@@ -7,7 +7,7 @@ from pyjsdl.rect import Rect
 from pyjsdl.time import Time
 from pyjsdl.color import Color
 from pyjsdl import env
-from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, MouseWheelHandler, eventGetMouseWheelVelocityY, Event, requestAnimationFrameInit
+from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, Event, requestAnimationFrameInit
 
 __docformat__ = 'restructuredtext'
 
@@ -18,11 +18,10 @@ _img = None
 _wnd = None
 
 
-class Canvas(Surface, MouseWheelHandler):
+class Canvas(Surface):
 
     def __init__(self, size, buffered):
         Surface.__init__(self, size)
-        MouseWheelHandler.__init__(self, True)
         if isinstance(buffered, bool):
             self._bufferedimage = buffered
         else:
@@ -43,7 +42,6 @@ class Canvas(Surface, MouseWheelHandler):
         self.time = Time()
         self.event = env.event
         self.addMouseListener(self)
-        self.addMouseWheelListener(self)
         self.addKeyboardListener(self)
         self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
         self.onContextMenu = None
@@ -98,14 +96,12 @@ class Canvas(Surface, MouseWheelHandler):
     def onMouseWheel(self, sender, velocity):
         event = DOM.eventGetCurrentEvent()
         if event.type == 'mousewheel':
-            #update for changes in mousewheel implementation
             if hasattr(event, 'wheelDeltaX'):
                 self.onMouseWheel = self._onMouseWheel
                 self._onMouseWheel(sender, velocity)
             else:
                 self.onMouseWheel = self._onMouseWheelY
-                DOM.eventGetMouseWheelVelocityY = eventGetMouseWheelVelocityY
-                self._onMouseWheelY(sender, eventGetMouseWheelVelocityY(event))
+                self._onMouseWheelY(sender, self.getMouseWheelVelocityY(event))
         else:       #DOMMouseScroll
             self.onMouseWheel = self._onMouseScroll
             self._onMouseScroll(sender, velocity)

@@ -12,9 +12,24 @@ from pyjamas.ui.TextBox import TextBox
 from pyjamas.ui.TextArea import TextArea
 from pyjamas.ui import Event
 from pyjamas.ui.MouseListener import MouseWheelHandler
-from pyjamas.Canvas.HTML5Canvas import HTML5Canvas
+from pyjamas.Canvas.HTML5Canvas import HTML5Canvas as _HTML5Canvas
 from pyjamas.media.Audio import Audio
 from __pyjamas__ import JS, wnd
+
+
+class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
+
+    def __init__(self, coordX, coordY, *args, **kwargs):
+        _HTML5Canvas.__init__(self, coordX, coordY, *args, **kwargs)
+        MouseWheelHandler.__init__(self, True)
+
+    def addMouseListener(self, listener):
+        _HTML5Canvas.addMouseListener(self, listener)
+        self.addMouseWheelListener(self)
+        DOM.eventGetMouseWheelVelocityY = eventGetMouseWheelVelocityY
+
+    def getMouseWheelVelocityY(self, event):
+        return DOM.eventGetMouseWheelVelocityY(event)
 
 
 def eventGetMouseWheelVelocityY(evt):
