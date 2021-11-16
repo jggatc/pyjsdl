@@ -369,7 +369,8 @@ class JEvent(object):
         Event object attributes:
         
         * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-        * button: mouse button pressed (1-3, 4-5 V-scroll, and 6-7 H-scroll some browsers)
+        * button: mouse button pressed (1-3, 4-5 V-scroll, and 6-7 H-scroll)
+        * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
         * key: keycode of key pressed (K_a-K_z...)
@@ -380,7 +381,9 @@ class JEvent(object):
             self.attr['button'] = event.button + 1
             self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
         elif event.type == 'mousemove':
-            self.attr['button'] = event.button + 1
+            self.attr['buttons'] = (bool(event.buttons & 1),
+                                    bool(event.buttons & 4),
+                                    bool(event.buttons & 2))
             self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
             self.attr['rel'] = (self.attr['pos'][0]-self.__class__._mouse_pos[0], self.attr['pos'][1]-self.__class__._mouse_pos[1])
             self.__class__._mouse_pos = self.attr['pos']
