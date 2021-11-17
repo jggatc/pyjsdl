@@ -1,6 +1,7 @@
-0.25.1  minor updates
+0.25-dev
 -revise event set_blocked processing.
 -revise event object for performance.
+-refactor event handler for performance.
 
 
 0.25    2021-11-07

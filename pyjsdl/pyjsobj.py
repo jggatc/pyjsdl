@@ -26,15 +26,6 @@ class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
     def addMouseListener(self, listener):
         _HTML5Canvas.addMouseListener(self, listener)
         self.addMouseWheelListener(self)
-        DOM.eventGetMouseWheelVelocityY = eventGetMouseWheelVelocityY
-
-    def getMouseWheelVelocityY(self, event):
-        return DOM.eventGetMouseWheelVelocityY(event)
-
-
-def eventGetMouseWheelVelocityY(evt):
-    #code from pyjs
-    JS("return Math['round'](-@{{evt}}['wheelDelta'] / 40) || 0;")
 
 
 def requestAnimationFrameInit():

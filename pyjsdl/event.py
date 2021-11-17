@@ -31,11 +31,9 @@ class Event(object):
         
         Module initialization creates pyjsdl.event instance.
         """
-        self.eventQueue = [None for i in range(256)]      #max 256: Error: Event queue full
-#        self.eventQueue = [None] * 256      #pyjs -O TypeError
+        self.eventQueue = [None for i in range(256)]
         self.eventNum = 0
-        self.eventQueueTmp = [None for i in range(256)]   #used when main queue is locked
-#        self.eventQueueTmp = [None] * 256   #pyjs -O TypeError
+        self.eventQueueTmp = [None for i in range(256)]
         self.eventNumTmp = 0
         self.queueLock = False
         self.queueAccess = False
@@ -69,8 +67,6 @@ class Event(object):
         self.queueLock = False
 
     def _updateQueue(self, event):
-        if event.type not in self.events:
-            return
         self.queueAccess = True
         if not self.queueLock:
             if self.eventNumTmp:
@@ -356,7 +352,6 @@ class UserEvent(object):
 
 class JEvent(object):
 
-    _mouse_pos = (0, 0)
     _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
     _charCode = {33:Const.K_EXCLAIM, 34:Const.K_QUOTEDBL, 35:Const.K_HASH, 36:Const.K_DOLLAR, 38:Const.K_AMPERSAND, 39:Const.K_QUOTE, 40:Const.K_LEFTPAREN, 41:Const.K_RIGHTPAREN, 42:Const.K_ASTERISK, 43:Const.K_PLUS, 44:Const.K_COMMA, 45:Const.K_MINUS, 46:Const.K_PERIOD, 97:Const.K_a, 98:Const.K_b, 99:Const.K_c, 100:Const.K_d, 101:Const.K_e, 102:Const.K_f, 103:Const.K_g, 104:Const.K_h, 105:Const.K_i, 106:Const.K_j, 107:Const.K_k, 108:Const.K_l, 109:Const.K_m, 110:Const.K_n, 111:Const.K_o, 112:Const.K_p, 113:Const.K_q, 114:Const.K_r, 115:Const.K_s, 116:Const.K_t, 117:Const.K_u, 118:Const.K_v, 119:Const.K_w, 120:Const.K_x, 121:Const.K_y, 122:Const.K_z}
 
@@ -379,17 +374,19 @@ class JEvent(object):
         object.__setattr__(self, "attr", {})
         if event.type in ('mousedown', 'mouseup'):
             self.attr['button'] = event.button + 1
-            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
+            self.attr['pos'] = (event._x+env.frame.scrollLeft,
+                                event._y+env.frame.scrollTop)
         elif event.type == 'mousemove':
-            self.attr['buttons'] = (bool(event.buttons & 1),
-                                    bool(event.buttons & 4),
-                                    bool(event.buttons & 2))
-            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
-            self.attr['rel'] = (self.attr['pos'][0]-self.__class__._mouse_pos[0], self.attr['pos'][1]-self.__class__._mouse_pos[1])
-            self.__class__._mouse_pos = self.attr['pos']
+            self.attr['buttons'] = ((int(event.buttons) & 1) == 1,
+                                    (int(event.buttons) & 4) == 4,
+                                    (int(event.buttons) & 2) == 2)
+            self.attr['pos'] = (event._x+env.frame.scrollLeft,
+                                event._y+env.frame.scrollTop)
+            self.attr['rel'] = (event._relx, event._rely)
         elif event.type in ('wheel', 'mousewheel', 'DOMMouseScroll'):
-            self.attr['button'] = event.btn
-            self.attr['pos'] = event.pos[0]+env.frame.scrollLeft, event.pos[1]+env.frame.scrollTop
+            self.attr['button'] = event._btn
+            self.attr['pos'] = (event._x+env.frame.scrollLeft,
+                                event._y+env.frame.scrollTop)
         elif event.type in ('keydown', 'keyup'):
             self.attr['key'] = event.keyCode
         elif event.type == 'keypress':
