@@ -115,10 +115,6 @@ class Canvas(Surface):
             r = self.canvas.getBoundingClientRect()
             event._x = event.clientX - round(r.left)
             event._y = event.clientY - round(r.top)
-            if event.deltaY < 0:
-                event._btn = 4
-            else:
-                event._btn = 5
             self.event._updateQueue(event)
         event.preventDefault()
 
