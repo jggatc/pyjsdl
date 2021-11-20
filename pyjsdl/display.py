@@ -6,7 +6,7 @@ from pyjsdl.surface import Surface
 from pyjsdl.rect import Rect
 from pyjsdl.time import Time
 from pyjsdl import env
-from pyjsdl.pyjsobj import DOM, Window, RootPanel, FocusPanel, VerticalPanel, loadImages, TextBox, TextArea, Event, requestAnimationFrameInit
+from pyjsdl.pyjsobj import DOM, Window, RootPanel, SimplePanel, VerticalPanel, loadImages, TextBox, TextArea, Event, requestAnimationFrameInit
 
 __docformat__ = 'restructuredtext'
 
@@ -108,8 +108,7 @@ class Canvas(Surface):
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
 
-    def onMouseWheel(self, sender, velocity):
-        event = DOM.eventGetCurrentEvent()
+    def onMouseWheel(self, event):
         if event.type in self.event.events:
             r = self.canvas.getBoundingClientRect()
             event._x = event.clientX - round(r.left)
@@ -333,7 +332,7 @@ class Display(object):
         env.set_env('canvas', self.canvas)
         self.frame = Window.getDocumentRoot()
         env.set_env('frame', self.frame)
-        panel = FocusPanel(Widget=self.canvas)
+        panel = SimplePanel(Widget=self.canvas)
         RootPanel().add(panel)
         self.panel = panel
         self.vpanel = None

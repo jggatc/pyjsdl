@@ -4,28 +4,56 @@
 from pyjamas import DOM
 from pyjamas import Window
 from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.FocusPanel import FocusPanel
+from pyjamas.ui.FocusPanel import SimplePanel
 from pyjamas.ui.VerticalPanel import VerticalPanel
 from pyjamas.Canvas.Color import Color
 from pyjamas.Canvas.ImageLoader import loadImages
 from pyjamas.ui.TextBox import TextBox
 from pyjamas.ui.TextArea import TextArea
 from pyjamas.ui import Event
-from pyjamas.ui.MouseListener import MouseWheelHandler
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas as _HTML5Canvas
 from pyjamas.media.Audio import Audio
 from __pyjamas__ import JS, wnd
+
+
+class MouseWheelHandler(object):
+
+    _listener = {}
+
+    def __init__(self):
+        element = self.getElement()
+        if hasattr(element, 'onwheel'):
+            self._mousewheel = 'wheel'
+        elif hasattr(element, 'onmousewheel'):
+            self._mousewheel = 'mousewheel'
+        else:
+            self._mousewheel = 'DOMMouseScroll'
+
+    def addMouseWheelListener(self):
+        element = self.getElement()
+        listener = lambda event: self.onMouseWheel(event)
+        self._listener[self] = listener
+        element.addEventListener(self._mousewheel, listener)
+
+    def removeMouseWheelListener(self):
+        element = self.getElement()
+        listener = self._listener[self]
+        del self._listener[self]
+        element.removeEventListener(self._mousewheel, listener)
+
+    def onMouseWheel(self, event):
+        pass
 
 
 class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
 
     def __init__(self, coordX, coordY, *args, **kwargs):
         _HTML5Canvas.__init__(self, coordX, coordY, *args, **kwargs)
-        MouseWheelHandler.__init__(self, True)
+        MouseWheelHandler.__init__(self)
 
     def addMouseListener(self, listener):
         _HTML5Canvas.addMouseListener(self, listener)
-        self.addMouseWheelListener(self)
+        self.addMouseWheelListener()
 
 
 def requestAnimationFrameInit():

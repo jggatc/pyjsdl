@@ -49,6 +49,7 @@ class Event(object):
         self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
         self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']), Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN, 'mousedown', 'wheel', 'mousewheel',  'DOMMouseScroll']), Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']), Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']), Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
+        self.eventObj = {'mousedown':MouseDownEvent, 'mouseup':MouseUpEvent, 'wheel':MouseWheelEvent, 'mousewheel':MouseWheelEvent, 'DOMMouseScroll':_MouseWheelEvent, 'mousemove':MouseMoveEvent, 'keydown':KeyDownEvent, 'keyup':KeyUpEvent, 'keypress':KeyPressEvent}
         if env.pyjs_mode.optimized:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
             self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
@@ -71,9 +72,9 @@ class Event(object):
         if not self.queueLock:
             if self.eventNumTmp:
                  self._appendMerge()
-            self._append(JEvent(event))
+            self._append(self.eventObj[event.type](event))
         else:
-            self._appendTmp(JEvent(event))
+            self._appendTmp(self.eventObj[event.type](event))
         self.queueAccess = False
 
     def _append(self, event):
@@ -351,60 +352,23 @@ class UserEvent(object):
 
 
 class JEvent(object):
+    """
+    Event object wraps browser event.
+
+    Event object attributes:
+
+    * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
+    * button: mouse button pressed (1-5)
+    * buttons: mouse buttons pressed (1,2,3)
+    * pos: mouse position (x,y)
+    * rel: mouse relative position change (x,y)
+    * key: keycode of key pressed (K_a-K_z...)
+    """
 
     _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
+    _eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp'}
     _charCode = {33:Const.K_EXCLAIM, 34:Const.K_QUOTEDBL, 35:Const.K_HASH, 36:Const.K_DOLLAR, 38:Const.K_AMPERSAND, 39:Const.K_QUOTE, 40:Const.K_LEFTPAREN, 41:Const.K_RIGHTPAREN, 42:Const.K_ASTERISK, 43:Const.K_PLUS, 44:Const.K_COMMA, 45:Const.K_MINUS, 46:Const.K_PERIOD, 97:Const.K_a, 98:Const.K_b, 99:Const.K_c, 100:Const.K_d, 101:Const.K_e, 102:Const.K_f, 103:Const.K_g, 104:Const.K_h, 105:Const.K_i, 106:Const.K_j, 107:Const.K_k, 108:Const.K_l, 109:Const.K_m, 110:Const.K_n, 111:Const.K_o, 112:Const.K_p, 113:Const.K_q, 114:Const.K_r, 115:Const.K_s, 116:Const.K_t, 117:Const.K_u, 118:Const.K_v, 119:Const.K_w, 120:Const.K_x, 121:Const.K_y, 122:Const.K_z}
-
-    __slots__ = ['type', 'attr']
-
-    def __init__(self, event):
-        """
-        Event object wraps browser event.
-        
-        Event object attributes:
-        
-        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-        * button: mouse button pressed (1-3, 4-5 V-scroll, and 6-7 H-scroll)
-        * buttons: mouse buttons pressed (1,2,3)
-        * pos: mouse position (x,y)
-        * rel: mouse relative position change (x,y)
-        * key: keycode of key pressed (K_a-K_z...)
-        """
-        object.__setattr__(self, "type", self.__class__._types[event.type])
-        object.__setattr__(self, "attr", {})
-        if event.type in ('mousedown', 'mouseup'):
-            self.attr['button'] = event.button + 1
-            self.attr['pos'] = (event._x+env.frame.scrollLeft,
-                                event._y+env.frame.scrollTop)
-        elif event.type == 'mousemove':
-            self.attr['buttons'] = ((int(event.buttons) & 1) == 1,
-                                    (int(event.buttons) & 4) == 4,
-                                    (int(event.buttons) & 2) == 2)
-            self.attr['pos'] = (event._x+env.frame.scrollLeft,
-                                event._y+env.frame.scrollTop)
-            self.attr['rel'] = (event._relx, event._rely)
-        elif event.type in ('wheel', 'mousewheel', 'DOMMouseScroll'):
-            if event.deltaY < 0:
-                self.attr['button'] = 4
-            else:
-                self.attr['button'] = 5
-            self.attr['pos'] = (event._x+env.frame.scrollLeft,
-                                event._y+env.frame.scrollTop)
-        elif event.type in ('keydown', 'keyup'):
-            self.attr['key'] = event.keyCode
-        elif event.type == 'keypress':
-            if event.keyCode:
-                code = event.keyCode
-            else:
-                code = event.which
-            if code in self.__class__._charCode:
-                self.attr['key'] = self.__class__._charCode[code]
-            else:
-                self.attr['key'] = code
-        if env.pyjs_mode.optimized: #__getattr__ not implemented in pyjs -O
-            for attr in self.attr:
-                object.__setattr__(self, attr, self.attr[attr])
-        self.attr['event'] = event
+    __slots__ = []
 
     def __str__(self):
         return self.toString()
@@ -412,24 +376,119 @@ class JEvent(object):
     def __repr__(self):
         return self.toString()
 
-    def __getattr__(self, attr):
-        if attr in self.attr:
-            return self.attr[attr]
-        else:
-            raise AttributeError("'Event' object has no attribute '%s'" % attr)
-
-    def __setattr__(self, attr, value):
-        self.attr[attr] = value
-
     def toString(self):
-        event_name = env.event.event_name(self.type)
-        return "<Event(%s-%s %r)>" % (self.type, event_name, self.attr)
+        event_name = self._eventName[self.type]
+        attr = {}
+        for name in self.__slots__[1:-1]:
+            attr[name] = getattr(self, name)
+        return "<Event(%s-%s %r)>" % (self.type, event_name, repr(attr))
 
     def getEvent(self):
         """
         Return browser event.
         """
-        return self.attr['event']
+        return self.event
+
+
+class MouseDownEvent(JEvent):
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        self.button = event.button + 1
+        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+
+
+class MouseUpEvent(JEvent):
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        self.button = event.button + 1
+        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+
+
+class MouseWheelEvent(JEvent):
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        if event.deltaY < 0:
+            self.button = 4
+        else:
+            self.button = 5
+        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+
+
+class _MouseWheelEvent(JEvent):
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        if event.detail < 0:
+            self.button = 4
+        else:
+            self.button = 5
+        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+
+
+class MouseMoveEvent(JEvent):
+
+    __slots__ = ['type', 'buttons', 'pos', 'rel', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        self.buttons = ((int(event.buttons) & 1) == 1,
+                        (int(event.buttons) & 4) == 4,
+                        (int(event.buttons) & 2) == 2)
+        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+        self.rel = (event._relx, event._rely)
+
+
+class KeyDownEvent(JEvent):
+
+    __slots__ = ['type', 'key', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        self.key = event.keyCode
+
+
+class KeyUpEvent(JEvent):
+
+    __slots__ = ['type', 'key', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        self.key = event.keyCode
+
+
+class KeyPressEvent(JEvent):
+
+    __slots__ = ['type', 'key', 'event']
+
+    def __init__(self, event):
+        self.event = event
+        self.type = self._types[event.type]
+        if event.keyCode:
+            code = event.keyCode
+        else:
+            code = event.which
+        if code in self._charCode:
+            self.key = self._charCode[code]
+        else:
+            self.key = code
 
 
 class TouchListener:
