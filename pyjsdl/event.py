@@ -2,6 +2,7 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl import env
+from pyjsdl import key
 from pyjsdl import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -42,6 +43,7 @@ class Event(object):
         self.queueTmp = []
         self.mousePress = {0:False, 1:False, 2:False}
         self.mouseMove = {'x':-1, 'y':-1}
+        self.mouseMovePre = {'x':0, 'y':0}
         self.mouseMoveRel = {'x':None, 'y':None}
         self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
@@ -49,14 +51,9 @@ class Event(object):
         self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
         self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']), Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN, 'mousedown', 'wheel', 'mousewheel',  'DOMMouseScroll']), Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']), Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']), Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
-        self.eventObj = {'mousedown':MouseDownEvent, 'mouseup':MouseUpEvent, 'wheel':MouseWheelEvent, 'mousewheel':MouseWheelEvent, 'DOMMouseScroll':_MouseWheelEvent, 'mousemove':MouseMoveEvent, 'keydown':KeyDownEvent, 'keyup':KeyUpEvent, 'keypress':KeyPressEvent}
-        if env.pyjs_mode.optimized:
-            self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
-            self.specialKey = set([Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE])
-        else:   #pyjs-S onKeyDown keycode 'mod' not in set, due to js/pyjs numeric diff
-            self.modKey = set([keycode.valueOf() for keycode in (Const.K_ALT, Const.K_CTRL, Const.K_SHIFT)])
-            self.specialKey = set([keycode.valueOf() for keycode in (Const.K_UP, Const.K_DOWN, Const.K_LEFT, Const.K_RIGHT, Const.K_HOME, Const.K_END, Const.K_PAGEDOWN, Const.K_PAGEUP, Const.K_BACKSPACE, Const.K_DELETE, Const.K_INSERT, Const.K_RETURN, Const.K_TAB, Const.K_ESCAPE)])
-#Const.K_F1, Const.K_F2, Const.K_F3, Const.K_F4, Const.K_F5, Const.K_F6, Const.K_F7, Const.K_F8, Const.K_F9, Const.K_F10, Const.K_F11, Const.K_F12, Const.K_F13, Const.K_F14, Const.K_F15   #IE keypress keycode: id same as alpha keys
+        self.eventObj = {'mousedown':MouseDownEvent, 'mouseup':MouseUpEvent, 'wheel':MouseWheelEvent, 'mousewheel':MouseWheelEvent, 'DOMMouseScroll':_MouseWheelEvent, 'mousemove':MouseMoveEvent, 'keydown':KeyDownEvent, 'keyup':KeyUpEvent}
+        self.modKey = key._modKey
+        self.specialKey = key._specialKey
         self.touchlistener = None
         self.Event = UserEvent
         self._nonimplemented_methods()
@@ -72,9 +69,9 @@ class Event(object):
         if not self.queueLock:
             if self.eventNumTmp:
                  self._appendMerge()
-            self._append(self.eventObj[event.type](event))
+            self._append(event)
         else:
-            self._appendTmp(self.eventObj[event.type](event))
+            self._appendTmp(event)
         self.queueAccess = False
 
     def _append(self, event):
@@ -365,9 +362,6 @@ class JEvent(object):
     * key: keycode of key pressed (K_a-K_z...)
     """
 
-    _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN, 'keydown':Const.KEYDOWN, 'keypress':Const.KEYDOWN, 'keyup':Const.KEYUP}
-    _eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp'}
-    _charCode = {33:Const.K_EXCLAIM, 34:Const.K_QUOTEDBL, 35:Const.K_HASH, 36:Const.K_DOLLAR, 38:Const.K_AMPERSAND, 39:Const.K_QUOTE, 40:Const.K_LEFTPAREN, 41:Const.K_RIGHTPAREN, 42:Const.K_ASTERISK, 43:Const.K_PLUS, 44:Const.K_COMMA, 45:Const.K_MINUS, 46:Const.K_PERIOD, 97:Const.K_a, 98:Const.K_b, 99:Const.K_c, 100:Const.K_d, 101:Const.K_e, 102:Const.K_f, 103:Const.K_g, 104:Const.K_h, 105:Const.K_i, 106:Const.K_j, 107:Const.K_k, 108:Const.K_l, 109:Const.K_m, 110:Const.K_n, 111:Const.K_o, 112:Const.K_p, 113:Const.K_q, 114:Const.K_r, 115:Const.K_s, 116:Const.K_t, 117:Const.K_u, 118:Const.K_v, 119:Const.K_w, 120:Const.K_x, 121:Const.K_y, 122:Const.K_z}
     __slots__ = []
 
     def __str__(self):
@@ -390,105 +384,114 @@ class JEvent(object):
         return self.event
 
 
-class MouseDownEvent(JEvent):
+class MouseEvent(JEvent):
+
+    _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN}
+    _eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp'}
+
+    __slots__ = []
+
+
+class MouseDownEvent(MouseEvent):
 
     __slots__ = ['type', 'button', 'pos', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, x, y):
         self.event = event
         self.type = self._types[event.type]
         self.button = event.button + 1
-        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
 
 
-class MouseUpEvent(JEvent):
+class MouseUpEvent(MouseEvent):
 
     __slots__ = ['type', 'button', 'pos', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, x, y):
         self.event = event
         self.type = self._types[event.type]
         self.button = event.button + 1
-        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
 
 
-class MouseWheelEvent(JEvent):
+class MouseWheelEvent(MouseEvent):
 
     __slots__ = ['type', 'button', 'pos', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, x, y):
         self.event = event
         self.type = self._types[event.type]
         if event.deltaY < 0:
             self.button = 4
         else:
             self.button = 5
-        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
 
 
-class _MouseWheelEvent(JEvent):
+class _MouseWheelEvent(MouseEvent):
 
     __slots__ = ['type', 'button', 'pos', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, x, y):
         self.event = event
         self.type = self._types[event.type]
         if event.detail < 0:
             self.button = 4
         else:
             self.button = 5
-        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
+        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
 
 
-class MouseMoveEvent(JEvent):
+class MouseMoveEvent(MouseEvent):
 
     __slots__ = ['type', 'buttons', 'pos', 'rel', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, x, y):
         self.event = event
         self.type = self._types[event.type]
         self.buttons = ((int(event.buttons) & 1) == 1,
                         (int(event.buttons) & 4) == 4,
                         (int(event.buttons) & 2) == 2)
-        self.pos = (event._x+env.frame.scrollLeft, event._y+env.frame.scrollTop)
-        self.rel = (event._relx, event._rely)
+        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.rel = (x - env.event.mouseMovePre['x'],
+                    y - env.event.mouseMovePre['y'])
 
 
-class KeyDownEvent(JEvent):
+class KeyEvent(JEvent):
 
-    __slots__ = ['type', 'key', 'event']
+    _types = {'keydown':Const.KEYDOWN, 'keyup':Const.KEYUP}
+    _eventName = {Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp'}
+    _charCode = key._charCode
+    _specialKey = key._specialKey
+    _modKey = key._modKey
 
-    def __init__(self, event):
-        self.event = event
-        self.type = self._types[event.type]
-        self.key = event.keyCode
-
-
-class KeyUpEvent(JEvent):
-
-    __slots__ = ['type', 'key', 'event']
-
-    def __init__(self, event):
-        self.event = event
-        self.type = self._types[event.type]
-        self.key = event.keyCode
+    __slots__ = []
 
 
-class KeyPressEvent(JEvent):
+class KeyDownEvent(KeyEvent):
 
     __slots__ = ['type', 'key', 'event']
 
-    def __init__(self, event):
+    def __init__(self, event, keycode):
         self.event = event
         self.type = self._types[event.type]
-        if event.keyCode:
-            code = event.keyCode
+        if keycode in self._charCode:
+            self.key = self._charCode[keycode]
         else:
-            code = event.which
-        if code in self._charCode:
-            self.key = self._charCode[code]
+            self.key = keycode
+
+
+class KeyUpEvent(KeyEvent):
+
+    __slots__ = ['type', 'key', 'event']
+
+    def __init__(self, event, keycode):
+        self.event = event
+        self.type = self._types[event.type]
+        if keycode in self._charCode:
+            self.key = self._charCode[keycode]
         else:
-            self.key = code
+            self.key = keycode
 
 
 class TouchListener:
