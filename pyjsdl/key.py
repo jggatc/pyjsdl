@@ -36,11 +36,13 @@ class Key(object):
         if not self._keys:
             for keyname in dir(Const):
                 if keyname.startswith('K_'):
-                    self._keys[getattr(Const, keyname)] = keyname.split('_')[-1].lower()
-            self._keys[0] = 'unknown key'
-        if keycode not in self._keys:
-            keycode = 0
-        return self._keys[keycode]
+                    name = keyname.split('_')[1].lower()
+                    if len(name) != 1:
+                        self._keys[getattr(Const, keyname)] = name
+        if keycode in self._keys:
+           return self._keys[keycode]
+        else:
+           return chr(keycode)
 
     def get_mods(self):
         """
