@@ -42,7 +42,7 @@ from pyjsdl import mask
 from pyjsdl import font
 from pyjsdl import sprite
 from pyjsdl import cursors
-from pyjsdl.locals import *
+from pyjsdl.constants import *
 
 
 _initialized = False

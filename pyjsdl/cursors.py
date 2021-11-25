@@ -3,7 +3,7 @@
 
 from pyjsdl.surface import Surface
 from pyjsdl.color import Color
-from pyjsdl import locals as Const
+from pyjsdl import constants as Const
 
 
 #cursors not implemented

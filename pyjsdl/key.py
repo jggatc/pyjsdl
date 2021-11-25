@@ -2,7 +2,7 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyjsdl import env
-from pyjsdl import locals as Const
+from pyjsdl import constants as Const
 
 __docformat__ = 'restructuredtext'
 

@@ -4,7 +4,7 @@
 from pyjsdl.pyjsobj import Audio
 from pyjsdl.time import Time
 from pyjsdl import env
-from pyjsdl import locals as Const
+from pyjsdl import constants as Const
 
 __docformat__ = 'restructuredtext'
 
