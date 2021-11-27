@@ -131,11 +131,10 @@ class Canvas(Surface):
         event = DOM.eventGetCurrentEvent()
         if keycode in self.modKey:
             self.event.keyPress[keycode] = False
-        self.keyHeld[keycode]['pressed'] = False
+        if keycode in self.keyHeld:
+            self.keyHeld[keycode]['pressed'] = False
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, keycode))
-        if keycode in self.modKey:
-            self.event.keyPress[keycode] = False
 
     def _isPaused(self, keycode):
         if keycode not in self.keyHeld:
