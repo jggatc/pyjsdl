@@ -55,6 +55,8 @@ class Event(object):
         self.modKey = key._modKey
         self.specialKey = key._specialKey
         self.touchlistener = None
+        self.keyRepeat = [0, 0]
+        self.keyHeld = {}
         self.Event = UserEvent
         self._nonimplemented_methods()
 

@@ -47,6 +47,8 @@ class Canvas(Surface):
         self.preventContextMenu()
         self.evt = self.event.eventObj
         self.modKey = self.event.modKey
+        self.keyRepeat = self.event.keyRepeat
+        self.keyHeld = self.event.keyHeld
         self.mouse_entered = True
         self.event._initiate_touch_listener(self)
         self._touch_callback = self.event.touchlistener.callback
@@ -118,18 +120,46 @@ class Canvas(Surface):
 
     def onKeyDown(self, sender, keycode, mods):
         event = DOM.eventGetCurrentEvent()
-        if event.type in self.event.events:
-            self.event._updateQueue(self.evt[event.type](event, keycode))
         if keycode in self.modKey:
             self.event.keyPress[keycode] = True
+        if event.type in self.event.events:
+            if not self._isPaused(keycode):
+                self.event._updateQueue(self.evt[event.type](event, keycode))
         DOM.eventPreventDefault(event)
 
     def onKeyUp(self, sender, keycode, mods):
         event = DOM.eventGetCurrentEvent()
+        if keycode in self.modKey:
+            self.event.keyPress[keycode] = False
+        self.keyHeld[keycode]['pressed'] = False
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, keycode))
         if keycode in self.modKey:
             self.event.keyPress[keycode] = False
+
+    def _isPaused(self, keycode):
+        if keycode not in self.keyHeld:
+            self.keyHeld[keycode] = {'pressed':False, 'delay':False, 'time':0}
+        key = self.keyHeld[keycode]
+        if not key['pressed']:
+            key['pressed'] = True
+            paused = False
+            if self.keyRepeat[0]:
+                key['delay'] = True
+                key['time'] = self.time.time()
+        else:
+            paused = True
+            if self.keyRepeat[0]:
+                time = self.time.time()
+                if key['delay']:
+                    if time - key['time'] > self.keyRepeat[0]:
+                        key['time'] = time
+                        key['delay'] = False
+                        paused = False
+                elif time - key['time'] > self.keyRepeat[1]:
+                    key['time'] = time
+                    paused = False
+        return paused
 
     def onTouchInitiate(self, event):
         self.event.touchlistener.activate()
