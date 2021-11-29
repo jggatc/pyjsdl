@@ -47,6 +47,7 @@ class Canvas(Surface):
         self.preventContextMenu()
         self.evt = self.event.eventObj
         self.modKey = self.event.modKey
+        self.specialKey = self.event.specialKey
         self.keyRepeat = self.event.keyRepeat
         self.keyHeld = self.event.keyHeld
         self.mouse_entered = True
@@ -124,8 +125,12 @@ class Canvas(Surface):
             self.event.keyPress[keycode] = True
         if event.type in self.event.events:
             if not self._isPaused(keycode):
-                self.event._updateQueue(self.evt[event.type](event, keycode))
-        DOM.eventPreventDefault(event)
+                self.event.keyCode = keycode
+                if keycode in self.specialKey:
+                    self.event._updateQueue(self.evt[event.type](event, keycode))
+                    DOM.eventPreventDefault(event)
+            else:
+                DOM.eventPreventDefault(event)
 
     def onKeyUp(self, sender, keycode, mods):
         event = DOM.eventGetCurrentEvent()
@@ -135,6 +140,13 @@ class Canvas(Surface):
             self.keyHeld[keycode]['pressed'] = False
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, keycode))
+
+    def onKeyPress(self, sender, keycode, mods):
+        event = DOM.eventGetCurrentEvent()
+        if event.type in self.event.events:
+            self.event.keyPressCode[self.event.keyCode] = keycode
+            self.event._updateQueue(self.evt[event.type](event, keycode))
+        event.preventDefault()
 
     def _isPaused(self, keycode):
         if keycode not in self.keyHeld:

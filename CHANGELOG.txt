@@ -3,6 +3,7 @@
 -revise event object for performance.
 -refactor event handler for performance.
 -add key set_repeat method.
+-revise key event handler.
 
 0.25    2021-11-07
 -revise sprite orderedupdates.
