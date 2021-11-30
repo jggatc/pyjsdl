@@ -55,6 +55,22 @@ class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
         _HTML5Canvas.addMouseListener(self, listener)
         self.addMouseWheelListener()
 
+    def addKeyEventListener(self, obj):
+        element = obj.getElement()
+        element.setAttribute('tabindex','0')
+        listener = lambda event: self.onKeyEvent(event)
+        _listener[self] = listener
+        element.addEventListener('keydown', listener)
+
+    def removeKeyEventListener(self, obj):
+        element = obj.getElement()
+        listener = _listener[self]
+        del _listener[self]
+        element.removeEventListener('keydown', listener)
+
+
+_listener = {}
+
 
 def requestAnimationFrameInit():
     requestAnimationFramePolyfill()
