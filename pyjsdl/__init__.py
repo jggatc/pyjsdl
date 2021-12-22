@@ -37,6 +37,7 @@ from pyjsdl.time import Time
 from pyjsdl.vector import Vector2
 from pyjsdl import draw
 from pyjsdl import transform
+from pyjsdl import surface
 from pyjsdl import surfarray
 from pyjsdl import mask
 from pyjsdl import font
@@ -108,4 +109,13 @@ def quit():
 
 class error(RuntimeError):
     pass
+
+
+def bounding_rect_return(setting):
+    """
+    Set whether blit/draw return bounding Rect.
+    Setting (bool) defaults to True on module initialization.
+    """
+    surface.bounding_rect_return(setting)
+    draw.bounding_rect_return(setting)
 

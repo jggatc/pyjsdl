@@ -5,6 +5,7 @@
 -add key set_repeat method.
 -revise key event handler.
 -update key event handler.
+-update surface blit with optional rect return.
 
 0.25    2021-11-07
 -revise sprite orderedupdates.

@@ -313,10 +313,19 @@ def aalines(surface, color, closed, pointlist, blend=1):
     return rect
 
 
-def set_return(setting):
+def bounding_rect_return(setting):
     """
     Set whether draw functions return bounding Rect.
+    Setting (bool) defaults to True on module initialization.
     """
     global _return_rect
     _return_rect = setting
+
+
+#depreciated
+def _set_return(*args):
+    msg = 'set_return depreciated, use bounding_rect_return'
+    print(msg)
+    raise Exception(msg)
+set_return = _set_return
 
