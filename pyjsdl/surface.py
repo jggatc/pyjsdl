@@ -285,31 +285,41 @@ class Surface(HTML5Canvas):
         """
         if color is None:
             HTML5Canvas.fill(self)
-            return
-        if color:
-            if self._fill_style != color:
-                self._fill_style = color
-                if hasattr(color, 'a'):
-                    self.setFillStyle(color)
-                else:
-                    self.setFillStyle(Color(color))
-            if not rect:
-                _rect = Rect(0, 0, self.width, self.height)
+            return None
+        if self._fill_style != color:
+            self._fill_style = color
+            if hasattr(color, 'a'):
+                self.setFillStyle(color)
             else:
-                if self._display:
-                    surface_rect = self._display._surface_rect
-                else:
-                    surface_rect = self.get_rect()
-                if hasattr(rect, 'width'):
-                    _rect = surface_rect.clip( rect )
-                else:
-                    _rect = surface_rect.clip( Rect(rect) )
-                if not _rect.width or not _rect.height:
-                    return _rect
+                self.setFillStyle(Color(color))
+        if not _return_rect:
+            if rect is None:
+                self.fillRect(0, 0, self.width, self.height)
+            else:
+                self.fillRect(rect[0], rect[1], rect[2], rect[3])
+            return None
+        if rect is None:
+            _rect = Rect(0, 0, self.width, self.height)
             self.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
         else:
-            _rect = Rect(0, 0, self.width, self.height)
-            self.clear()
+            if self._display:
+                if hasattr(rect, 'width'):
+                    _rect = self._display._surface_rect.clip(rect)
+                else:
+                    _rect_ = rectPool.get(rect[0],rect[1],rect[2],rect[3])
+                    _rect = self._display._surface_rect.clip(_rect_)
+                    rectPool.append(_rect_)
+            else:
+                surface_rect = rectPool.get(0, 0, self.width, self.height)
+                if hasattr(rect, 'width'):
+                    _rect = surface_rect.clip(rect)
+                else:
+                    _rect_ = rectPool.get(rect[0],rect[1],rect[2],rect[3])
+                    _rect = surface_rect.clip(_rect_)
+                    rectPool.append(_rect_)
+                rectPool.append(surface_rect)
+            if _rect.width and _rect.height:
+                self.fillRect(_rect.x, _rect.y, _rect.width, _rect.height)
         return _rect
 
     def get_parent(self):
@@ -381,7 +391,7 @@ class IndexSizeError(Exception):
 
 def bounding_rect_return(setting):
     """
-    Set whether surface blit function returns bounding Rect.
+    Set whether surface blit/fill functions return bounding Rect.
     Setting (bool) defaults to True on module initialization.
     """
     global _return_rect
