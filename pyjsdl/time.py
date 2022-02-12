@@ -40,11 +40,11 @@ class Clock(object):
         if self._framerate != framerate and not env.canvas._pause:
             self._framerate = framerate
             if framerate:
-                env.canvas._framerate = 1000.0/framerate
+                env.canvas._framerate = 1000.0 / framerate
             else:
                 env.canvas._framerate = 0.0
         self._time = self.time()
-        self._time_diff = self._time-self._time_init
+        self._time_diff = self._time - self._time_init
         self._time_init = self._time
         return self._time_diff
 
@@ -60,7 +60,7 @@ class Clock(object):
         Return fps.
         """
         if not env.canvas._pause:
-            return 1000.0/env.canvas._frametime
+            return 1000.0 / env.canvas._frametime
         else:
             return 0.0
 
@@ -129,7 +129,7 @@ class Time(object):
         if time:
             if not env.canvas._pause:
                 self._framerate = env.canvas._framerate
-                env.canvas._framerate = time*10
+                env.canvas._framerate = time * 10
                 env.canvas._pause = True
                 self.set_timeout(self, time)
         else:
@@ -145,7 +145,7 @@ class Time(object):
 
         Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.
-        Disable timer with time of 0. 
+        Disable timer with time of 0.
         """
         if hasattr(event, 'type'):
             eventType = event.type

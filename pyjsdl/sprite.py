@@ -227,7 +227,8 @@ class Group(object):
             rectPool.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
             for sprite in self._sprites:
-                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
+                self._sprites_drawn[sprite] = rectPool.copy(
+                                 self._sprites[sprite].rect)
         return None
 
     def clear(self, surface, background):
@@ -346,20 +347,26 @@ class RenderUpdates(Group):
             self.changed_areas[:] = []
             for sprite in self._sprites:
                 if sprite in self._sprites_drawn:
-                    if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
-                        self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
+                    if self._sprites_drawn[sprite].intersects(
+                                   self._sprites[sprite].rect):
+                        self._sprites_drawn[sprite].union_ip(
+                                  self._sprites[sprite].rect)
                     else:
-                        self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
+                        self.changed_areas.append(
+                            rectPool.copy(self._sprites[sprite].rect))
                 else:
-                    self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
+                    self.changed_areas.append(
+                        rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(list(self._sprites_drawn.values()))
             self._sprites_drawn.clear()
             for sprite in self._sprites:
-                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
+                self._sprites_drawn[sprite] = rectPool.copy(
+                                 self._sprites[sprite].rect)
         else:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
-            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.values()])
+            self.changed_areas.extend([rectPool.copy(sprite.rect)
+                                       for sprite in self._sprites.values()])
         return self.changed_areas
 
 
@@ -483,7 +490,7 @@ class LayeredUpdates(OrderedUpdates):
     def add(self, *sprites, **kwargs):
         """
         Add sprite(s) to group, maintaining order based on layer of sprite,
-        derived from sprite _layer attribute or if absent default layer. 
+        derived from sprite _layer attribute or if absent default layer.
         If layer keyword argument is provided it is used.
         """
         if 'layer' in kwargs:
@@ -736,15 +743,18 @@ class _collide_rect_ratio(object):
 
     def __call__(self, sprite1, sprite2):   #__call__ not implemented in pyjs
         r = sprite1.rect
-        x = (r.width*self.ratio)-r.width
-        y = (r.height*self.ratio)-r.height
-        r1 = rectPool.get(r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
+        x = (r.width * self.ratio) - r.width
+        y = (r.height * self.ratio) - r.height
+        r1 = rectPool.get(r.x - int(x*0.5), r.y - int(y*0.5),
+                          r.width + int(x), r.height + int(y))
         r = sprite2.rect
-        x = (r.width*self.ratio)-r.width
-        y = (r.height*self.ratio)-r.height
-        r2 = rectPool.get(r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
+        x = (r.width * self.ratio) - r.width
+        y = (r.height * self.ratio) - r.height
+        r2 = rectPool.get(r.x - int(x*0.5), r.y - int(y*0.5),
+                          r.width + int(x), r.height + int(y))
         collide = r1.intersects(r2)
-        rectPool.extend((r1,r2))
+        rectPool.append(r1)
+        rectPool.append(r2)
         return collide
 
 
@@ -759,16 +769,18 @@ def collide_circle(sprite1, sprite2):
     if hasattr(sprite1, 'radius'):
         radius1 = sprite1.radius
     else:
-        radius1 = ( (((sprite1.rect.width)**2) + ((sprite1.rect.height)**2))**0.5 ) * 0.5
+        radius1 = (((((sprite1.rect.width)**2)
+                   + ((sprite1.rect.height)**2))**0.5) * 0.5)
     if hasattr(sprite2, 'radius'):
         radius2 = sprite2.radius
     else:
-        radius2 = ( (((sprite2.rect.width)**2) + ((sprite2.rect.height)**2))**0.5 ) * 0.5
-    sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
-    sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
-    sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
-    sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
-    return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+        radius2 = (((((sprite2.rect.width)**2)
+                   + ((sprite2.rect.height)**2))**0.5) * 0.5)
+    sx1 = (sprite1.rect.x + int(sprite1.rect.width * 0.5))
+    sy1 = (sprite1.rect.y + int(sprite1.rect.height * 0.5))
+    sx2 = (sprite2.rect.x + int(sprite2.rect.width * 0.5))
+    sy2 = (sprite2.rect.y + int(sprite2.rect.height * 0.5))
+    return (((sx1 - sx2)**2 + (sy1 - sy2)**2)) < (radius1**2 + radius2**2)
 
 
 def collide_circle_ratio(ratio):
@@ -795,16 +807,18 @@ class _collide_circle_ratio(object):
         if hasattr(sprite1, 'radius'):
             radius1 = sprite1.radius * self.ratio
         else:
-            radius1 = ( (((sprite1.rect.width)**2) + ((sprite1.rect.height)**2))**0.5 ) * 0.5 * self.ratio
+            radius1 = (((((sprite1.rect.width)**2)
+                       + ((sprite1.rect.height)**2))**0.5) * 0.5 * self.ratio)
         if hasattr(sprite2, 'radius'):
             radius2 = sprite2.radius * self.ratio
         else:
-            radius2 = ( (((sprite2.rect.width)**2) + ((sprite2.rect.height)**2))**0.5 ) * 0.5 * self.ratio
-        sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
-        sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
-        sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
-        sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
-        return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+            radius2 = (((((sprite2.rect.width)**2)
+                       + ((sprite2.rect.height)**2))**0.5) * 0.5 * self.ratio)
+        sx1 = (sprite1.rect.x + int(sprite1.rect.width * 0.5))
+        sy1 = (sprite1.rect.y + int(sprite1.rect.height * 0.5))
+        sx2 = (sprite2.rect.x + int(sprite2.rect.width * 0.5))
+        sy2 = (sprite2.rect.y + int(sprite2.rect.height * 0.5))
+        return ((sx1 - sx2)**2 + (sy1 - sy2)**2) < (radius1**2 + radius2**2)
 
 
 def collide_mask(sprite1, sprite2):
@@ -823,7 +837,8 @@ def collide_mask(sprite1, sprite2):
         mask2 = sprite2.mask
     else:
         mask2 = mask.from_surface(sprite2.image)
-    if mask1.overlap(mask2, (sprite2.rect.x-sprite1.rect.x,sprite2.rect.y-sprite1.rect.y)):
+    if mask1.overlap(mask2,
+        (sprite2.rect.x-sprite1.rect.x, sprite2.rect.y-sprite1.rect.y)):
         return True
     else:
         return False

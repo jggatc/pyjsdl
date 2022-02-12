@@ -35,13 +35,22 @@ class Color(_Color):
         else:
             _color = color
         if ln == 4:
-            self.r,self.g,self.b,self.a = _color[0],_color[1],_color[2],_color[3]
+            self.r = _color[0]
+            self.g = _color[1]
+            self.b = _color[2]
+            self.a = _color[3]
         elif ln == 3:
-            self.r,self.g,self.b,self.a = _color[0],_color[1],_color[2],255
+            self.r = _color[0]
+            self.g = _color[1]
+            self.b = _color[2]
+            self.a = 255
         else:
             if hasattr(_color, 'startswith') and _color.startswith('#'):
                 _color = '0x' + _color[1:]
-            self.r,self.g,self.b,self.a = (_color>>16) & 0xff, (_color>>8) & 0xff, _color & 0xff, (_color>>24) & 0xff
+            self.r = (_color>>16) & 0xff
+            self.g = (_color>>8) & 0xff
+            self.b = _color & 0xff
+            self.a = (_color>>24) & 0xff
 
     def __str__(self):
         return "rgba(%d, %d, %d, %f)" % (self.r, self.g, self.b, self.a/255.0)
@@ -63,19 +72,35 @@ class Color(_Color):
 
     def __eq__(self, other):
         if hasattr(other, 'a'):
-            return self.r==other.r and self.g==other.g and self.b==other.b and self.a==other.a
+            return ( self.r == other.r and
+                     self.g == other.g and
+                     self.b == other.b and
+                     self.a == other.a )
         else:
             if len(other) == 4:
-                return self.a==other[3] and self.r==other[0] and self.g==other[1] and self.b==other[2]
+                return ( self.a == other[3] and
+                         self.r == other[0] and
+                         self.g == other[1] and
+                         self.b == other[2] )
             else:
-                return self.r==other[0] and self.g==other[1] and self.b==other[2]
+                return ( self.r == other[0] and
+                         self.g == other[1] and
+                         self.b == other[2] )
 
     def __ne__(self, other):
         if hasattr(other, 'a'):
-            return self.r!=other.r or self.g!=other.g or self.b!=other.b or self.a!=other.a
+            return ( self.r != other.r or
+                     self.g != other.g or
+                     self.b != other.b or
+                     self.a != other.a )
         else:
             if len(other) == 4:
-                return self.a!=other[3] or self.r!=other[0] or self.g!=other[1] or self.b!=other[2]
+                return ( self.a != other[3] or
+                         self.r != other[0] or
+                         self.g != other[1] or
+                         self.b != other[2] )
             else:
-                return self.r!=other[0] or self.g!=other[1] or self.b!=other[2]
+                return ( self.r != other[0] or
+                         self.g != other[1] or
+                         self.b != other[2] )
 

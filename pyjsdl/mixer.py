@@ -37,7 +37,8 @@ class Mixer:
         self.Channel = self._get_channel
         self._channel_max = 8
         self._channels = {}
-        self._channel_available = [id for id in range(self._channel_max-1,-1,-1)]
+        self._channel_available = [id for id in
+                                   range(self._channel_max-1,-1,-1)]
         self._channel_active = []
         self._channel_reserved = []
         self._channel_reserved_num = 0
@@ -473,7 +474,8 @@ class Channel(object):
             self._mixer._process(self._id)
             self._sound_object.element.volume = 0.01
         else:
-            self._sound_object.element.volume = self._volume * self._sound._volume
+            self._sound_object.element.volume = (self._volume
+                                                 * self._sound._volume)
         self._sound_object.element.play()
         if self._sound_object.element.paused:
             self.stop()
@@ -492,7 +494,8 @@ class Channel(object):
             self._mixer._process(self._id)
             self._sound_object.element.volume = 0.01
         else:
-            self._sound_object.element.volume = self._volume * self._sound._volume
+            self._sound_object.element.volume = (self._volume
+                                                 * self._sound._volume)
         self._sound_object.element.play()
         if self._sound_object.element.paused:
             self.stop()
@@ -501,7 +504,8 @@ class Channel(object):
         return None
 
     def _replay(self):
-        self._sound_object.element.volume = self._volume * self._sound._volume
+        self._sound_object.element.volume = (self._volume
+                                             * self._sound._volume)
         self._sound_object.element.play()
         if self._sound_object.element.paused:
             self.stop()
@@ -519,20 +523,27 @@ class Channel(object):
         if self._fadein:
             if self._time < self._fadein:
                 self._dvol = self._time / self._fadein
-                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+                self._sound_object.element.volume = (self._volume
+                                                     * self._sound._volume
+                                                     * self._dvol)
             else:
                 self._fadein = 0
                 complete = True
-                self._sound_object.element.volume = self._volume * self._sound._volume
+                self._sound_object.element.volume = (self._volume
+                                                     * self._sound._volume)
         elif self._fadeout:
             if self._time < self._fadeout:
                 self._dvol = 1.0 - (self._time / self._fadeout)
-                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+                self._sound_object.element.volume = (self._volume
+                                                     * self._sound._volume
+                                                     * self._dvol)
             else:
                 self._fadeout = 0
                 complete = True
                 self._dvol = 0.01
-                self._sound_object.element.volume = self._volume * self._sound._volume * self._dvol
+                self._sound_object.element.volume = (self._volume
+                                                     * self._sound._volume
+                                                     * self._dvol)
                 self._loops = 0
                 self._onended()
         return complete
@@ -612,7 +623,8 @@ class Channel(object):
         Stop sound after fade out time.
         """
         if self._sound:
-            self._fadeout = self._sound_object.element.currentTime + (time/1000.0)
+            self._fadeout = (self._sound_object.element.currentTime
+                             + (time/1000.0))
             self._mixer._process(self._id)
         return None
 
@@ -626,7 +638,8 @@ class Channel(object):
             volume = 1.0
         self._volume = volume
         if self._active:
-            self._sound_object.element.volume = self._volume * self._sound._volume
+            self._sound_object.element.volume = (self._volume
+                                                 * self._sound._volume)
         return None
 
     def get_volume(self):
@@ -669,7 +682,8 @@ class Channel(object):
         Without an argument resets endevent to NOEVENT type.
         """
         if eventType is not None:
-            if self._endevent is None or self._endevent.type != eventType:
+            if ( self._endevent is None or
+                 self._endevent.type != eventType ):
                 self._endevent = env.event.Event(eventType)
         else:
             self._endevent = None

@@ -76,9 +76,11 @@ def circle(surface, color, position, radius, width=0):
     if not _return_rect:
         return None
     if surface._display:
-        return surface._display._surface_rect.clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
+        return surface._display._surface_rect.clip(
+            Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius))
     else:
-        return surface.get_rect().clip( Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius) )
+        return surface.get_rect().clip(
+            Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius))
 
 
 def ellipse(surface, color, rect, width=0):
@@ -92,12 +94,13 @@ def ellipse(surface, color, rect, width=0):
     else:
         _rect = Rect(rect)
     surface.saveContext()
-    surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
+    surface.translate(_rect.x + int(_rect.width/2),
+                      _rect.y + int(_rect.height/2))
     if _rect.width >= _rect.height:
-        surface.scale(_rect.width/(_rect.height*1.0), 1)
+        surface.scale(_rect.width / (_rect.height*1.0), 1)
         radius = int(_rect.height/2)
     else:
-        surface.scale(1, _rect.height/(_rect.width*1.0))
+        surface.scale(1, _rect.height / (_rect.width*1.0))
         radius = int(_rect.width/2)
     surface.beginPath()
     surface.arc(0, 0, radius, 0, 2*_pi, False)
@@ -139,7 +142,8 @@ def arc(surface, color, rect, start_angle, stop_angle, width=1):
         _rect = Rect(rect)
     if _rect.width == _rect.height:
         surface.beginPath()
-        surface.arc(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2), int(_rect.width/2), -start_angle, -stop_angle, True)
+        surface.arc(_rect.x + int(_rect.width/2), _rect.y + int(_rect.height/2),
+                    int(_rect.width/2), -start_angle, -stop_angle, True)
         if width:
             surface.setLineWidth(width)
             if surface._stroke_style != color:
@@ -160,12 +164,13 @@ def arc(surface, color, rect, start_angle, stop_angle, width=1):
             surface.fill()
     else:
         surface.saveContext()
-        surface.translate(_rect.x+int(_rect.width/2), _rect.y+int(_rect.height/2))
+        surface.translate(_rect.x + int(_rect.width/2),
+                          _rect.y + int(_rect.height/2))
         if _rect.width >= _rect.height:
-            surface.scale(_rect.width/(_rect.height*1.0), 1)
+            surface.scale(_rect.width / (_rect.height*1.0), 1)
             radius = int(_rect.height/2)
         else:
-            surface.scale(1, _rect.height/(_rect.width*1.0))
+            surface.scale(1, _rect.height / (_rect.width*1.0))
             radius = int(_rect.width/2)
         surface.beginPath()
         surface.arc(0, 0, radius, -start_angle, -stop_angle, True)
@@ -231,9 +236,11 @@ def polygon(surface, color, pointlist, width=0):
     xmin, xmax = min(xpts), max(xpts)
     ymin, ymax = min(ypts), max(ypts)
     if surface._display:
-        return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface._display._surface_rect.clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
     else:
-        return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface.get_rect().clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
 
 
 def line(surface, color, point1, point2, width=1):
@@ -260,9 +267,11 @@ def line(surface, color, point1, point2, width=1):
     xmin, xmax = min(xpts), max(xpts)
     ymin, ymax = min(ypts), max(ypts)
     if surface._display:
-        return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface._display._surface_rect.clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
     else:
-        return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface.get_rect().clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
 
 
 def lines(surface, color, closed, pointlist, width=1):
@@ -292,9 +301,11 @@ def lines(surface, color, closed, pointlist, width=1):
     xmin, xmax = min(xpts), max(xpts)
     ymin, ymax = min(ypts), max(ypts)
     if surface._display:
-        return surface._display._surface_rect.clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface._display._surface_rect.clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
     else:
-        return surface.get_rect().clip( Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1) )
+        return surface.get_rect().clip(
+            Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1))
 
 
 def aaline(surface, color, point1, point2, blend=1):

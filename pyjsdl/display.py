@@ -42,7 +42,14 @@ class Canvas(Surface):
         self.event = env.event
         self.addMouseListener(self)
         self.addKeyEventListener(self)
-        self.sinkEvents(Event.ONMOUSEDOWN | Event.ONMOUSEUP| Event.ONMOUSEMOVE | Event.ONMOUSEOUT | Event.ONMOUSEWHEEL | Event.ONKEYDOWN | Event.ONKEYPRESS | Event.ONKEYUP)
+        self.sinkEvents(Event.ONMOUSEDOWN |
+                        Event.ONMOUSEUP |
+                        Event.ONMOUSEMOVE |
+                        Event.ONMOUSEOUT |
+                        Event.ONMOUSEWHEEL |
+                        Event.ONKEYDOWN |
+                        Event.ONKEYPRESS |
+                        Event.ONKEYUP)
         self.onContextMenu = None
         self.preventContextMenu()
         self.evt = self.event.eventObj
@@ -614,9 +621,11 @@ class Textbox(TextBox):
     def __init__(self, size=None, panel=None):
         TextBox.__init__(self)
         if not size:
-            self.width, self.height = env.canvas.surface.width-5, 20
+            self.width = env.canvas.surface.width - 5
+            self.height = 20
         else:
-            self.width, self.height = int(size[0]), int(size[1])
+            self.width = int(size[0])
+            self.height = int(size[1])
         self.setSize(str(self.width)+'px', str(self.height)+'px')
         self.setVisible(False)
         if panel:
@@ -631,7 +640,8 @@ class Textbox(TextBox):
 
     def resize(self, width=None, height=None):
         if not (width or height):
-            self.width, self.height = env.canvas.surface.width-5, 20
+            self.width = env.canvas.surface.width - 5
+            self.height = 20
         else:
             if width:
                 self.width = int(width)
@@ -656,9 +666,11 @@ class Textarea(TextArea):
     def __init__(self, size=None, panel=None):
         TextArea.__init__(self)
         if not size:
-            self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
+            self.width = env.canvas.surface.width - 5
+            self.height = int(env.canvas.surface.height/5) - 5
         else:
-            self.width, self.height = int(size[0]), int(size[1])
+            self.width = int(size[0])
+            self.height = int(size[1])
         self.setSize(str(self.width)+'px', str(self.height)+'px')
         self.setStyleAttribute({'resize':'vertical'})
         self.setVisible(False)
@@ -674,7 +686,8 @@ class Textarea(TextArea):
 
     def resize(self, width=None, height=None):
         if not (width or height):
-            self.width, self.height = env.canvas.surface.width-5, int(env.canvas.surface.height/5)-5
+            self.width = env.canvas.surface.width - 5
+            self.height = int(env.canvas.surface.height/5) - 5
         else:
             if width:
                 self.width = int(width)

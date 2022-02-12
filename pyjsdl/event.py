@@ -45,13 +45,43 @@ class Event(object):
         self.mouseMove = {'x':-1, 'y':-1}
         self.mouseMovePre = {'x':0, 'y':0}
         self.mouseMoveRel = {'x':None, 'y':None}
-        self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
-        self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
-        self.eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp', Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp','mousemove':'MouseMotion', 'mousedown':'MouseButtonDown', 'mouseup':'MouseButtonUp', 'keydown':'KeyDown', 'keyup':'KeyUp'}
-        self.eventType = [Const.MOUSEMOTION, Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP, Const.KEYDOWN, Const.KEYUP, 'mousemove', 'mousedown', 'mouseup', 'wheel', 'mousewheel', 'DOMMouseScroll', 'keydown', 'keypress', 'keyup']
+        self.keyPress = {Const.K_ALT: False,
+                         Const.K_CTRL: False,
+                         Const.K_SHIFT: False}
+        self.keyMod = {Const.K_ALT: {True:Const.KMOD_ALT, False:0},
+                       Const.K_CTRL: {True:Const.KMOD_CTRL, False:0},
+                       Const.K_SHIFT: {True:Const.KMOD_SHIFT, False:0}}
+        self.eventName = {Const.MOUSEMOTION: 'MouseMotion',
+                          Const.MOUSEBUTTONDOWN: 'MouseButtonDown',
+                          Const.MOUSEBUTTONUP: 'MouseButtonUp',
+                          Const.KEYDOWN: 'KeyDown',
+                          Const.KEYUP: 'KeyUp',
+                          'mousemove': 'MouseMotion',
+                          'mousedown': 'MouseButtonDown',
+                          'mouseup': 'MouseButtonUp',
+                          'keydown': 'KeyDown',
+                          'keyup': 'KeyUp'}
+        self.eventType = [Const.MOUSEMOTION,
+                          Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP,
+                          Const.KEYDOWN, Const.KEYUP,
+                          'mousemove', 'mousedown', 'mouseup',
+                          'wheel', 'mousewheel', 'DOMMouseScroll',
+                          'keydown', 'keypress', 'keyup']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']), Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN, 'mousedown', 'wheel', 'mousewheel',  'DOMMouseScroll']), Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']), Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']), Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
-        self.eventObj = {'mousedown':MouseDownEvent, 'mouseup':MouseUpEvent, 'wheel':MouseWheelEvent, 'mousewheel':MouseWheelEvent, 'DOMMouseScroll':_MouseWheelEvent, 'mousemove':MouseMoveEvent, 'keydown':KeyDownEvent, 'keyup':KeyUpEvent}
+        self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']),
+                           Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN,
+                               'mousedown', 'wheel', 'mousewheel', 'DOMMouseScroll']),
+                           Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']),
+                           Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']),
+                           Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
+        self.eventObj = {'mousedown': MouseDownEvent,
+                         'mouseup': MouseUpEvent,
+                         'wheel': MouseWheelEvent,
+                         'mousewheel': MouseWheelEvent,
+                         'DOMMouseScroll': _MouseWheelEvent,
+                         'mousemove': MouseMoveEvent,
+                         'keydown': KeyDownEvent,
+                         'keyup': KeyUpEvent}
         self.modKey = key._modKey
         self.specialKey = key._specialKey
         self.modKeyCode = key._modKeyCode
@@ -253,23 +283,27 @@ class Event(object):
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
                 for evtType in eventType:
-                    self.events = self.events.difference(self.eventTypes[evtType])
+                    self.events = self.events.difference(
+                                      self.eventTypes[evtType])
             else:
-                self.events = self.events.difference(self.eventTypes[eventType])
+                self.events = self.events.difference(
+                                  self.eventTypes[eventType])
         else:
             self.events = set(self.eventType)
         return None
 
     def set_allowed(self, eventType):
         """
-        Set allowed event type(s) on queue. 
+        Set allowed event type(s) on queue.
         """
         if eventType is not None:
             if isinstance(eventType, (tuple,list)):
                 for evtType in eventType:
-                    self.events = self.events.union(self.eventTypes[evtType])
+                    self.events = self.events.union(
+                                      self.eventTypes[evtType])
             else:
-                self.events = self.events.union(self.eventTypes[eventType])
+                self.events = self.events.union(
+                                  self.eventTypes[eventType])
         else:
             self.events.clear()
         return None
@@ -349,7 +383,8 @@ class UserEvent(object):
         if attr in self.attr:
             return self.attr[attr]
         else:
-            raise AttributeError("'Event' object has no attribute '%s'" % attr)
+            raise AttributeError(
+                "'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
         self.attr[attr] = value
@@ -397,8 +432,15 @@ class JEvent(object):
 
 class MouseEvent(JEvent):
 
-    _types = {'mousemove':Const.MOUSEMOTION, 'mousedown':Const.MOUSEBUTTONDOWN, 'mouseup':Const.MOUSEBUTTONUP, 'wheel':Const.MOUSEBUTTONDOWN, 'mousewheel':Const.MOUSEBUTTONDOWN, 'DOMMouseScroll':Const.MOUSEBUTTONDOWN}
-    _eventName = {Const.MOUSEMOTION:'MouseMotion', Const.MOUSEBUTTONDOWN:'MouseButtonDown', Const.MOUSEBUTTONUP:'MouseButtonUp'}
+    _types = {'mousemove': Const.MOUSEMOTION,
+              'mousedown': Const.MOUSEBUTTONDOWN,
+              'mouseup': Const.MOUSEBUTTONUP,
+              'wheel': Const.MOUSEBUTTONDOWN,
+              'mousewheel': Const.MOUSEBUTTONDOWN,
+              'DOMMouseScroll': Const.MOUSEBUTTONDOWN}
+    _eventName = {Const.MOUSEMOTION: 'MouseMotion',
+                  Const.MOUSEBUTTONDOWN: 'MouseButtonDown',
+                  Const.MOUSEBUTTONUP: 'MouseButtonUp'}
 
     __slots__ = []
 
@@ -411,7 +453,8 @@ class MouseDownEvent(MouseEvent):
         self.event = event
         self.type = self._types[event.type]
         self.button = event.button + 1
-        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
 
 
 class MouseUpEvent(MouseEvent):
@@ -422,7 +465,8 @@ class MouseUpEvent(MouseEvent):
         self.event = event
         self.type = self._types[event.type]
         self.button = event.button + 1
-        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
 
 
 class MouseWheelEvent(MouseEvent):
@@ -436,7 +480,8 @@ class MouseWheelEvent(MouseEvent):
             self.button = 4
         else:
             self.button = 5
-        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
 
 
 class _MouseWheelEvent(MouseEvent):
@@ -450,7 +495,8 @@ class _MouseWheelEvent(MouseEvent):
             self.button = 4
         else:
             self.button = 5
-        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
 
 
 class MouseMoveEvent(MouseEvent):
@@ -463,15 +509,19 @@ class MouseMoveEvent(MouseEvent):
         self.buttons = ((int(event.buttons) & 1) == 1,
                         (int(event.buttons) & 4) == 4,
                         (int(event.buttons) & 2) == 2)
-        self.pos = (x+env.frame.scrollLeft, y+env.frame.scrollTop)
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
         self.rel = (x - env.event.mouseMovePre['x'],
                     y - env.event.mouseMovePre['y'])
 
 
 class KeyEvent(JEvent):
 
-    _types = {'keydown':Const.KEYDOWN, 'keyup':Const.KEYUP, 'keypress':Const.KEYDOWN}
-    _eventName = {Const.KEYDOWN:'KeyDown', Const.KEYUP:'KeyUp'}
+    _types = {'keydown': Const.KEYDOWN,
+              'keyup': Const.KEYUP,
+              'keypress': Const.KEYDOWN}
+    _eventName = {Const.KEYDOWN: 'KeyDown',
+                  Const.KEYUP: 'KeyUp'}
     _code = key._code
     _specialKey = key._specialKey
     _specialKeyCode = key._specialKeyCode
@@ -501,9 +551,9 @@ class KeyDownEvent(KeyEvent):
             else:
                 self.key = event.which or event.keyCode or 0
             self.unicode = event.key
-        self.mod = ( (int(event.altKey)*Const.KMOD_ALT) |
-                     (int(event.ctrlKey)*Const.KMOD_CTRL) |
-                     (int(event.shiftKey)*Const.KMOD_SHIFT) )
+        self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
+                     (int(event.ctrlKey) * Const.KMOD_CTRL) |
+                     (int(event.shiftKey) * Const.KMOD_SHIFT) )
 
 class KeyUpEvent(KeyEvent):
 
@@ -527,9 +577,9 @@ class KeyUpEvent(KeyEvent):
             else:
                 self.key = event.which or event.keyCode or 0
             self.unicode = event.key
-        self.mod = ( (int(event.altKey)*Const.KMOD_ALT) |
-                     (int(event.ctrlKey)*Const.KMOD_CTRL) |
-                     (int(event.shiftKey)*Const.KMOD_SHIFT) )
+        self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
+                     (int(event.ctrlKey) * Const.KMOD_CTRL) |
+                     (int(event.shiftKey) * Const.KMOD_SHIFT) )
 
 
 class _KeyDownEvent(KeyEvent):
@@ -544,9 +594,9 @@ class _KeyDownEvent(KeyEvent):
             self.unicode = chr(self.key)
         else:
             self.unicode = ''
-        self.mod = ( (int(event.altKey)*Const.KMOD_ALT) |
-                     (int(event.ctrlKey)*Const.KMOD_CTRL) |
-                     (int(event.shiftKey)*Const.KMOD_SHIFT) )
+        self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
+                     (int(event.ctrlKey) * Const.KMOD_CTRL) |
+                     (int(event.shiftKey) * Const.KMOD_SHIFT) )
 
 
 class _KeyUpEvent(KeyEvent):
@@ -577,9 +627,9 @@ class _KeyUpEvent(KeyEvent):
                 else:
                     self.key = keycode
                     self.unicode = chr(keycode)
-        self.mod = ( (int(event.altKey)*Const.KMOD_ALT) |
-                     (int(event.ctrlKey)*Const.KMOD_CTRL) |
-                     (int(event.shiftKey)*Const.KMOD_SHIFT) )
+        self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
+                     (int(event.ctrlKey) * Const.KMOD_CTRL) |
+                     (int(event.shiftKey) * Const.KMOD_SHIFT) )
 
 
 class _KeyPressEvent(KeyEvent):
@@ -594,9 +644,9 @@ class _KeyPressEvent(KeyEvent):
             self.unicode = chr(keycode+32)
         else:
             self.unicode = chr(keycode)
-        self.mod = ( (int(event.altKey)*Const.KMOD_ALT) |
-                     (int(event.ctrlKey)*Const.KMOD_CTRL) |
-                     (int(event.shiftKey)*Const.KMOD_SHIFT) )
+        self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
+                     (int(event.ctrlKey) * Const.KMOD_CTRL) |
+                     (int(event.shiftKey) * Const.KMOD_SHIFT) )
 
 
 class TouchListener:

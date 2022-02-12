@@ -53,7 +53,10 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
             i = y*width
             for x in range(0, width, 4):
                 ix = i+x
-                if surface._getPixel(pixels, ix) == color[0] and surface._getPixel(pixels, ix+1) == color[1] and surface._getPixel(pixels, ix+2) == color[2] and surface._getPixel(pixels, ix+3) >= threshold[3]:
+                if (surface._getPixel(pixels, ix) == color[0] and
+                    surface._getPixel(pixels, ix+1) == color[1] and
+                    surface._getPixel(pixels, ix+2) == color[2] and
+                    surface._getPixel(pixels, ix+3) >= threshold[3]):
                     mask.set_at((xpix,y))
                 xpix += 1
     else:
@@ -73,7 +76,10 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
             i = y*width
             for x in range(0, width, 4):
                 ix = i+x
-                if (col['r1'] < surface._getPixel(pixels, ix) < col['r2']) and (col['g1'] < surface._getPixel(pixels, ix+1) < col['g2']) and (col['b1'] < surface._getPixel(pixels, ix+2) < col['b2']) and (surface._getPixel(pixels, ix+3) > col['a']):
+                if ((col['r1'] < surface._getPixel(pixels, ix) < col['r2']) and
+                    (col['g1'] < surface._getPixel(pixels, ix+1) < col['g2']) and
+                    (col['b1'] < surface._getPixel(pixels, ix+2) < col['b2']) and
+                    (surface._getPixel(pixels, ix+3) > col['a'])):
                     mask.set_at((xpix,y))
                 xpix += 1
     return mask
@@ -185,7 +191,8 @@ class Mask(object):
         h = min(self.height-y1, mask.height-y2)
         if w > 0 and h > 0:
             for y in range(h):
-                if self.bit[y1+y].get(x1, x1+w).intersects(mask.bit[y2+y].get(x2, x2+w)):
+                if self.bit[y1+y].get(x1, x1+w).intersects(
+                              mask.bit[y2+y].get(x2, x2+w)):
                     return True
         return None
 
@@ -198,7 +205,8 @@ class Mask(object):
         cbitset = []
         for bitset in self.bit:
             cbitset.append('\n')
-            cbitset.extend([cbit[bitset.get(i)] for i in range(self.width)])
+            cbitset.extend([cbit[bitset.get(i)]
+                            for i in range(self.width)])
         bitstr = ''.join(cbitset)
         return bitstr
 

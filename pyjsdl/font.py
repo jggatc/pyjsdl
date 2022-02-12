@@ -108,11 +108,42 @@ class Font(object):
     * Font.get_linesize
     """
 
-    _font = ['arial', 'bitstream vera sans', 'bitstream vera serif', 'book antiqua', 'comic sans ms', 'courier new', 'courier', 'dejavu sans', 'dejavu sans mono', 'dejavu serif', 'freesans', 'garamond', 'georgia', 'helvetica', 'impact', 'liberation sans', 'liberation serif', 'lucida console', 'lucida serif', 'nimbus mono l', 'nimbus roman no9 l', 'nimbus sans l', 'palatino', 'times new roman', 'times', 'tahoma', 'verdana', 'cursive', 'monospace', 'sans-serif', 'serif']
+    _font = [
+        'arial', 'bitstream vera sans', 'bitstream vera serif',
+        'book antiqua', 'comic sans ms', 'courier new', 'courier',
+        'dejavu sans', 'dejavu sans mono', 'dejavu serif',
+        'freesans', 'garamond', 'georgia', 'helvetica',
+        'impact', 'liberation sans', 'liberation serif',
+        'lucida console', 'lucida serif', 'nimbus mono l',
+        'nimbus roman no9 l', 'nimbus sans l', 'palatino',
+        'times new roman', 'times', 'tahoma', 'verdana',
+        'cursive', 'monospace', 'sans-serif', 'serif']
 
-    _font_alt = {'arial':0, 'bitstreamverasans':1, 'bitstreamveraserif':2, 'bookantiqua':3, 'comicsansms':4, 'couriernew':5, 'courier':6, 'dejavusans':7, 'dejavusansmono':8, 'dejavuserif':9, 'freesans':10, 'garamond':11, 'georgia':12, 'helvetica':13, 'impact':14, 'liberationsans':15, 'liberationserif':16, 'lucidaconsole':17, 'lucidaserif':18, 'nimbusmonol':19, 'nimbusromanno9l':20, 'nimbussansl':21, 'palatino':22, 'timesnewroman':23, 'times':24, 'tahoma':25, 'verdana':26, 'cursive':27, 'monospace':28, 'sansserif':29, 'serif':30}
-    
-    _font_family = [['arial', 'helvetica', 'liberation sans',  'nimbus sans l', 'freesans', 'tahoma', 'sans-serif'], ['verdana', 'bitstream vera sans', 'dejavu sans', 'sans-serif'], ['impact', 'sans-serif'], ['comic sans ms', 'cursive', 'sans-serif'], ['courier new', 'courier', 'lucida console', 'dejavu sans mono', 'monospace'], ['times new roman', 'times', 'liberation serif', 'nimbus roman no9 l', 'serif'], ['garamond',  'book antiqua', 'palatino', 'liberation serif', 'nimbus roman no9 l', 'serif'], ['georgia', 'bitstream vera serif', 'lucida serif', 'liberation serif', 'dejavu serif', 'serif']]
+    _font_alt = {
+        'arial': 0, 'bitstreamverasans': 1, 'bitstreamveraserif': 2,
+        'bookantiqua': 3, 'comicsansms': 4, 'couriernew': 5, 'courier': 6,
+        'dejavusans': 7, 'dejavusansmono': 8, 'dejavuserif': 9,
+        'freesans': 10, 'garamond': 11, 'georgia': 12, 'helvetica': 13,
+        'impact': 14, 'liberationsans': 15, 'liberationserif': 16,
+        'lucidaconsole': 17, 'lucidaserif': 18, 'nimbusmonol': 19,
+        'nimbusromanno9l': 20, 'nimbussansl': 21, 'palatino': 22,
+        'timesnewroman': 23, 'times': 24, 'tahoma': 25, 'verdana': 26,
+        'cursive': 27, 'monospace': 28, 'sansserif': 29, 'serif': 30}
+
+    _font_family = [
+        ['arial', 'helvetica', 'liberation sans',  'nimbus sans l',
+         'freesans', 'tahoma', 'sans-serif'],
+        ['verdana', 'bitstream vera sans', 'dejavu sans', 'sans-serif'],
+        ['impact', 'sans-serif'],
+        ['comic sans ms', 'cursive', 'sans-serif'],
+        ['courier new', 'courier', 'lucida console',
+         'dejavu sans mono', 'monospace'],
+        ['times new roman', 'times', 'liberation serif',
+         'nimbus roman no9 l', 'serif'],
+        ['garamond',  'book antiqua', 'palatino',
+         'liberation serif', 'nimbus roman no9 l', 'serif'],
+        ['georgia', 'bitstream vera serif', 'lucida serif',
+         'liberation serif', 'dejavu serif', 'serif']]
 
     def __init__(self, name, size):
         """
@@ -175,7 +206,8 @@ Example of font file declaration:
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def render(self, text, antialias=True, color=(0,0,0), background=None, surface=None):      #optional surface for text rendering
+    def render(self, text, antialias=True, color=(0,0,0),
+               background=None, surface=None):      #optional surface for text rendering
         """
         Render text onto surface.
         Arguments are text to render, and optional antialias, RGB color of text, RGB color of background, and surface for text rendering.
@@ -189,7 +221,9 @@ Example of font file declaration:
         if background:
             surf.setFillStyle(Color(background))
             surf.fillRect(0,0,w,h)
-        surf.setFont('%s %dpx %s' % (self.fontstyle, self.fontsize, self.fontname))
+        surf.setFont('%s %dpx %s' % (self.fontstyle,
+                                     self.fontsize,
+                                     self.fontname))
 #        if antialias: pass
         surf.setFillStyle(Color(color))
         surf.setTextAlign('center')
@@ -209,7 +243,9 @@ Example of font file declaration:
         Return size x,y of a surface for of given text.
         """
         if _surf:   #>IE9 - use exception if HTML5Canvas not implemented
-            _surf.setFont('%s %dpx %s' % (self.fontstyle, self.fontsize, self.fontname))
+            _surf.setFont('%s %dpx %s' % (self.fontstyle,
+                                          self.fontsize,
+                                          self.fontname))
             x = _surf.measureText(text)
         else:   #estimate
             x = self._size_estimate(text)
@@ -298,8 +334,12 @@ Example of font file declaration:
             fontsize = 10
             _surf.setFont('%dpx %s' % (fontsize, font))     #generated font='arial'
             char_size = {}
-            for char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;?~!@#$%^&=+-*/\_<>(){}[]\'\" ':
-                char_size[char] = float(_surf.measureText(char)/fontsize)
+            for chrs in ('abcdefghijklmnopqrstuvwxyz',
+                         'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                         '0123456789',
+                         '.,:;?~!@#$%^&=+-*/\_<>(){}[]\'\" '):
+                for char in chrs:
+                    char_size[char] = float(_surf.measureText(char)/fontsize)
             return char_size
 
 
