@@ -16,7 +16,7 @@ _return_rect = True
 def rect(surface, color, rect, width=0):
     """
     Draw rectangle shape, and returns bounding Rect.
-    Argument include surface to draw, color, Rect.
+    Arguments include surface to draw, color, Rect.
     Optional width argument of outline, which defaults to 0 for filled shape.
     """
     if hasattr(rect, 'width'):
@@ -51,7 +51,7 @@ def rect(surface, color, rect, width=0):
 def circle(surface, color, position, radius, width=0):
     """
     Draw circular shape, and returns bounding Rect.
-    Argument include surface to draw, color, position and radius.
+    Arguments include surface to draw, color, position and radius.
     Optional width argument of outline, which defaults to 0 for filled shape.
     """
     surface.beginPath()
@@ -86,7 +86,7 @@ def circle(surface, color, position, radius, width=0):
 def ellipse(surface, color, rect, width=0):
     """
     Draw ellipse shape, and returns bounding Rect.
-    Argument include surface to draw, color, and rect.
+    Arguments include surface to draw, color, and rect.
     Optional width argument of outline, which defaults to 0 for filled shape.
     """
     if hasattr(rect, 'width'):
@@ -133,7 +133,7 @@ def ellipse(surface, color, rect, width=0):
 def arc(surface, color, rect, start_angle, stop_angle, width=1):
     """
     Draw arc shape, and returns bounding Rect.
-    Argument include surface to draw, color, rect, start_angle, stop_angle.
+    Arguments include surface to draw, color, rect, start_angle, stop_angle.
     Optional width argument of outline.
     """
     if hasattr(rect, 'width'):
@@ -204,7 +204,7 @@ def arc(surface, color, rect, start_angle, stop_angle, width=1):
 def polygon(surface, color, pointlist, width=0):
     """
     Draw polygon shape, and returns bounding Rect.
-    Argument include surface to draw, color, and pointlist.
+    Arguments include surface to draw, color, and pointlist.
     Optional width argument of outline, which defaults to 0 for filled shape.
     """
     surface.beginPath()
@@ -246,7 +246,7 @@ def polygon(surface, color, pointlist, width=0):
 def line(surface, color, point1, point2, width=1):
     """
     Draw line, and returns bounding Rect.
-    Argument include surface to draw, color, point1, point2.
+    Arguments include surface to draw, color, point1, point2.
     Optional width argument of line.
     """
     surface.beginPath()
@@ -277,7 +277,7 @@ def line(surface, color, point1, point2, width=1):
 def lines(surface, color, closed, pointlist, width=1):
     """
     Draw interconnected lines, and returns Rect bound.
-    Argument include surface to draw, color, closed, and pointlist.
+    Arguments include surface to draw, color, closed, and pointlist.
     Optional width argument of line.
     """
     surface.beginPath()
@@ -310,17 +310,19 @@ def lines(surface, color, closed, pointlist, width=1):
 
 def aaline(surface, color, point1, point2, blend=1):
     """
-    Calls line(), return bounding Rect.
+    Draw line, and returns bounding Rect.
+    Arguments include surface to draw, color, point1, point2.
     """
-    rect = line(surface, color, point1, point2, blend)
+    rect = line(surface, color, point1, point2)
     return rect
 
 
 def aalines(surface, color, closed, pointlist, blend=1):
     """
-    Calls lines(), return bounding Rect.
+    Draw interconnected lines, and returns Rect bound.
+    Arguments include surface to draw, color, closed, and pointlist.
     """
-    rect = lines(surface, color, closed, pointlist, blend)
+    rect = lines(surface, color, closed, pointlist)
     return rect
 
 
