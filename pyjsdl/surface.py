@@ -29,6 +29,8 @@ class Surface(HTML5Canvas):
     * Surface.subsurface
     * Surface.getSubimage
     * Surface.blit
+    * Surface.set_alpha
+    * Surface.get_alpha
     * Surface.set_colorkey
     * Surface.get_colorkey
     * Surface.replace_color
@@ -56,6 +58,8 @@ class Surface(HTML5Canvas):
         self._colorkey = None
         self._stroke_style = None
         self._fill_style = None
+        self._alpha = 1.0
+        self._has_alpha = False
         self._nonimplemented_methods()
 
     def __str__(self):
@@ -107,6 +111,9 @@ class Surface(HTML5Canvas):
         """
         surface = Surface((self.width, self.height))
         surface.drawImage(self.canvas, 0, 0)
+        surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def subsurface(self, rect):
@@ -137,6 +144,8 @@ class Surface(HTML5Canvas):
         surface._super_surface = self
         surface._offset = (_rect.x,_rect.y)
         surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def getSubimage(self, x, y, width, height):
@@ -154,18 +163,22 @@ class Surface(HTML5Canvas):
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
+        ctx = self.impl.canvasContext
+        ctx.globalAlpha = surface._alpha
         if not area:
-            self.impl.canvasContext.drawImage(surface.canvas,
-                        position[0], position[1])
+            ctx.drawImage(surface.canvas,
+                          position[0], position[1])
+            ctx.globalAlpha = 1.0
             if _return_rect:
                 rect = rectPool.get(position[0], position[1],
                                     surface.width, surface.height)
             else:
                 return None
         else:
-            self.impl.canvasContext.drawImage(surface.canvas,
-                        area[0], area[1], area[2], area[3],
-                        position[0], position[1], area[2], area[3])
+            ctx.drawImage(surface.canvas,
+                          area[0], area[1], area[2], area[3],
+                          position[0], position[1], area[2], area[3])
+            ctx.globalAlpha = 1.0
             if _return_rect:
                 rect = rectPool.get(position[0], position[1],
                                     area[2], area[3])
@@ -182,14 +195,43 @@ class Surface(HTML5Canvas):
     def _blits(self, surfaces):
         ctx = self.impl.canvasContext
         for surface, rect in surfaces:
+            ctx.globalAlpha = surface._alpha
             ctx.drawImage(surface.canvas, rect.x, rect.y)
+        ctx.globalAlpha = 1.0
 
     def _blit_clear(self, surface, rect_list):
         ctx = self.impl.canvasContext
+        ctx.globalAlpha = surface._alpha
         for r in rect_list:
             ctx.drawImage(surface.canvas,
                           r.x, r.y, r.width, r.height,
                           r.x, r.y, r.width, r.height)
+        ctx.globalAlpha = 1.0
+
+    def set_alpha(self, alpha):
+        """
+        Set surface alpha (0-255), disabled by passing None.
+        """
+        if alpha is not None:
+            _alpha = alpha/255.0
+            if _alpha < 0.0:
+                _alpha = 0.0
+            elif _alpha > 255.0:
+                _alpha = 255.0
+            self._alpha = _alpha
+            self._has_alpha = True
+        else:
+            self._alpha = 1.0
+            self._has_alpha = False
+
+    def get_alpha(self):
+        """
+        Get surface alpha value.
+        """
+        if self._has_alpha:
+            return int(self._alpha*255)
+        else:
+            return None
 
     def set_colorkey(self, color, flags=None):
         """
@@ -356,8 +398,6 @@ class Surface(HTML5Canvas):
     def _nonimplemented_methods(self):
         self.convert = lambda *arg: self
         self.convert_alpha = lambda *arg: self
-        self.set_alpha = lambda *arg: None
-        self.get_alpha = lambda *arg: None
         self.lock = lambda *arg: None
         self.unlock = lambda *arg: None
         self.mustlock = lambda *arg: False
@@ -371,6 +411,7 @@ class Surf(object):
         self.canvas = image
         self.width = self.canvas.width
         self.height = self.canvas.height
+        self._alpha = 1.0
         self._nonimplemented_methods()
 
     def get_size(self):
@@ -385,8 +426,6 @@ class Surf(object):
     def _nonimplemented_methods(self):
         self.convert = lambda *arg: self
         self.convert_alpha = lambda *arg: self
-        self.set_alpha = lambda *arg: None
-        self.get_alpha = lambda *arg: None
         self.lock = lambda *arg: None
         self.unlock = lambda *arg: None
         self.mustlock = lambda *arg: False
