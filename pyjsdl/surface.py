@@ -29,6 +29,7 @@ class Surface(HTML5Canvas):
     * Surface.subsurface
     * Surface.getSubimage
     * Surface.blit
+    * Surface.blits
     * Surface.set_alpha
     * Surface.get_alpha
     * Surface.set_colorkey
@@ -191,6 +192,49 @@ class Surface(HTML5Canvas):
         changed_rect = surface_rect.clip(rect)
         rectPool.append(rect)
         return changed_rect
+
+    def blits(self, blit_sequence, doreturn=True):
+        """
+        Draw a sequence of surfaces on this surface.
+        Argument blit_sequence of (source, dest) or (source, dest, area).
+        Optional doreturn (defaults to True) to return list of rects.
+        """
+        ctx = self.impl.canvasContext
+        if doreturn:
+            rects = []
+            if self._display:
+                surface_rect = self._display._surface_rect
+            else:
+                surface_rect = self.get_rect()
+        else:
+            rects = None
+        for blit in blit_sequence:
+            surface = blit[0]
+            position = blit[1]
+            if len(blit) > 2:
+                area = blit[2]
+            else:
+                area = None
+            ctx.globalAlpha = surface._alpha
+            if not area:
+                ctx.drawImage(surface.canvas,
+                              position[0], position[1])
+                if doreturn:
+                    rect = rectPool.get(position[0], position[1],
+                                        surface.width, surface.height)
+                    rects.append(surface_rect.clip(rect))
+                    rectPool.append(rect)
+            else:
+                ctx.drawImage(surface.canvas,
+                              area[0], area[1], area[2], area[3],
+                              position[0], position[1], area[2], area[3])
+                if doreturn:
+                    rect = rectPool.get(position[0], position[1],
+                                        area[2], area[3])
+                    rects.append(surface_rect.clip(rect))
+                    rectPool.append(rect)
+        ctx.globalAlpha = 1.0
+        return rects
 
     def _blits(self, surfaces):
         ctx = self.impl.canvasContext
