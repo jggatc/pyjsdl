@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-#Pyjsdl version 0.25
+#Pyjsdl version 0.26
 #Project Site: https://gatc.ca/
 
 from pyjsdl import env

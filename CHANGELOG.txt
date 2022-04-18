@@ -1,4 +1,4 @@
-0.25-dev
+0.26    2022-04-18
 -revise event set_blocked processing.
 -revise event object for performance.
 -refactor event handler for performance.
@@ -6,6 +6,8 @@
 -revise key event handler.
 -update key event handler.
 -update surface blit with optional rect return.
+-add surface alpha methods.
+-add surface blits method.
 
 0.25    2021-11-07
 -revise sprite orderedupdates.
