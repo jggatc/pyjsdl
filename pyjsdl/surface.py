@@ -60,7 +60,6 @@ class Surface(HTML5Canvas):
         self._stroke_style = None
         self._fill_style = None
         self._alpha = 1.0
-        self._has_alpha = False
         self._nonimplemented_methods()
 
     def __str__(self):
@@ -114,7 +113,6 @@ class Surface(HTML5Canvas):
         surface.drawImage(self.canvas, 0, 0)
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def subsurface(self, rect):
@@ -146,7 +144,6 @@ class Surface(HTML5Canvas):
         surface._offset = (_rect.x,_rect.y)
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def getSubimage(self, x, y, width, height):
@@ -260,22 +257,17 @@ class Surface(HTML5Canvas):
             _alpha = alpha/255.0
             if _alpha < 0.0:
                 _alpha = 0.0
-            elif _alpha > 255.0:
-                _alpha = 255.0
+            elif _alpha > 1.0:
+                _alpha = 1.0
             self._alpha = _alpha
-            self._has_alpha = True
         else:
             self._alpha = 1.0
-            self._has_alpha = False
 
     def get_alpha(self):
         """
         Get surface alpha value.
         """
-        if self._has_alpha:
-            return int(self._alpha*255)
-        else:
-            return None
+        return int(self._alpha*255)
 
     def set_colorkey(self, color, flags=None):
         """
