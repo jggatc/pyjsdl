@@ -18,9 +18,8 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
-#
-#Pyjsdl version 0.26
-#Project Site: https://gatc.ca/
+
+__version__ = '0.26'
 
 from pyjsdl import env
 from pyjsdl import util
@@ -43,6 +42,7 @@ from pyjsdl import mask
 from pyjsdl import font
 from pyjsdl import sprite
 from pyjsdl import cursors
+from pyjsdl import version
 from pyjsdl.constants import *
 
 
