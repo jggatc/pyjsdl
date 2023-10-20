@@ -1,5 +1,6 @@
 0.26_dev
 -revise surface alpha.
+-update transform to preserve surface alpha.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
