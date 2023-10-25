@@ -350,6 +350,12 @@ class Vector2(object):
         self.y = round(r * sin(phi), 6)
         return None
 
+    def copy(self):
+        """
+        Return copy of vector.
+        """
+        return Vector2(self.x, self.y)
+
     def update(self, *args, **kwargs):
         """
         Update vector.
