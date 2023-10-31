@@ -294,12 +294,9 @@ class Sound(object):
     _id = 0
     _mixer = None
 
-    def __init__(self, sound_file, id=None):
-        if id is None:
-            self._id = Sound._id
-            Sound._id += 1
-        else:
-            self._id = id
+    def __init__(self, sound_file):
+        self._id = Sound._id
+        Sound._id += 1
         if isinstance(sound_file, str):
             self._sound_object = Audio(sound_file.replace('\\','/'))
         else:
