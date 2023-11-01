@@ -2,6 +2,7 @@
 -revise surface alpha.
 -update transform to preserve surface alpha.
 -add vector copy method.
+-revise mixer set_num_channels method.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
