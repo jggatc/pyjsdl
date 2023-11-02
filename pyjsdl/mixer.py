@@ -441,17 +441,6 @@ class Channel(object):
         self._sound_object = self._sound.get_sound_object()
         self._sound_object.element.onended = self._ended_handler
 
-    def _reset_sound(self):
-        self._active = False
-        restart = not self._pause
-        if not self._sound:
-            return
-        self._sound_object.element.pause()
-        self._sound_object.element.currentTime = 0
-        if restart:
-            self._sound_object.play()
-        self._active = True
-
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on channel.
@@ -758,8 +747,16 @@ class Music(object):
         """
         Rewind music.
         """
-        if self._channel.get_busy():
-            self._channel._reset_sound()
+        if not self._channel._sound or not self._channel.get_busy():
+            return None
+        self._channel._active = False
+        restart = not self._channel._pause
+        self._channel.pause()
+        self._channel._sound_object.element.currentTime = 0
+        if restart:
+            self._channel.unpause()
+        self._channel._active = True
+        return None
 
     def stop(self):
         """
