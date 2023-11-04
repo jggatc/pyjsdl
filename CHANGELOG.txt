@@ -4,6 +4,7 @@
 -add vector copy method.
 -revise mixer set_num_channels method.
 -refactor mixer music rewind method.
+-revise mixer channel play promise handling.
 
 0.26    2022-04-18
 -revise event set_blocked processing.

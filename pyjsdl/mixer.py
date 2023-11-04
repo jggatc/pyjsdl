@@ -5,6 +5,7 @@ from pyjsdl.pyjsobj import Audio
 from pyjsdl.time import Time
 from pyjsdl import env
 from pyjsdl import constants as Const
+from __pyjamas__ import JS
 
 __docformat__ = 'restructuredtext'
 
@@ -433,6 +434,20 @@ class Channel(object):
         self._fadeout = 0
         self._dvol = 1.0
         self._timerid = 0
+        if env.pyjs_mode.optimized:
+            self._play_status = {
+                'success': lambda: self._play_success(),
+                'failed': lambda e: self._play_failed(e)}
+            self._unpause_status = {
+                'success': lambda: self._unpause_success(),
+                'failed': lambda e: self._unpause_failed(e)}
+        else:
+            self._play_status = {
+                'success': self._play_success,
+                'failed': self._play_failed}
+            self._unpause_status = {
+                'success': self._unpause_success,
+                'failed': self._unpause_failed}
         self._mixer._register_channel(self)
         self._ended_handler = lambda event: self._onended(event)
 
@@ -464,12 +479,26 @@ class Channel(object):
         else:
             self._sound_object.element.volume = (self._volume
                                                  * self._sound._volume)
-        self._sound_object.element.play()
-        if self._sound_object.element.paused:
-            self.stop()
+        promise = self._sound_object.element.play()
+        if promise:
+            success = self._play_status['success']
+            failed = self._play_status['failed']
+            JS("@{{promise}}.then(@{{success}}).catch(@{{failed}});")
         else:
             self._active = True
         return None
+
+    def _play_success(self, res):
+        self._active = True
+
+    def _play_failed(self, err):
+        error = JS("@{{err}}.name;")
+        if error == 'AbortError':
+            self._replay()
+        elif error == 'NotAllowedError':
+            self.stop()
+        else:
+            raise
 
     def _play(self, sound, loops, maxtime, fade_ms):
         self._set_sound(sound)
@@ -484,9 +513,11 @@ class Channel(object):
         else:
             self._sound_object.element.volume = (self._volume
                                                  * self._sound._volume)
-        self._sound_object.element.play()
-        if self._sound_object.element.paused:
-            self.stop()
+        promise = self._sound_object.element.play()
+        if promise:
+            success = self._play_status['success']
+            failed = self._play_status['failed']
+            JS("@{{promise}}.then(@{{success}}).catch(@{{failed}});")
         else:
             self._active = True
         return None
@@ -494,9 +525,11 @@ class Channel(object):
     def _replay(self):
         self._sound_object.element.volume = (self._volume
                                              * self._sound._volume)
-        self._sound_object.element.play()
-        if self._sound_object.element.paused:
-            self.stop()
+        promise = self._sound_object.element.play()
+        if promise:
+            success = self._play_status['success']
+            failed = self._play_status['failed']
+            JS("@{{promise}}.then(@{{success}}).catch(@{{failed}});")
         else:
             self._active = True
 
@@ -602,9 +635,24 @@ class Channel(object):
         """
         if self._sound:
             if self._pause:
-                self._sound_object.play()
-                self._pause = False
+                promise = self._sound_object.element.play()
+                if promise:
+                    success = self._unpause_status['success']
+                    failed = self._unpause_status['failed']
+                    JS("@{{promise}}.then(@{{success}}).catch(@{{failed}});")
+                else:
+                    self._pause = False
         return None
+
+    def _unpause_success(self, res):
+        self._pause = False
+
+    def _unpause_failed(self, err):
+        error = JS("@{{err}}.name;")
+        if error == 'AbortError':
+            self.unpause()
+        else:
+            raise
 
     def fadeout(self, time):
         """
