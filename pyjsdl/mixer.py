@@ -387,7 +387,7 @@ class Sound(object):
         """
         return self._sound_object.getDuration()
 
-    def get_sound_object(self):
+    def _get_sound_object(self):
         if self._sound_objects:
             sound_object = self._sound_objects.pop()
         else:
@@ -453,7 +453,7 @@ class Channel(object):
 
     def _set_sound(self, sound):
         self._sound = sound
-        self._sound_object = self._sound.get_sound_object()
+        self._sound_object = self._sound._get_sound_object()
         self._sound_object.element.onended = self._ended_handler
 
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
