@@ -1,0 +1,7 @@
+Pyjsdl - Python-to-JavaScript Multimedia Framework
+
+The pyjsdl-ts package is a port of pyjsdl (https://gatc.ca/projects/pyjsdl/) module with the same functionality. Pyjsdl module is modelled on Pygame/SDL commands that wraps JavaScript functionality including HTML5 canvas. The module permits scripts coded in Python/Pygame to compile to JavaScript using the Transcrypt compiler (https://www.transcrypt.org/), allowing deployment of JavaScript applications without extensive editing of the script.
+
+Pyjsdl page: https://gatc.ca/projects/pyjsdl-ts/
+Pyjsdl docs: https://gatc.ca/projects/pyjsdl-ts/doc/
+
