@@ -4,6 +4,7 @@
 from pyjsdl import env
 from pyjsdl import key
 from pyjsdl import constants as Const
+from pyjsdl.pyjsobj import document
 
 __docformat__ = 'restructuredtext'
 
@@ -56,24 +57,42 @@ class Event(object):
                           Const.MOUSEBUTTONUP: 'MouseButtonUp',
                           Const.KEYDOWN: 'KeyDown',
                           Const.KEYUP: 'KeyUp',
+                          Const.ACTIVEEVENT: 'ActiveEvent',
                           'mousemove': 'MouseMotion',
                           'mousedown': 'MouseButtonDown',
                           'mouseup': 'MouseButtonUp',
                           'keydown': 'KeyDown',
-                          'keyup': 'KeyUp'}
+                          'keyup': 'KeyUp',
+                          'mouseover': 'ActiveEvent',
+                          'mouseout': 'ActiveEvent',
+                          'focus': 'ActiveEvent',
+                          'blur': 'ActiveEvent',
+                          'visibilitychange': 'ActiveEvent'}
         self.eventType = [Const.MOUSEMOTION,
                           Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP,
                           Const.KEYDOWN, Const.KEYUP,
+                          Const.ACTIVEEVENT,
                           'mousemove', 'mousedown', 'mouseup',
                           'wheel', 'mousewheel', 'DOMMouseScroll',
-                          'keydown', 'keypress', 'keyup']
+                          'keydown', 'keypress', 'keyup',
+                          'mouseover', 'mouseout',
+                          'focus', 'blur', 'visibilitychange']
         self.events = set(self.eventType)
-        self.eventTypes = {Const.MOUSEMOTION: set([Const.MOUSEMOTION, 'mousemove']),
-                           Const.MOUSEBUTTONDOWN: set([Const.MOUSEBUTTONDOWN,
+        self.eventTypes = {Const.MOUSEMOTION:
+                               set([Const.MOUSEMOTION, 'mousemove']),
+                           Const.MOUSEBUTTONDOWN:
+                               set([Const.MOUSEBUTTONDOWN,
                                'mousedown', 'wheel', 'mousewheel', 'DOMMouseScroll']),
-                           Const.MOUSEBUTTONUP: set([Const.MOUSEBUTTONUP, 'mouseup']),
-                           Const.KEYDOWN: set([Const.KEYDOWN, 'keydown', 'keypress']),
-                           Const.KEYUP: set([ Const.KEYUP, 'keyup'])}
+                           Const.MOUSEBUTTONUP:
+                               set([Const.MOUSEBUTTONUP, 'mouseup']),
+                           Const.KEYDOWN:
+                               set([Const.KEYDOWN, 'keydown', 'keypress']),
+                           Const.KEYUP:
+                               set([ Const.KEYUP, 'keyup']),
+                           Const.ACTIVEEVENT:
+                               set([Const.ACTIVEEVENT,
+                                   'mouseover', 'mouseout',
+                                   'focus', 'blur', 'visibilitychange'])}
         self.eventObj = {'mousedown': MouseDownEvent,
                          'mouseup': MouseUpEvent,
                          'wheel': MouseWheelEvent,
@@ -81,7 +100,12 @@ class Event(object):
                          'DOMMouseScroll': _MouseWheelEvent,
                          'mousemove': MouseMoveEvent,
                          'keydown': KeyDownEvent,
-                         'keyup': KeyUpEvent}
+                         'keyup': KeyUpEvent,
+                         'mouseover': MouseFocusEvent,
+                         'mouseout': MouseFocusEvent,
+                         'focus': InputFocusEvent,
+                         'blur': InputFocusEvent,
+                         'visibilitychange': VisibilityEvent}
         self.modKey = key._modKey
         self.specialKey = key._specialKey
         self.modKeyCode = key._modKeyCode
@@ -400,12 +424,16 @@ class JEvent(object):
 
     Event object attributes:
 
-    * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
+    * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION,
+            KEYDOWN, KEYUP, ACTIVEEVENT
     * button: mouse button pressed (1-5)
     * buttons: mouse buttons pressed (1,2,3)
     * pos: mouse position (x,y)
     * rel: mouse relative position change (x,y)
     * key: keycode of key pressed (K_a-K_z...)
+    * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT)
+    * state: focus state (APPFOCUSMOUSE | APPINPUTFOCUS | APPACTIVE)
+    * gain: focus gain (0,1)
     """
 
     __slots__ = []
@@ -647,6 +675,42 @@ class _KeyPressEvent(KeyEvent):
         self.mod = ( (int(event.altKey) * Const.KMOD_ALT) |
                      (int(event.ctrlKey) * Const.KMOD_CTRL) |
                      (int(event.shiftKey) * Const.KMOD_SHIFT) )
+
+
+class MouseFocusEvent(JEvent):
+
+    __slots__ = ['type', 'state', 'gain', 'event']
+    _gain = {'mouseover': 1, 'mouseout': 0}
+
+    def __init__(self, event):
+        self.event = event
+        self.type = Const.ACTIVEEVENT
+        self.state = Const.APPFOCUSMOUSE
+        self.gain = self._gain[event.type]
+
+
+class InputFocusEvent(JEvent):
+
+    __slots__ = ['type', 'state', 'gain', 'event']
+    _gain = {'focus': 1, 'blur': 0}
+
+    def __init__(self, event):
+        self.event = event
+        self.type = Const.ACTIVEEVENT
+        self.state = Const.APPINPUTFOCUS
+        self.gain = self._gain[event.type]
+
+
+class VisibilityEvent(JEvent):
+
+    __slots__ = ['type', 'state', 'gain', 'event']
+    _gain = {True: 1, False: 0}
+
+    def __init__(self, event):
+        self.event = event
+        self.type = Const.ACTIVEEVENT
+        self.state = Const.APPACTIVE
+        self.gain = self._gain[not document.getVisibility()]
 
 
 class TouchListener:

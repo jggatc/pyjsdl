@@ -6,6 +6,7 @@ from pyjsdl.surface import Surface
 from pyjsdl.rect import Rect
 from pyjsdl.time import Time
 from pyjsdl import env
+from pyjsdl import constants as Const
 from pyjsdl.pyjsobj import DOM, Window, RootPanel, SimplePanel, VerticalPanel, loadImages, TextBox, TextArea, Event, requestAnimationFrameInit
 
 __docformat__ = 'restructuredtext'
@@ -42,6 +43,8 @@ class Canvas(Surface):
         self.event = env.event
         self.addMouseListener(self)
         self.addKeyEventListener(self)
+        self.addFocusListener(self)
+        self.addVisibilityChangeListener()
         self.sinkEvents(Event.ONMOUSEDOWN |
                         Event.ONMOUSEUP |
                         Event.ONMOUSEMOVE |
@@ -49,7 +52,8 @@ class Canvas(Surface):
                         Event.ONMOUSEWHEEL |
                         Event.ONKEYDOWN |
                         Event.ONKEYPRESS |
-                        Event.ONKEYUP)
+                        Event.ONFOCUS |
+                        Event.ONBLUR)
         self.onContextMenu = None
         self.preventContextMenu()
         self.evt = self.event.eventObj
@@ -106,9 +110,15 @@ class Canvas(Surface):
         self.event.mousePress[event.button] = False
 
     def onMouseEnter(self, sender):
+        event = DOM.eventGetCurrentEvent()
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
         self.mouse_entered = True
 
     def onMouseLeave(self, sender):
+        event = DOM.eventGetCurrentEvent()
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
         self.event.mousePress[0] = False
         self.event.mousePress[1] = False
         self.event.mousePress[2] = False
@@ -212,6 +222,20 @@ class Canvas(Surface):
                     key['time'] = time
                     paused = False
         return paused
+
+    def onFocus(self, sender):
+        event = DOM.eventGetCurrentEvent()
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
+
+    def onLostFocus(self, sender):
+        event = DOM.eventGetCurrentEvent()
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
+
+    def onVisibilityChange(self, event):
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
 
     def onTouchInitiate(self, event):
         self.event.touchlistener.activate()

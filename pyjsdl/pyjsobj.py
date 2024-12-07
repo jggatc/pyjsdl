@@ -13,7 +13,7 @@ from pyjamas.ui.TextArea import TextArea
 from pyjamas.ui import Event
 from pyjamas.Canvas.HTML5Canvas import HTML5Canvas as _HTML5Canvas
 from pyjamas.media.Audio import Audio
-from __pyjamas__ import JS, wnd
+from __pyjamas__ import JS, doc, wnd
 
 
 class MouseWheelHandler(object):
@@ -45,11 +45,33 @@ class MouseWheelHandler(object):
         pass
 
 
-class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
+class VisibilityChangeHandler(object):
+
+    _listener = {}
+
+    def __init__(self):
+        self._visibilitychange = 'visibilitychange'
+
+    def addVisibilityChangeListener(self):
+        listener = lambda event: self.onVisibilityChange(event)
+        self._listener[self] = listener
+        doc().addEventListener(self._visibilitychange, listener)
+
+    def removeVisibilityChangeListener(self):
+        listener = self._listener[self]
+        del self._listener[self]
+        doc().removeEventListener(self._visibilitychange, listener)
+
+    def onVisibilityChange(self, event):
+        pass
+
+
+class HTML5Canvas(_HTML5Canvas, MouseWheelHandler, VisibilityChangeHandler):
 
     def __init__(self, coordX, coordY, *args, **kwargs):
         _HTML5Canvas.__init__(self, coordX, coordY, *args, **kwargs)
         MouseWheelHandler.__init__(self)
+        VisibilityChangeHandler.__init__(self)
 
     def addMouseListener(self, listener):
         _HTML5Canvas.addMouseListener(self, listener)
@@ -70,6 +92,14 @@ class HTML5Canvas(_HTML5Canvas, MouseWheelHandler):
 
 
 _listener = {}
+
+
+class Document(object):
+
+    def getVisibility(self):
+        return doc().hidden
+
+document = Document()
 
 
 def requestAnimationFrameInit():
