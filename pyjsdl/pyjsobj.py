@@ -51,18 +51,34 @@ class VisibilityChangeHandler(object):
 
     def __init__(self):
         self._visibilitychange = 'visibilitychange'
+        self._pagehide = 'pagehide'
+        wnd().onunload = None
+        wnd().onbeforeunload = None
 
     def addVisibilityChangeListener(self):
         listener = lambda event: self.onVisibilityChange(event)
-        self._listener[self] = listener
+        self._listener[self._visibilitychange] = listener
         doc().addEventListener(self._visibilitychange, listener)
 
     def removeVisibilityChangeListener(self):
-        listener = self._listener[self]
-        del self._listener[self]
+        listener = self._listener[self._visibilitychange]
+        del self._listener[self._visibilitychange]
         doc().removeEventListener(self._visibilitychange, listener)
 
+    def addPageHideListener(self):
+        listener = lambda event: self.onPageHide(event)
+        self._listener[self._pagehide] = listener
+        wnd().addEventListener(self._pagehide, listener)
+
+    def removePageHideListener(self):
+        listener = self._listener[self._pagehide]
+        del self._listener[self._pagehide]
+        wnd().removeEventListener(self._pagehide, listener)
+
     def onVisibilityChange(self, event):
+        pass
+
+    def onPageHide(self, event):
         pass
 
 

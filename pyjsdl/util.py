@@ -4,7 +4,7 @@
 from pyjsdl.time import Time
 from pyjsdl.rect import Rect
 from pyjsdl import env
-from __pyjamas__ import JS
+from __pyjamas__ import JS, doc
 
 
 class Timer(object):
@@ -150,6 +150,42 @@ def call(obj, func, args=()):
     Returns the method's return value.
     """
     return JS("@{{func}}.apply(@{{obj}}, @{{args}}['getArray']());")
+
+
+def createEvent(eventObject, eventType, eventOptions=None):
+    """
+    Create JavaScript event.
+
+    For instance:
+        MouseEvent type 'mousedown', handled as a MouseButtonDown event.
+        PageTransitionEvent type 'pagehide', handled as a Quit event.
+    Default options are {'bubbles':True, 'cancelable':True}.
+    """
+    opt = {'bubbles':True, 'cancelable':True}
+    if eventOptions is not None:
+        for key in eventOptions:
+            opt[key] = eventOptions[key]
+    options = JS("{}")
+    for key in opt:
+        val = opt[key]
+        JS("@{{options}}[@{{key}}] = @{{val}}")
+    event = JS("new @{{eventObject}}(@{{eventType}}, @{{options}})")
+    return event
+
+
+def dispatchEvent(event, element=None):
+    """
+    Dispatch JavaScript event.
+
+    The event is dispatched to the element.
+    Default element is the canvas.
+    """
+    if element is None:
+        element = doc().getElementsByTagName('canvas').item(0)
+        if element is None:
+            return False
+    element.dispatchEvent(event)
+    return True
 
 
 #code modified from pyjs

@@ -6,6 +6,7 @@
 -refactor mixer music rewind method.
 -revise mixer channel play promise handling.
 -add activeevent.
+-add closeevent.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
