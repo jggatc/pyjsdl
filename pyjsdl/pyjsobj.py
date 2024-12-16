@@ -110,6 +110,18 @@ class HTML5Canvas(_HTML5Canvas, MouseWheelHandler, VisibilityChangeHandler):
 _listener = {}
 
 
+def set_icon(icon):
+    if hasattr(icon, 'canvas'):
+        icon = icon.canvas.toDataURL()
+    obj = JS('parent.document')
+    link = obj.querySelector("link[rel~='icon']")
+    if not link:
+        link = obj.createElement('link')
+        link.rel = 'icon'
+        obj.head.appendChild(link)
+    link.href = icon
+
+
 class Document(object):
 
     def getVisibility(self):

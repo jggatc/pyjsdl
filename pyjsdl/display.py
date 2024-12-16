@@ -7,7 +7,9 @@ from pyjsdl.rect import Rect
 from pyjsdl.time import Time
 from pyjsdl import env
 from pyjsdl import constants as Const
-from pyjsdl.pyjsobj import DOM, Window, RootPanel, SimplePanel, VerticalPanel, loadImages, TextBox, TextArea, Event, requestAnimationFrameInit
+from pyjsdl.pyjsobj import RootPanel, SimplePanel, VerticalPanel, TextBox, TextArea
+from pyjsdl.pyjsobj import requestAnimationFrameInit, loadImages, Event, DOM, Window
+from pyjsdl import pyjsobj
 
 __docformat__ = 'restructuredtext'
 
@@ -396,6 +398,7 @@ class Display(object):
     * pyjsdl.display.quit
     * pyjsdl.display.get_init
     * pyjsdl.display.get_active
+    * pyjsdl.display.set_icon
     * pyjsdl.display.set_caption
     * pyjsdl.display.get_caption
     * pyjsdl.display.flip
@@ -419,7 +422,6 @@ class Display(object):
             self.id = ''
             self.icon = None
             self._image_list = []
-            self._nonimplemented_methods()
             self._initialized = True
 
     def set_mode(self, size, buffered=True, *args, **kwargs):
@@ -572,6 +574,15 @@ class Display(object):
         else:
             return False
 
+    def set_icon(self, icon):
+        """
+        Set page icon.
+        Argument is the icon image URL or relative path.
+        Icon can be a surface including images that were preloaded.
+        """
+        pyjsobj.set_icon(icon)
+        return None
+
     def set_caption(self, text):
         """
         Set Canvas element id.
@@ -592,12 +603,6 @@ class Display(object):
             return self.canvas.getID()
         except (TypeError, AttributeError):
             return self.id
-
-    def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
-        self.set_icon = lambda *arg: None
 
     def flip(self):
         """
