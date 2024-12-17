@@ -448,7 +448,12 @@ class Surf(object):
         self.width = self.canvas.width
         self.height = self.canvas.height
         self._alpha = 1.0
-        self._nonimplemented_methods()
+        self.convert = lambda *arg: self
+        self.convert_alpha = lambda *arg: self
+
+    def __str__(self):
+        s = "<%s(%dx%d)>"
+        return s % (self.__class__.__name__, self.width, self.height)
 
     def get_size(self):
         return (self.width, self.height)
@@ -465,9 +470,19 @@ class Surf(object):
             setattr(rect, key, attr[key])
         return rect
 
-    def _nonimplemented_methods(self):
-        self.convert = lambda *arg: self
-        self.convert_alpha = lambda *arg: self
+    def set_alpha(self, alpha):
+        if alpha is not None:
+            _alpha = alpha/255.0
+            if _alpha < 0.0:
+                _alpha = 0.0
+            elif _alpha > 1.0:
+                _alpha = 1.0
+            self._alpha = _alpha
+        else:
+            self._alpha = 1.0
+
+    def get_alpha(self):
+        return int(self._alpha*255)
 
 
 class IndexSizeError(Exception):
