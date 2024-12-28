@@ -8,6 +8,7 @@
 -add activeevent.
 -add closeevent.
 -add display set_icon.
+-update color object.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
