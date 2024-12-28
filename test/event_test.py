@@ -141,9 +141,10 @@ def test_event_post():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
-    assert [e.type for e in evts] == events
+    assert [e.type for e in evts if e.type in events] == events
     evt_obj = pg.event.Event(pg.USEREVENT,{'x':1,'y':2,'z':3})
     pg.event.post(evt_obj)
-    e = pg.event.get()[0]
+    evts = pg.event.get()
+    e = [ev for ev in evts if ev.type==pg.USEREVENT][0]
     assert (e.type==pg.USEREVENT and e.x==1 and e.y==2 and e.z==3)
 

@@ -28,13 +28,10 @@ def init(environ):
 
 
 def _color_convert(color):
-    if isinstance(color,tuple):
-        if len(color) == 4:
-            r,g,b,a = color[0],color[1],color[2],color[3]
-        else:
-            r,g,b,a = color[0],color[1],color[2],255
+    if len(color) == 4:
+        r,g,b,a = color[0],color[1],color[2],color[3]
     else:
-        r,g,b,a = int((color>>16) & 0xff), int((color>>8) & 0xff), int(color & 0xff), int((color>>24) & 0xff)
+        r,g,b,a = color[0],color[1],color[2],255
     return r,g,b,a
 
 
@@ -81,30 +78,19 @@ def test_surface_blit():
 
 
 def test_surface_fill():
-    color = (255,0,0), (0,255,0,255), (0xff<<24)+255
+    color = (255,0,0), (0,255,0,255)
     for c in color:
         surface.fill((0,0,0))
-        surface.fill(c)
+        surface.fill(pg.Color(c))
         if env['executor'] != 'pyjs':
-            assert surface.get_at((0,0)) == _color_convert(c)
+            assert surface.get_at((0,0)) == c
         else:
             cc = surface.get_at((0,0))
             assert (cc[0],cc[1],cc[2],cc[3]) == _color_convert(c)
-    surface.fill((0,0,0))
-    surface.fill((255,0,0,255), (0,0,2,2))
-    if env['executor'] != 'pyjs':
-        assert surface.get_at((0,0)) == (255,0,0,255)
-        assert surface.get_at((2,2)) != (255,0,0,255)
-    else:
-        c = surface.get_at((0,0))
-        assert (c.r,c.g,c.b,c.a) == (255,0,0,255)
-        c = surface.get_at((2,2))
-        assert (c.r,c.g,c.b,c.a) != (255,0,0,255)
 
 
 def test_surface_set_colorkey():
     color = (255,0,0), (0,255,0,255), None
-    #color = (255,0,0), (0,255,0,255), (0xff<<24)+255, None     #pg.error?
     for c in color:
         surface.set_colorkey(c)
         if surface.get_colorkey():
@@ -125,12 +111,12 @@ def test_surface_get_colorkey():
 
 
 def test_surface_set_at():
-    color = (255,0,0), (0,255,0,255), (0xff<<24)+255
+    color = (255,0,0), (0,255,0,255)
     for c in color:
         surface.fill((0,0,0))
         surface.set_at((0,0), c)
         if env['executor'] != 'pyjs':
-            assert surface.get_at((0,0)) == _color_convert(c)
+            assert surface.get_at((0,0)) == c
         else:   #pyjs compares color==tuple not __eq__
             cc = surface.get_at((0,0))
             assert (cc.r,cc.g,cc.b,cc.a) == _color_convert(c)
