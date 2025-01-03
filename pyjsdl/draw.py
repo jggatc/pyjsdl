@@ -336,9 +336,5 @@ def bounding_rect_return(setting):
 
 
 #depreciated
-def _set_return(*args):
-    msg = 'set_return depreciated, use bounding_rect_return'
-    print(msg)
-    raise Exception(msg)
-set_return = _set_return
+set_return = bounding_rect_return
 
