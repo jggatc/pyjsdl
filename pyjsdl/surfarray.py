@@ -106,9 +106,6 @@ def blit_array(surface, array):
     return None
 
 
-use_arraytype = lambda *arg: None
-
-
 class ImageMatrixRGB(ImageMatrix):
     """
     Array of pixel data arranged by width/height in RGB format.
