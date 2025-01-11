@@ -10,6 +10,7 @@
 -add display set_icon.
 -update color object.
 -revise sprite to optimize.
+-revise vector elementwise object.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
