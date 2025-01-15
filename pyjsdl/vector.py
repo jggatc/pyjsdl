@@ -19,32 +19,16 @@ class Vector2(object):
 
     __slots__ = ['x', 'y']
 
-    def __init__(self, *args, **kwargs):
-        l = len(args)
-        if l == 2:
-            self.x = float(args[0])
-            self.y = float(args[1])
-        elif l == 1:
-            if isinstance(args[0], (int, float)):
-                self.x = float(args[0])
-                self.y = float(args[0])
-            else:
-                self.x = float(args[0][0])
-                self.y = float(args[0][1])
+    def __init__(self, x=None, y=None):
+        if y is not None:
+            self.x = float(x)
+            self.y = float(y)
+        elif x is not None:
+            self.x = float(x[0])
+            self.y = float(x[1])
         else:
-            if kwargs:
-                if 'x' in kwargs and 'y' in kwargs:
-                    self.x = float(kwargs['x'])
-                    self.y = float(kwargs['y'])
-                elif 'x' in kwargs:
-                    self.x = float(kwargs['x'])
-                    self.y = float(kwargs['x'])
-                else:
-                    self.x = float(kwargs['y'])
-                    self.y = float(kwargs['y'])
-            else:
-                self.x = 0.0
-                self.y = 0.0
+            self.x = 0.0
+            self.y = 0.0
 
     def __str__(self):
         return '[%g, %g]' % (self.x, self.y)
@@ -65,15 +49,9 @@ class Vector2(object):
 
     def __setitem__(self, index, val):
         if index == 0:
-            try:
-                self.x = float(val)
-            except ValueError:
-                raise TypeError
+            self.x = float(val)
         elif index == 1:
-            try:
-                self.y = float(val)
-            except ValueError:
-                raise TypeError
+            self.y = float(val)
         elif isinstance(index, slice):
             l = [self.x, self.y]
             l[index] = val
@@ -356,35 +334,19 @@ class Vector2(object):
         """
         return Vector2(self.x, self.y)
 
-    def update(self, *args, **kwargs):
+    def update(self, x=None, y=None):
         """
         Update vector.
         """
-        l = len(args)
-        if l == 2:
-            self.x = float(args[0])
-            self.y = float(args[1])
-        elif l == 1:
-            if isinstance(args[0], (int, float)):
-                self.x = float(args[0])
-                self.y = float(args[0])
-            else:
-                self.x = float(args[0][0])
-                self.y = float(args[0][1])
+        if y is not None:
+            self.x = float(x)
+            self.y = float(y)
+        elif x is not None:
+            self.x = float(x[0])
+            self.y = float(x[1])
         else:
-            if kwargs:
-                if 'x' in kwargs and 'y' in kwargs:
-                    self.x = float(kwargs['x'])
-                    self.y = float(kwargs['y'])
-                elif 'x' in kwargs:
-                    self.x = float(kwargs['x'])
-                    self.y = float(kwargs['x'])
-                else:
-                    self.x = float(kwargs['y'])
-                    self.y = float(kwargs['y'])
-            else:
-                self.x = 0.0
-                self.y = 0.0
+            self.x = 0.0
+            self.y = 0.0
 
     def __pos__(self):
         return Vector2(self.x, self.y)
@@ -396,17 +358,17 @@ class Vector2(object):
         if hasattr(other, '__iter__'):
             return Vector2(self.x + other[0], self.y + other[1])
         else:
-            return Vector2(self.x + other, self.y + other)
+            raise TypeError('unsupported operand')
 
     def __sub__(self, other):
         if hasattr(other, '__iter__'):
             return Vector2(self.x - other[0], self.y - other[1])
         else:
-            return Vector2(self.x - other, self.y - other)
+            raise TypeError('unsupported operand')
 
     def __mul__(self, other):
         if hasattr(other, '__iter__'):
-            if not isinstance(other, VectorElementwiseProxy):
+            if not hasattr(other, '_v'):
                 return (self.x * other[0]) + (self.y * other[1])
             else:
                 return Vector2(self.x * other[0], self.y * other[1])
@@ -415,114 +377,107 @@ class Vector2(object):
 
     def __div__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self.x / other[0], self.y / other[1])
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                return Vector2(self.x / other[0], self.y / other[1])
         else:
             return Vector2(self.x / other, self.y / other)
 
     def __truediv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self.x / other[0], self.y / other[1])
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                return Vector2(self.x / other[0], self.y / other[1])
         else:
             return Vector2(self.x / other, self.y / other)
 
     def __floordiv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(floor(self.x/other[0]), floor(self.y/other[1]))
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                return Vector2(floor(self.x/other[0]), floor(self.y/other[1]))
         else:
             return Vector2(floor(self.x/other), floor(self.y/other))
 
     def __eq__(self, other):
         if hasattr(other, '__iter__'):
-            if len(other) == 2:
-                return ( abs(self.x - other[0]) < 0.000001 and
-                         abs(self.y - other[1]) < 0.000001 )
-            else:
-                return False
+            return ( abs(self.x - other[0]) < 0.000001 and
+                     abs(self.y - other[1]) < 0.000001 )
         else:
-            return ( abs(self.x - other) < 0.000001 and
-                     abs(self.y - other) < 0.000001 )
+            return False
 
     def __ne__(self, other):
         if hasattr(other, '__iter__'):
-            if len(other) == 2:
-                return ( abs(self.x - other[0]) > 0.000001 or
-                         abs(self.y - other[1]) > 0.000001 )
-            else:
-                return True
+            return ( abs(self.x - other[0]) > 0.000001 or
+                     abs(self.y - other[1]) > 0.000001 )
         else:
-            return ( abs(self.x - other) > 0.000001 or
-                     abs(self.y - other) > 0.000001 )
+            return True
 
     def __gt__(self, other):
-        if not isinstance(other, VectorElementwiseProxy):
-            msg = 'This operation is not supported by vectors'
-            raise TypeError(msg)
+        if not hasattr(other, '_v'):
+            raise TypeError('operation not supported')
         return NotImplemented
 
     def __ge__(self, other):
-        if not isinstance(other, VectorElementwiseProxy):
-            msg = 'This operation is not supported by vectors'
-            raise TypeError(msg)
+        if not hasattr(other, '_v'):
+            raise TypeError('operation not supported')
         return NotImplemented
 
     def __lt__(self, other):
-        if not isinstance(other, VectorElementwiseProxy):
-            msg = 'This operation is not supported by vectors'
-            raise TypeError(msg)
+        if not hasattr(other, '_v'):
+            raise TypeError('operation not supported')
         return NotImplemented
 
     def __le__(self, other):
-        if not isinstance(other, VectorElementwiseProxy):
-            msg = 'This operation is not supported by vectors'
-            raise TypeError(msg)
+        if not hasattr(other, '_v'):
+            raise TypeError('operation not supported')
         return NotImplemented
 
     def __radd__(self, other):
         if hasattr(other, '__iter__'):
             return Vector2(self.x + other[0], self.y + other[1])
         else:
-            return Vector2(self.x + other, self.y + other)
+            raise TypeError('unsupported operand')
 
     def __rsub__(self, other):
         if hasattr(other, '__iter__'):
             return Vector2(other[0] - self.x, other[1] - self.y)
         else:
-            return Vector2(other - self.x, other - self.y)
+            raise TypeError('unsupported operand')
 
     def __rmul__(self, other):
         if hasattr(other, '__iter__'):
-            if not isinstance(other, VectorElementwiseProxy):
-                return (self.x * other[0]) + (self.y * other[1])
-            else:
-                return Vector2(self.x * other[0], self.y * other[1])
+            return (self.x * other[0]) + (self.y * other[1])
         else:
             return Vector2(self.x * other, self.y * other)
 
     def __rdiv__(self, other):
-        if hasattr(other, '__iter__'):
-            return Vector2(other[0] / self.x, other[1] / self.y)
+        if not hasattr(other, '_v'):
+            raise TypeError('unsupported operand')
         else:
-            return Vector2(other / self.x, other / self.y)
+            return Vector2(other[0] / self.x, other[1] / self.y)
 
     def __rtruediv__(self, other):
-        if hasattr(other, '__iter__'):
-            return Vector2(other[0] / self.x, other[1] / self.y)
+        if not hasattr(other, '_v'):
+            raise TypeError('unsupported operand')
         else:
-            return Vector2(other / self.x, other / self.y)
+            return Vector2(other[0] / self.x, other[1] / self.y)
 
     def __rfloordiv__(self, other):
-        if hasattr(other, '__iter__'):
-            return Vector2(floor(other[0]/self.x), floor(other[1]/self.y))
+        if not hasattr(other, '_v'):
+            raise TypeError('unsupported operand')
         else:
-            return Vector2(floor(other/self.x), floor(other/self.y))
+            return Vector2(floor(other[0]/self.x), floor(other[1]/self.y))
 
     def __iadd__(self, other):
         if hasattr(other, '__iter__'):
             self.x += other[0]
             self.y += other[1]
         else:
-            self.x += other
-            self.y += other
+            raise TypeError('unsupported operand')
         return self
 
     def __isub__(self, other):
@@ -530,14 +485,16 @@ class Vector2(object):
             self.x -= other[0]
             self.y -= other[1]
         else:
-            self.x -= other
-            self.y -= other
+            raise TypeError('unsupported operand')
         return self
 
     def __imul__(self, other):
         if hasattr(other, '__iter__'):
-            self.x *= other[0]
-            self.y *= other[1]
+            if not hasattr(other, '_v'):
+                return (self._x * other[0]) + (self._y * other[1])
+            else:
+                self.x *= other[0]
+                self.y *= other[1]
         else:
             self.x *= other
             self.y *= other
@@ -545,8 +502,11 @@ class Vector2(object):
 
     def __idiv__(self, other):
         if hasattr(other, '__iter__'):
-            self.x /= other[0]
-            self.y /= other[1]
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                self.x /= other[0]
+                self.y /= other[1]
         else:
             self.x /= other
             self.y /= other
@@ -554,8 +514,11 @@ class Vector2(object):
 
     def __itruediv__(self, other):
         if hasattr(other, '__iter__'):
-            self.x /= other[0]
-            self.y /= other[1]
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                self.x /= other[0]
+                self.y /= other[1]
         else:
             self.x /= other
             self.y /= other
@@ -563,8 +526,11 @@ class Vector2(object):
 
     def __ifloordiv__(self, other):
         if hasattr(other, '__iter__'):
-            self.x = float(floor(self.x / other[0]))
-            self.y = float(floor(self.y / other[1]))
+            if not hasattr(other, '_v'):
+                raise TypeError('unsupported operand')
+            else:
+                self.x = float(floor(self.x / other[0]))
+                self.y = float(floor(self.y / other[1]))
         else:
             self.x = float(floor(self.x / other))
             self.y = float(floor(self.y / other))
@@ -578,32 +544,52 @@ class _Vector2(Vector2):
 
     __slots__ = ['_x', '_y']
 
-    def __init__(self, *args, **kwargs):
-        l = len(args)
-        if l == 2:
-            self._x = float(args[0])
-            self._y = float(args[1])
-        elif l == 1:
-            if isinstance(args[0], (int, float)):
-                self._x = float(args[0])
-                self._y = float(args[0])
-            else:
-                self._x = float(args[0][0])
-                self._y = float(args[0][1])
+    def __init__(self, x=None, y=None):
+        if y is not None:
+            self._x = float(x)
+            self._y = float(y)
+        elif x is not None:
+            self._x = float(x[0])
+            self._y = float(x[1])
         else:
-            if kwargs:
-                if 'x' in kwargs and 'y' in kwargs:
-                    self._x = float(kwargs['x'])
-                    self._y = float(kwargs['y'])
-                elif 'x' in kwargs:
-                    self._x = float(kwargs['x'])
-                    self._y = float(kwargs['x'])
-                else:
-                    self._x = float(kwargs['y'])
-                    self._y = float(kwargs['y'])
-            else:
-                self._x = 0.0
-                self._y = 0.0
+            self._x = 0.0
+            self._y = 0.0
+
+    def __str__(self):
+        return '[%g, %g]' % (self._x, self._y)
+
+    def __repr__(self):
+        return '<%s(%g, %g)>' % (self.__class__.__name__[1:],
+                                 self._x, self._y)
+
+    def __getitem__(self, index):
+        if index in (0, -2):
+            return self._x
+        elif index in (1, -1):
+            return self._y
+        elif isinstance(index, slice):
+            return [self._x, self._y][index]
+        else:
+            raise IndexError
+
+    def __setitem__(self, index, val):
+        if index == 0:
+            self._x = float(val)
+        elif index == 1:
+            self._y = float(val)
+        elif isinstance(index, slice):
+            l = [self._x, self._y]
+            l[index] = val
+            if len(l) != 2:
+                raise ValueError
+            self._x = float(l[0])
+            self._y = float(l[1])
+        else:
+            raise IndexError
+
+    def __iter__(self):
+        for val in (self._x, self._y):
+            yield val
 
     @property
     def x(self):
@@ -635,9 +621,19 @@ class _Vector2(Vector2):
     def y(self):
         raise TypeError('Cannot delete the y attribute')
 
-    def __repr__(self):
-        return '<%s(%g, %g)>' % (self.__class__.__name__[1:],
-                                 self.x, self.y)
+    def update(self, x=None, y=None):
+        """
+        Update vector.
+        """
+        if y is not None:
+            self._x = float(x)
+            self._y = float(y)
+        elif x is not None:
+            self._x = float(x[0])
+            self._y = float(x[1])
+        else:
+            self._x = 0.0
+            self._y = 0.0
 
 
 if env.pyjs_mode.test_getattr():

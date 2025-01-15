@@ -11,6 +11,7 @@
 -update color object.
 -revise sprite to optimize.
 -revise vector elementwise object.
+-revise vector operator methods.
 
 0.26    2022-04-18
 -revise event set_blocked processing.
