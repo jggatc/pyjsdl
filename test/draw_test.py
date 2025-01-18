@@ -3,9 +3,6 @@ pg = None
 surface = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg, surface
     env = environ
@@ -82,10 +79,7 @@ def test_draw_arc():
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
     if env['platform'] not in ('jvm','js'):
-        try:
-            assert (rect.x,rect.y,rect.width,rect.height) == data[1]
-        except AssertionError:      #pg1.9.6
-            assert (rect.x,rect.y,rect.width,rect.height) == (5,5,10,10)
+        assert (rect.x,rect.y,rect.width,rect.height) == data[1]
     else:   #update to new boundary process
         assert (rect.x,rect.y,rect.width,rect.height) == (5,5,10,10)
 

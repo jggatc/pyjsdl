@@ -2,14 +2,13 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ
     pg = env['pg']
-    tests = [test_rect,
+    tests = [test_rect_constructor,
+             test_rect_get,
+             test_rect_comparison,
              test_rect_copy,
              test_rect_move,
              test_rect_inflate,
@@ -21,8 +20,7 @@ def init(environ):
     return tests
 
 
-def test_rect():
-    #construction
+def test_rect_constructor():
     rect = pg.Rect(0,0,10,10)
     assert (rect.x,rect.y,rect.width,rect.height) == (0,0,10,10)
     rect = pg.Rect((0,0),(10,10))
@@ -36,19 +34,9 @@ def test_rect():
     rect = pg.Rect(obj)
     assert (rect.x,rect.y,rect.width,rect.height) == (0,0,10,10)
     assert (rect[0],rect[1],rect[2],rect[3]) == (0,0,10,10)
-    #comparison
-    rect = pg.Rect(0,0,10,10)
-    if env['platform'] != 'js':
-        #pyjs compares rect==tuple not __eq__
-        assert rect == (0,0,10,10)
-        assert rect != (0,0,100,100)
-        assert not (rect == (0,0,100,100))
-    if not env['pyjs_opt']:
-        #pyjs -O __eq__ not called
-        assert rect == pg.Rect(0,0,10,10)
-        assert rect != pg.Rect(0,0,100,100)
-        assert not (rect == pg.Rect(0,0,100,100))
-    #get/set
+
+
+def test_rect_get():
     rect = pg.Rect(0,0,10,10)
     rect.x,rect.y,rect.width,rect.height = 10,10,100,100
     assert (rect.x,rect.y,rect.width,rect.height) == (10,10,100,100)
@@ -106,6 +94,20 @@ def test_rect():
     r = pg.Rect(25,25,40,40)
     setattr(r, 'center', (10,20))
     assert getattr(r, 'center')==(10,20) and (r.x,r.y,r.width,r.height)==(-10,0,40,40)
+
+
+def test_rect_comparison():
+    rect = pg.Rect(0,0,10,10)
+    if env['platform'] != 'js':
+        #pyjs compares rect==tuple not __eq__
+        assert rect == (0,0,10,10)
+        assert rect != (0,0,100,100)
+        assert not (rect == (0,0,100,100))
+    if not env['pyjs_opt']:
+        #pyjs -O __eq__ not called
+        assert rect == pg.Rect(0,0,10,10)
+        assert rect != pg.Rect(0,0,100,100)
+        assert not (rect == pg.Rect(0,0,100,100))
 
 
 def test_rect_copy():

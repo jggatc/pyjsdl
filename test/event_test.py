@@ -2,9 +2,6 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ
@@ -54,6 +51,7 @@ def test_event_poll():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = [pg.event.poll() for i in range(len(events))]
+    assert [e.type for e in evts] == events
 
 
 def test_event_wait():
@@ -121,10 +119,7 @@ def test_event_block():
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
     assert [e.type for e in evts] == events[:2]
-    if env['platform'] not in ('jvm','js'):    #changed in pg2
-        pg.event.set_allowed(None)
-    else:
-        pg.event.set_blocked(None)
+    pg.event.set_allowed(None)
     pg.event.clear()
     for evt in events:
         pg.event.post(event_obj[evt])

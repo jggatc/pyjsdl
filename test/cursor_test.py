@@ -2,9 +2,6 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ

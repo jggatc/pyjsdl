@@ -2,8 +2,6 @@ env = None
 pg = None
 wait = 0
 
-# __pragma__ ('opov')
-
 
 def init(environ):
     global env, pg

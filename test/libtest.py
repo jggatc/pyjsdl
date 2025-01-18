@@ -2,12 +2,12 @@
 Libtest
 
 Check doc/libtest.txt for information.
+
+pyjsmode:
+pyjsbuild -S: opt=False/attr=True
+pyjsbuild -O: opt=True/attr=False
+pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True
 """
-
-
-platform = None
-
-# __pragma__ ('skip')
 
 import os, sys
 
@@ -27,14 +27,6 @@ else:
     platform = 'js'
     executor = 'pyjs'
     library = 'pyjsdl'
-
-# __pragma__ ('noskip')
-
-if platform is None:
-    import pyjsdl as pg
-    platform = 'js'
-    executor = 'transcrypt'
-    library = 'pyjsdl-ts'
 
 from test import surface_test
 from test import rect_test
@@ -58,15 +50,6 @@ if executor in ('python', 'jython', 'pyjs'):
     else:
         _name = lambda f: f.__name__
         _str = lambda n, t, r: 'Test %3d  %-30s %10s' % (n, _name(t), r)
-elif executor == 'transcrypt':
-    try:
-        assert False
-        has_assert = False
-    except AssertionError:
-        has_assert = True
-    # __pragma__ ('noalias', 'name')
-    _name = lambda f: f.name
-    _str = lambda n, t, r: 'Test {}  {} {}'.format(n, _name(t), r)
 
 
 def set_pyjsmode():

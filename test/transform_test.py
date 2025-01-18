@@ -5,9 +5,6 @@ width = None
 height = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg, surface, width, height
     env = environ
