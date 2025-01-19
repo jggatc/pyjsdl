@@ -1,30 +1,6 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-#PyjsArray - Python-to-JavaScript TypedArray Module
-#Copyright (c) 2013 James Garnon
-
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-
-#PyjsArray version 0.54
-#Project Site: https://gatc.ca/
-
 from math import ceil as _ceil
 from __pyjamas__ import JS
 import sys
@@ -1514,7 +1490,7 @@ class BitSet(object):
     def __init__(self, width=None):
         if not self._bitmask:
             self._bitmask = dict([(self._bit-i-1,1<<i) for i in range(self._bit-1,-1,-1)])
-            self._bitmask[self._bit-1] = int(self._bitmask[self._bit-1])      #pyjs [1<<0] = 1L
+            self._bitmask[self._bit-1] = int(self._bitmask[self._bit-1])
         if width:
             self._width = abs(width)
         else:
@@ -1597,10 +1573,8 @@ class BitSet(object):
                 return
         if value:
             self._data[ int(index/self._bit) ] = self._data[ int(index/self._bit) ] | self._bitmask[ index%self._bit ]
-#            self._data[ int(index/self._bit) ] |= self._bitmask[ index%self._bit ]    #pyjs -O: |= not processed
         else:
             self._data[ int(index/self._bit) ] = self._data[ int(index/self._bit) ] & ~(self._bitmask[ index%self._bit ])
-#            self._data[ int(index/self._bit) ] &= ~(self._bitmask[ index%self._bit ])     #pyjs -O: &= not processed
         return None
 
     def fill(self, index=None, toIndex=None):
@@ -1682,8 +1656,6 @@ class BitSet(object):
         data = min(len(self._data), len(bitset._data))
         for dat in range(data):
             self._data[dat] = self._data[dat] & bitset._data[dat]
-#            self._data[dat] &= bitset._data[dat]     #pyjs -O: &= not processed
-#        pyjs -S: &= calls __and__ instead of __iand__, -O: no call to operator methods
 
     def orSet(self, bitset):
         """
@@ -1692,7 +1664,6 @@ class BitSet(object):
         data = min(len(self._data), len(bitset._data))
         for dat in range(data):
             self._data[dat] = self._data[dat] | bitset._data[dat]
-#            self._data[dat] |= bitset._data[dat]    #pyjs -O: |= not processed
 
     def xorSet(self, bitset):
         """
@@ -1701,7 +1672,6 @@ class BitSet(object):
         data = min(len(self._data), len(bitset._data))
         for dat in range(data):
             self._data[dat] = self._data[dat] ^ bitset._data[dat]
-#            self._data[dat] ^= bitset._data[dat]    #pyjs -O: |= not processed
 
     def resize(self, width):
         """
@@ -1799,20 +1769,4 @@ class PyjsMode(object):
             return False, True
 
 pyjs_mode = PyjsMode()
-
-
-#depreciated
-PyTypedArray = TypedArray
-PyUint8ClampedArray = Uint8ClampedArray
-PyUint8Array = Uint8Array
-PyUint16Array = Uint16Array
-PyUint32Array = Uint32Array
-PyInt8Array = Int8Array
-PyInt16Array = Int16Array
-PyInt32Array = Int32Array
-PyFloat32Array = Float32Array
-PyFloat64Array = Float64Array
-PyCanvasPixelArray = CanvasPixelArray
-PyImageData = ImageData
-PyImageMatrix = ImageMatrix
 
