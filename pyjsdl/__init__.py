@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
-__version__ = '0.26'
+__version__ = '0.27'
 
 from pyjsdl import env
 from pyjsdl import util
