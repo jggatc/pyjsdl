@@ -42,10 +42,10 @@ class Event(object):
         self.queue = []
         self.queueNil = []
         self.queueTmp = []
+        self.mousePos = {'x':-1, 'y':-1}
+        self.mousePosPre = {'x':-1, 'y':-1}
+        self.mousePosRel = {'x':-1, 'y':-1}
         self.mousePress = {0:False, 1:False, 2:False}
-        self.mouseMove = {'x':-1, 'y':-1}
-        self.mouseMovePre = {'x':0, 'y':0}
-        self.mouseMoveRel = {'x':None, 'y':None}
         self.keyPress = {Const.K_ALT: False,
                          Const.K_CTRL: False,
                          Const.K_SHIFT: False}
@@ -546,8 +546,8 @@ class MouseMoveEvent(MouseEvent):
                         (int(event.buttons) & 2) == 2)
         self.pos = (x + env.frame.scrollLeft,
                     y + env.frame.scrollTop)
-        self.rel = (x - env.event.mouseMovePre['x'],
-                    y - env.event.mouseMovePre['y'])
+        self.rel = (x - env.event.mousePosPre['x'],
+                    y - env.event.mousePosPre['y'])
 
 
 class KeyEvent(JEvent):

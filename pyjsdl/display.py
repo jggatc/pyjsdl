@@ -66,7 +66,6 @@ class Canvas(Surface):
         self.specialKeyCode = self.event.specialKeyCode
         self.keyRepeat = self.event.keyRepeat
         self.keyHeld = self.event.keyHeld
-        self.mouse_entered = True
         self.event._initiate_touch_listener(self)
         self._touch_callback = self.event.touchlistener.callback
         self._rect_list = []
@@ -88,50 +87,52 @@ class Canvas(Surface):
 
     def onMouseMove(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
+        self.event.mousePosPre['x'] = self.event.mousePos['x']
+        self.event.mousePosPre['y'] = self.event.mousePos['y']
+        self.event.mousePos['x'] = x
+        self.event.mousePos['y'] = y
         if event.type in self.event.events:
-            if not self.mouse_entered:
-                self.event.mouseMovePre['x'] = self.event.mouseMove['x']
-                self.event.mouseMovePre['y'] = self.event.mouseMove['y']
-            else:
-                self.event.mouseMovePre['x'] = x
-                self.event.mouseMovePre['y'] = y
-                self.mouse_entered = False
             self.event._updateQueue(self.evt[event.type](event, x, y))
-        self.event.mouseMove['x'] = x
-        self.event.mouseMove['y'] = y
 
     def onMouseDown(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
+        self.event.mousePress[event.button] = True
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, x, y))
-        self.event.mousePress[event.button] = True
 
     def onMouseUp(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
+        self.event.mousePress[event.button] = False
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, x, y))
-        self.event.mousePress[event.button] = False
 
     def onMouseEnter(self, sender):
         event = DOM.eventGetCurrentEvent()
+        x = (DOM.eventGetClientX(event)
+             - DOM.getAbsoluteLeft(sender.getElement()))
+        y = (DOM.eventGetClientY(event)
+             - DOM.getAbsoluteTop(sender.getElement()))
+        self.event.mousePos['x'] = x
+        self.event.mousePos['y'] = y
+        self.event.mousePosPre['x'] = x
+        self.event.mousePosPre['y'] = y
+        self.event.mousePosRel['x'] = x
+        self.event.mousePosRel['y'] = y
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event))
-        self.mouse_entered = True
 
     def onMouseLeave(self, sender):
         event = DOM.eventGetCurrentEvent()
-        if event.type in self.event.events:
-            self.event._updateQueue(self.evt[event.type](event))
+        self.event.mousePos['x'] = -1
+        self.event.mousePos['y'] = -1
         self.event.mousePress[0] = False
         self.event.mousePress[1] = False
         self.event.mousePress[2] = False
-        self.event.mouseMove['x'] = -1
-        self.event.mouseMove['y'] = -1
-        self.event.mouseMoveRel['x'] = None
-        self.event.mouseMoveRel['y'] = None
         for keycode in self.modKeyCode:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
+        if event.type in self.event.events:
+            self.event._updateQueue(self.evt[event.type](event))
 
     def onMouseWheel(self, event):
         if event.type in self.event.events:
