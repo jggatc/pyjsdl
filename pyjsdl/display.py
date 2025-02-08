@@ -393,6 +393,7 @@ class Display(object):
     * pyjsdl.display.get_canvas
     * pyjsdl.display.get_panel
     * pyjsdl.display.get_vpanel
+    * pyjsdl.display.resize
     * pyjsdl.display.getAbsoluteLeft
     * pyjsdl.display.getAbsoluteTop
     * pyjsdl.display.getScrollLeft
@@ -529,6 +530,13 @@ class Display(object):
             self.vpanel = VerticalPanel()
             RootPanel().add(self.vpanel)
         return self.vpanel
+
+    def resize(self, size):
+        """
+        Resize canvas display.
+        Argument size of display.
+        """
+        self.canvas.resize(size[0], size[1])
 
     def getAbsoluteLeft(self):
         """
