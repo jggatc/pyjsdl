@@ -136,9 +136,10 @@ class Canvas(Surface):
 
     def onMouseWheel(self, event):
         if event.type in self.event.events:
-            r = self.canvas.getBoundingClientRect()
-            x = event.clientX - round(r.left)
-            y = event.clientY - round(r.top)
+            x = (DOM.eventGetClientX(event)
+                 - DOM.getAbsoluteLeft(self.getElement()))
+            y = (DOM.eventGetClientY(event)
+                 - DOM.getAbsoluteTop(self.getElement()))
             self.event._updateQueue(self.evt[event.type](event, x, y))
         DOM.eventPreventDefault(event)
 
