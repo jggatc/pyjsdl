@@ -1,13 +1,19 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Vector module**
+
+The module provides vector object functionality.
+"""
+
 from pyjsdl import env
 from math import sqrt, sin, cos, atan2, pi, floor
 
 
 class Vector2(object):
     """
-    Vector2 - 2-dimensional vector.
+    Vector2 object.
 
     Build in --optimized mode (-O) lack type enforcement
     with attribute assignment, so ensure use of floats.
@@ -20,6 +26,9 @@ class Vector2(object):
     __slots__ = ['x', 'y']
 
     def __init__(self, x=None, y=None):
+        """
+        Initialize Vector2 object.
+        """
         if y is not None:
             self.x = float(x)
             self.y = float(y)
@@ -538,12 +547,15 @@ class Vector2(object):
 
 class _Vector2(Vector2):
     """
-    Vector2 - 2-dimensional vector.
+    Vector2 object.
     """
 
     __slots__ = ['_x', '_y']
 
     def __init__(self, x=None, y=None):
+        """
+        Initialize Vector2 object.
+        """
         if y is not None:
             self._x = float(x)
             self._y = float(y)

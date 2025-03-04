@@ -1,21 +1,21 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Image module**
+
+The module provides function to load images and convert them to surface objects.
+"""
+
 import os
 from pyjsdl.surface import Surface, Surf
 from pyjsdl import env
 import pyjsdl
 
-__docformat__ = 'restructuredtext'
-
 
 class Image(object):
     """
-    **pyjsdl.image**
-    
-    * pyjsdl.image.load
-    * pyjsdl.image.get_image
-    * pyjsdl.image.convert_image
+    Image object.
     """
 
     def __init__(self):
@@ -29,6 +29,7 @@ class Image(object):
     def load(self, img_file, namehint=None):
         """
         Retrieve image from preloaded images.
+
         The img_file argument is an image URL, or an image data object whereby namehint argument is used to retrieve the image.
         Return the image as a Surface.
         """

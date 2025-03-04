@@ -1,24 +1,20 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Mouse module**
+
+The module provides mouse functionality.
+"""
+
 from pyjsdl import env
 from pyjsdl import cursors
 from pyjsdl.pyjsobj import DOM
 
-__docformat__ = 'restructuredtext'
-
 
 class Mouse(object):
     """
-    **pyjsdl.mouse**
-    
-    * pyjsdl.mouse.get_pressed
-    * pyjsdl.mouse.get_pos
-    * pyjsdl.mouse.get_rel
-    * pyjsdl.mouse.set_visible
-    * pyjsdl.mouse.get_focused
-    * pyjsdl.mouse.set_cursor
-    * pyjsdl.mouse.get_cursor
+    Mouse object.
     """
 
     def __init__(self):
@@ -46,6 +42,7 @@ class Mouse(object):
     def get_pos(self):
         """
         Return x,y of mouse pointer.
+
         If the pointer is not in canvas, returns -1,-1
         """
         if self.mousePos['x'] != -1:
@@ -69,7 +66,9 @@ class Mouse(object):
 
     def set_visible(self, visible):
         """
-        Set visibility of mouse cursor. Return bool of previous state.
+        Set mouse cursor visibility according to visible bool argument.
+
+        Return previous cursor visibility state.
         """
         visible_pre = self._cursorVisible
         if visible:
@@ -91,11 +90,12 @@ class Mouse(object):
     def set_cursor(self, *cursor):
         """
         Set mouse cursor.
+
         Alternative arguments:
         * system cursor or cursor object
         * image url or surface, hotspot (x,y), and optional fallback
         * size, hotspot, data, mask, and optional fallback
-        Refer to pyjsdl.cursors for details.
+        Refer to cursors module for details.
         """
         args = len(cursor)
         if args == 1:

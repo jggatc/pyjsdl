@@ -1,6 +1,12 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Surfarray module**
+
+The module provides array access to surface pixel data.
+"""
+
 from pyjsdl.surface import Surface
 from pyjsdl.pyjsarray import Ndarray
 from pyjsdl.pyjsarray import Uint8ClampedArray
@@ -13,14 +19,11 @@ import sys
 if sys.version_info < (3,):
     from pyjsdl.util import _range as range
 
-__docformat__ = 'restructuredtext'
-
-__doc__ = 'Surface pixel manipulation'
-
 
 def array(surface):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [y,x] in RGBA format.
     Data array most consistent to ImageData format.
     """
@@ -31,6 +34,7 @@ def array(surface):
 def array2d(surface, copydata=False):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] in integer color format.
     Provides an interface to ImageData format.
     Creates a new formatted array if optional copydata argument is True.
@@ -45,6 +49,7 @@ def array2d(surface, copydata=False):
 def array3d(surface, copydata=False):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] in RGB format.
     Provides an interface to ImageData format.
     Creates a new formatted array if optional copydata argument is True.
@@ -59,6 +64,7 @@ def array3d(surface, copydata=False):
 def array_alpha(surface, copydata=False):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] of pixel alpha value.
     Provides an interface to ImageData format.
     Creates a new formatted array if optional copydata argument is True.
@@ -73,6 +79,7 @@ def array_alpha(surface, copydata=False):
 def make_surface(array):
     """
     Generates image pixels from array data.
+
     Argument array containing image data.
     Return Surface generated from array.
     """
@@ -84,6 +91,7 @@ def make_surface(array):
 def blit_array(surface, array):
     """
     Generates image pixels from array data.
+
     Arguments include destination Surface and array containing image data.
     """
     try:
@@ -109,6 +117,7 @@ def blit_array(surface, array):
 class ImageMatrixRGB(ImageMatrix):
     """
     Array of pixel data arranged by width/height in RGB format.
+
     Interface to ImageData.
     """
 
@@ -131,6 +140,7 @@ class ImageMatrixRGB(ImageMatrix):
 class ImageRGB(Ndarray):
     """
     Array of pixel data arranged by width/height in RGB format.
+
     Array data derived from ImageData.
     """
 
@@ -174,6 +184,7 @@ class ImageRGB(Ndarray):
 class ImageMatrixAlpha(ImageMatrix):
     """
     Array of pixel data arranged by width/height of pixel alpha value.
+
     Interface to ImageData.
     """
 
@@ -190,6 +201,7 @@ class ImageMatrixAlpha(ImageMatrix):
 class ImageAlpha(Ndarray):
     """
     Array of pixel data arranged by width/height of pixel alpha value.
+
     Array data derived from ImageData.
     """
 
@@ -231,6 +243,7 @@ class ImageAlpha(Ndarray):
 class ImageMatrixInteger(ImageMatrix):
     """
     Array of pixel data arranged by width/height in integer color format.
+
     Interface to ImageData.
     """
 
@@ -252,6 +265,7 @@ class ImageMatrixInteger(ImageMatrix):
 class ImageInteger(Ndarray):
     """
     Array of pixel data arranged by width/height in integer color format.
+
     Array data derived from ImageData.
     """
 

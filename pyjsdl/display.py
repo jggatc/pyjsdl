@@ -1,6 +1,12 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Display module**
+
+The module controls display surface updates and registers interaction events.
+"""
+
 import base64
 from pyjsdl.surface import Surface
 from pyjsdl.rect import Rect
@@ -10,8 +16,6 @@ from pyjsdl import constants as Const
 from pyjsdl.pyjsobj import RootPanel, SimplePanel, VerticalPanel, TextBox, TextArea
 from pyjsdl.pyjsobj import requestAnimationFrameInit, loadImages, Event, DOM, Window
 from pyjsdl import pyjsobj
-
-__docformat__ = 'restructuredtext'
 
 
 _canvas = None
@@ -272,6 +276,7 @@ class Canvas(Surface):
     def preventContextMenu(self, setting=True):
         """
         Control contextmenu event.
+
         Optional bool setting to prevent event, default to True.
         """
         if setting:
@@ -381,31 +386,7 @@ class Callback(object):
 
 class Display(object):
     """
-    **pyjsdl.display**
-
-    * pyjsdl.display.init
-    * pyjsdl.display.set_mode
-    * pyjsdl.display.setup
-    * pyjsdl.display.setup_images
-    * pyjsdl.display.textbox_init
-    * pyjsdl.display.is_canvas
-    * pyjsdl.display.get_surface
-    * pyjsdl.display.get_canvas
-    * pyjsdl.display.get_panel
-    * pyjsdl.display.get_vpanel
-    * pyjsdl.display.resize
-    * pyjsdl.display.getAbsoluteLeft
-    * pyjsdl.display.getAbsoluteTop
-    * pyjsdl.display.getScrollLeft
-    * pyjsdl.display.getScrollTop
-    * pyjsdl.display.quit
-    * pyjsdl.display.get_init
-    * pyjsdl.display.get_active
-    * pyjsdl.display.set_icon
-    * pyjsdl.display.set_caption
-    * pyjsdl.display.get_caption
-    * pyjsdl.display.flip
-    * pyjsdl.display.update
+    Display object.
     """
 
     def __init__(self):
@@ -419,7 +400,7 @@ class Display(object):
 
     def init(self):
         """
-        Initialize display.
+        Initialize display module.
         """
         if not self._initialized:
             self.id = ''
@@ -430,7 +411,8 @@ class Display(object):
     def set_mode(self, size, buffered=True, *args, **kwargs):
         """
         Setup the display Surface.
-        Argument include size (x,y) of surface and optional buffered surface.
+
+        Argument include size (width, height) of surface and optional buffered surface.
         Return a reference to the display Surface.
         """
         self.canvas = Canvas(size, buffered)
@@ -456,9 +438,10 @@ class Display(object):
     def setup(self, callback, images=None):
         """
         Initialize Canvas for script execution.
+
         Argument include callback function to run and optional images list to preload.
         Callback function can also be an object with a run method to call.
-        The images can be image URL, or file-like object or base64 data in format (name.ext,data).
+        The images can be image URL, or base64 data in format (name.ext,data).
         """
         self.canvas.set_callback(callback)
         image_list = []
@@ -472,6 +455,7 @@ class Display(object):
     def set_callback(self, callback):
         """
         Set Canvas callback function.
+
         Argument callback function to run.
         Callback function can also be an object with a run method to call.
         """
@@ -483,7 +467,8 @@ class Display(object):
     def setup_images(self, images):
         """
         Add images to image preload list.
-        The argument is an image or list of images representing an image URL, or file-like object or base64 data in format (name.ext,data).
+
+        The argument is an image or list of images representing an image URL, or base64 data in format (name.ext,data).
         Image preloading occurs at display.setup call.
         """
         if isinstance(images, str):
@@ -492,7 +477,9 @@ class Display(object):
 
     def textbox_init(self):
         """
-        Initiate textbox functionality and creates instances of pyjsdl.display.textbox and pyjsdl.display.textarea placed in lower VerticalPanel.
+        Initiate textbox functionality.
+
+        Creates instances of display.textbox and display.textarea in lower VerticalPanel.
         """
         if not self.textbox:
             self.textbox = Textbox()
@@ -534,6 +521,7 @@ class Display(object):
     def resize(self, width, height):
         """
         Resize canvas display.
+
         Arguments width and height of display.
         """
         self.canvas.resize(width, height)
@@ -587,6 +575,7 @@ class Display(object):
     def set_icon(self, icon):
         """
         Set page icon.
+
         Argument is the icon image URL or relative path.
         Icon can be a surface including images that were preloaded.
         """
@@ -596,6 +585,7 @@ class Display(object):
     def set_caption(self, text):
         """
         Set Canvas element id.
+
         Argument is the id text.
         """
         self.id = text
@@ -624,6 +614,7 @@ class Display(object):
     def update(self, rect_list=None):
         """
         Repaint display.
+
         Optional rect or rect list to specify regions to repaint.
         """
         if hasattr(rect_list, 'append'):
@@ -658,7 +649,8 @@ def _update(canvas, rect_list):
 class Textbox(TextBox):
     """
     TextBox object for text input.
-    Optional argument size (x,y) of textbox and panel to hold element.
+
+    Optional argument size (width, height) of textbox and panel to hold element.
     Default size derived from Canvas size placed in lower VerticalPanel.
     """
 
@@ -703,7 +695,8 @@ class Textbox(TextBox):
 class Textarea(TextArea):
     """
     TextArea object for text input/output.
-    Optional argument size (x,y) of textarea and panel to hold element.
+
+    Optional argument size (width, height) of textarea and panel to hold element.
     Default size derived from Canvas size placed in lower VerticalPanel.
     """
 

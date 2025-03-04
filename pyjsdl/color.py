@@ -1,24 +1,33 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from pyjsdl.pyjsobj import Color as _Color
+"""
+**Color module**
 
-__docformat__ = 'restructuredtext'
+The module provides a color object.
+"""
+
+from pyjsdl.pyjsobj import Color as _Color
 
 
 class Color(_Color):
+    """
+    Color object.
+    """
 
     def __init__(self, *color):
         """
-        Return Color object.
+        Initialize Color object.
         
-        Alternative arguments:
+        Alternative arguments::
         
         * r,g,b,a
         * r,g,b
         * (r,g,b,a)
         * (r,g,b)
         * integer argb
+        * html string '#rrggbb[aa]'
+        * hex string '0xrrggbb[aa]'
         * Color
 
         Color has the attributes::
@@ -26,7 +35,7 @@ class Color(_Color):
             r, g, b, a
 
         Operator functionality in --optimized mode (-O) requires --enable-operator-funcs.
-        Module initialization places pyjsdl.Color in module's namespace.
+        Module initialization places Color in module's namespace.
         """
         ln = len(color)
         if ln == 1:

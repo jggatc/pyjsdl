@@ -1,12 +1,16 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Font module**
+
+The module provides font access and rendering on a surface.
+"""
+
 from math import ceil as _ceil
 from pyjsdl.surface import Surface
 from pyjsdl.color import Color
 from pyjsdl.pyjsobj import HTML5Canvas
-
-__docformat__ = 'restructuredtext'
 
 
 _initialized = False
@@ -15,8 +19,6 @@ _surf = None
 
 def init():
     """
-    **pyjsdl.font.init**
-    
     Initialize font module.
     """
     global _surf, _initialized, match_font
@@ -33,8 +35,6 @@ init()
 
 def quit():
     """
-    **pyjsdl.font.quit**
-    
     Unintialize font module.
     """
     global _surf, _initialized
@@ -44,8 +44,6 @@ def quit():
 
 def get_init():
     """
-    **pyjsdl.font.get_init**
-    
     Check if font module is initialized.
     """
     return _initialized
@@ -53,8 +51,6 @@ def get_init():
 
 def get_default_font():
     """
-    **pyjsdl.font.get_default_font**
-    
     Return default font.
     """
     return Font._font[0]
@@ -62,8 +58,6 @@ def get_default_font():
 
 def get_fonts():
     """
-    **pyjsdl.font.get_fonts**
-    
     Return font names, which have fallback fonts if unavailable.
     """
     return Font._font
@@ -71,7 +65,7 @@ def get_fonts():
 
 def match_font(name):
     """
-    **pyjsdl.font.match_font**
+    Find system font.
     
     Argument name is a font name, or comma-delimited string of font names.
     Return font string in compliant format.
@@ -95,17 +89,7 @@ def match_font(name):
 
 class Font(object):
     """
-    **pyjsdl.font.Font**
-    
-    * Font.render
-    * Font.size
-    * Font.set_underline
-    * Font.get_underline
-    * Font.set_bold
-    * Font.get_bold
-    * Font.set_italic
-    * Font.get_italic
-    * Font.get_linesize
+    Font object.
     """
 
     _font = [
@@ -148,6 +132,7 @@ class Font(object):
     def __init__(self, name, size):
         """
         Return Font object.
+
         Arguments include name of a font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found. A font can be loaded from a filename 'fontname.ext' that was set in a css file; note: load process may be delayed a frame.
 
 Example of font file declaration:
@@ -210,6 +195,7 @@ Example of font file declaration:
                background=None, surface=None):      #optional surface for text rendering
         """
         Render text onto surface.
+
         Arguments are text to render, and optional antialias, RGB color of text, RGB color of background, and surface for text rendering.
         """
         if not surface:
@@ -240,7 +226,7 @@ Example of font file declaration:
 
     def size(self, text):
         """
-        Return size x,y of a surface for of given text.
+        Return size (width, height) of rendered text.
         """
         if _surf:   #>IE9 - use exception if HTML5Canvas not implemented
             _surf.setFont('%s %dpx %s' % (self.fontstyle,
@@ -271,6 +257,7 @@ Example of font file declaration:
     def set_underline(self, setting=True):
         """
         Set font underline style.
+
         Optional setting argument, default to True.
         """
         self.underline = setting
@@ -284,6 +271,7 @@ Example of font file declaration:
     def set_bold(self, setting=True):
         """
         Set font bold style.
+
         Optional setting argument, default to True.
         """
         self.bold = {True:'bold', False:''}[setting]
@@ -301,6 +289,7 @@ Example of font file declaration:
     def set_italic(self, setting=True):
         """
         Set font italic style.
+
         Optional setting argument, default to True.
         """
         self.italic = {True:'italic', False:''}[setting]
@@ -345,14 +334,13 @@ Example of font file declaration:
 
 class SysFont(Font):
     """
-    **pyjsdl.font.SysFont**
-    
-    * Font subclass
+    SysFont object.
     """
 
     def __init__(self, name, size, bold=False, italic=False):
         """
         Return SysFont subclassed of Font.
+
         Arguments include name of a system font and size of font, with optional bold and italic style. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
         """
         Font.__init__(self,name,size)

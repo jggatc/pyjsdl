@@ -1,26 +1,28 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Time module**
+
+The module provides time monitoring functionality.
+"""
+
 from pyjsdl import env
 from pyjsdl.pyjsobj import performanceNowInit
 from __pyjamas__ import JS
 
-__docformat__ = 'restructuredtext'
-
 
 class Clock(object):
     """
-    **pyjsdl.time.Clock**
-    
-    * Clock.get_time
-    * Clock.tick
-    * Clock.tick_busy_loop
-    * Clock.get_fps
+    Clock object.
     """
 
     _wnd = None
 
     def __init__(self):
+        """
+        Initialize clock object.
+        """
         self._time = self.time()
         self._time_init = self._time
         self._time_diff = 0
@@ -34,8 +36,10 @@ class Clock(object):
 
     def tick(self, framerate=0):
         """
-        Call once per program cycle, returns ms since last call.
+        Call once per program cycle.
+
         An optional framerate will add pause to limit rate.
+        Returns ms since last call.
         """
         if self._framerate != framerate and not env.canvas._pause:
             self._framerate = framerate
@@ -50,7 +54,9 @@ class Clock(object):
 
     def tick_busy_loop(self, framerate=0):
         """
-        Calls tick() with optional framerate.
+        Call once per program cycle.
+
+        An optional framerate will add pause to limit rate.
         Returns ms since last call.
         """
         return self.tick(framerate)
@@ -66,8 +72,6 @@ class Clock(object):
 
     def time(self):
         """
-        **pyjsdl.time.time**
-        
         Return system time (in ms).
         """
         return self._wnd.performance.now()
@@ -75,23 +79,15 @@ class Clock(object):
 
 class Time(object):
     """
-    **pyjsdl.time**
-    
-    * time.get_ticks
-    * time.delay
-    * time.wait
-    * time.set_timer
-    * time.time
-    * time.set_timeout
-    * time.clear_timeout
-    * time.set_interval
-    * time.clear_interval
-    * time.Clock
+    Time object.
     """
 
     _wnd = None
 
     def __init__(self):
+        """
+        Initialize time object.
+        """
         self.Clock = Clock
         Time._wnd = performanceNowInit()
         Clock._wnd = Time._wnd
@@ -102,16 +98,16 @@ class Time(object):
 
     def get_ticks(self):
         """
-        **pyjsdl.time.get_ticks**
-        
+        Get time ticks.
+
         Return ms since program start.
         """
         return self.time() - self._time_init
 
     def delay(self, time):
         """
-        **pyjsdl.time.delay**
-        
+        Time delay.
+
         Pause for given time (in ms). Return ms paused.
         Suspends the program, preferably use time.wait.
         """
@@ -122,8 +118,8 @@ class Time(object):
 
     def wait(self, time=0):
         """
-        **pyjsdl.time.wait**
-        
+        Wait function.
+
         Timeout program callback for given time (in ms).
         """
         if time:
@@ -141,7 +137,7 @@ class Time(object):
 
     def set_timer(self, event, time, once=False):
         """
-        **pyjsdl.time.set_timer**
+        Set timer.
 
         Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.
@@ -165,14 +161,14 @@ class Time(object):
 
     def time(self):
         """
-        **pyjsdl.time.time**
-        
         Return system time (in ms).
         """
         return self._wnd.performance.now()
 
     def set_timeout(self, obj, time):
         """
+        Set timeout.
+
         Timeout time (in ms) before triggering obj.run method.
         Return timer id.
         """
@@ -183,6 +179,7 @@ class Time(object):
     def clear_timeout(self, id):
         """
         Clear timer.
+
         Argument timer id of set_timeout.
         """
         JS("$wnd['clearTimeout'](@{{id}});")
@@ -190,6 +187,8 @@ class Time(object):
 
     def set_interval(self, obj, time):
         """
+        Set interval timeout.
+
         Recurring timeout time (in ms) before triggering obj.run method.
         Return timer id.
         """
@@ -199,7 +198,8 @@ class Time(object):
 
     def clear_interval(self, id):
         """
-        Clear timer.
+        Clear interval timeout.
+
         Argument timer id of set_interval.
         """
         JS("$wnd['clearInterval'](@{{id}});")

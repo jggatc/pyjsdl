@@ -1,6 +1,12 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Pyjsobj module**
+
+The module provides JavaScript functionality.
+"""
+
 from pyjamas import DOM
 from pyjamas import Window
 from pyjamas.ui.RootPanel import RootPanel

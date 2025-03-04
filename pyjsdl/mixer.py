@@ -1,37 +1,28 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Mixer module**
+
+The module provides function to load sounds and mixer to play sounds.
+"""
+
 from pyjsdl.pyjsobj import Audio
 from pyjsdl.time import Time
 from pyjsdl import env
 from pyjsdl import constants as Const
 from __pyjamas__ import JS
 
-__docformat__ = 'restructuredtext'
-
 
 class Mixer:
     """
-    **pyjsdl.mixer**
-    
-    * pyjsdl.mixer.init
-    * pyjsdl.mixer.quit
-    * pyjsdl.mixer.get_init
-    * pyjsdl.mixer.stop
-    * pyjsdl.mixer.pause
-    * pyjsdl.mixer.unpause
-    * pyjsdl.mixer.fadeout
-    * pyjsdl.mixer.set_num_channels
-    * pyjsdl.mixer.get_num_channels
-    * pyjsdl.mixer.set_reserved
-    * pyjsdl.mixer.find_channel
-    * pyjsdl.mixer.get_busy
-    * pyjsdl.mixer.Sound
-    * pyjsdl.mixer.Channel
-    * pyjsdl.mixer.music
+    Mixer object.
     """
 
     def __init__(self):
+        """
+        Initialize mixer object.
+        """
         Sound._mixer = self
         Channel._mixer = self
         self.Sound = Sound
@@ -126,6 +117,7 @@ class Mixer:
     def set_num_channels(self, count):
         """
         Set maximum mixer channels.
+
         Argument channel count.
         """
         if count >= self._channel_max:
@@ -155,6 +147,7 @@ class Mixer:
     def set_reserved(self, count):
         """
         Reserve channel.
+
         Argument reserved channel count.
         """
         if count > self._channel_max:
@@ -172,6 +165,7 @@ class Mixer:
     def find_channel(self, force=False):
         """
         Get an inactive mixer channel.
+
         Optional force attribute return longest running channel if all active.
         """
         if self._channel_available:
@@ -220,6 +214,9 @@ class Mixer:
             self._timerid = self._time.set_interval(self, 10)
 
     def run(self):
+        """
+        Mixer processing.
+        """
         if self._active:
             for id in self._channel_process:
                 complete = self._channels[id]._process()
@@ -283,21 +280,18 @@ class Mixer:
 
 class Sound(object):
     """
-    **pyjsdl.mixer.Sound**
-    
-    * Sound.play
-    * Sound.stop
-    * Sound.fadeout
-    * Sound.set_volume
-    * Sound.get_volume
-    * Sound.get_num_channels
-    * Sound.get_length
+    Sound object
     """
 
     _id = 0
     _mixer = None
 
     def __init__(self, sound_file):
+        """
+        Initialize sound object.
+
+        Argument sound_file is sound file.
+        """
         self._id = Sound._id
         Sound._id += 1
         if isinstance(sound_file, str):
@@ -312,6 +306,7 @@ class Sound(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on mixer channel.
+
         Argument loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -351,6 +346,7 @@ class Sound(object):
     def set_volume(self, volume):
         """
         Set sound volume.
+
         Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
@@ -397,26 +393,17 @@ class Sound(object):
 
 class Channel(object):
     """
-    **pyjsdl.mixer.Channel**
-    
-    * Channel.play
-    * Channel.stop
-    * Channel.pause
-    * Channel.unpause
-    * Channel.fadeout
-    * Channel.set_volume
-    * Channel.get_volume
-    * Channel.get_busy
-    * Channel.get_sound
-    * Channel.queue
-    * Channel.get_queue
-    * Channel.set_endevent
-    * Channel.get_endevent
+    Channel object.
     """
 
     _mixer = None
 
     def __init__(self, id):
+        """
+        Initialize channel object.
+
+        Argument id specifies channel, value between 0 and maximum mixer channels.
+        """
         self._id = id
         self._sound = None
         self._sound_object = None
@@ -459,6 +446,7 @@ class Channel(object):
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on channel.
+
         Argument sound to play, loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -570,6 +558,9 @@ class Channel(object):
         return complete
 
     def run(self):
+        """
+        Channel processing.
+        """
         time = self._sound_object.element.currentTime
         if self._maxtime:
             if time > self._maxtime:
@@ -667,6 +658,8 @@ class Channel(object):
     def set_volume(self, volume):
         """
         Set channel volume of sound playing.
+
+        Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
             volume = 0.0
@@ -714,6 +707,7 @@ class Channel(object):
     def set_endevent(self, eventType=None):
         """
         Set endevent for sound channel.
+
         Argument eventType is event type (eg. USEREVENT+num).
         Without an argument resets endevent to NOEVENT type.
         """
@@ -736,25 +730,13 @@ class Channel(object):
 
 class Music(object):
     """
-    **pyjsdl.mixer.music**
-
-    * music.load
-    * music.unload
-    * music.play
-    * music.rewind
-    * music.stop
-    * music.pause
-    * music.unpause
-    * music.fadeout
-    * music.set_volume
-    * music.get_volume
-    * music.get_busy
-    * music.queue
-    * music.set_endevent
-    * music.get_endevent
+    Music object.
     """
 
     def __init__(self):
+        """
+        Initialize music channel.
+        """
         self._channel = Channel(-1)
         self._sound = None
         self._queue = None
@@ -780,6 +762,7 @@ class Music(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play music.
+
         Argument loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -837,6 +820,7 @@ class Music(object):
     def set_volume(self, volume):
         """
         Set music volume.
+
         Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
@@ -875,6 +859,7 @@ class Music(object):
     def set_endevent(self, eventType=None):
         """
         Set endevent for music channel.
+
         Argument eventType is event type (eg. USEREVENT+num).
         Without an argument resets endevent to NOEVENT type.
         """

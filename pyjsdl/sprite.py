@@ -1,6 +1,12 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Sprite module**
+
+The module provides sprite object functionality.
+"""
+
 from pyjsdl.rect import rectPool
 from pyjsdl import mask
 import sys
@@ -10,8 +16,6 @@ if sys.version_info < (3,):
     from pyjsdl.util import _dict as dict
     from pyjsdl.util import _next as next
 
-__docformat__ = 'restructuredtext'
-
 
 def id(obj):
     return obj._identity
@@ -19,21 +23,15 @@ def id(obj):
 
 class Sprite(object):
     """
-    **pyjsdl.sprite.Sprite**
-    
-    * Sprite.add
-    * Sprite.remove
-    * Sprite.kill
-    * Sprite.alive
-    * Sprite.groups
-    * Sprite.update
+    Sprite object.
     """
 
     _identity = 0
 
     def __init__(self, *groups):
         """
-        Return Sprite.
+        Initialize Sprite object.
+
         Optional argument inludes group(s) to place sprite.
         Sprite require image and rect attributes for some functionality.
         """
@@ -97,6 +95,8 @@ class Sprite(object):
 
     def update(self, *args):
         """
+        Sprite update.
+
         Method to place sprite update statements that is called by group update.
         """
         pass
@@ -104,39 +104,29 @@ class Sprite(object):
 
 class DirtySprite(Sprite):
     """
-    **pyjsdl.sprite.Sprite**
-    
-    * Sprite subclass
-    * subclass not implemented
+    DirtySprite object.
     """
 
     def __init__(self, *groups):
         """
-        Return Sprite.
+        Initialize Sprite object.
+
+        Subclass not implemented.
         """
         Sprite.__init__(self, *groups)
 
 
 class Group(object):
     """
-    **pyjsdl.sprite.Group**
-    
-    * Group.sprites
-    * Group.copy
-    * Group.add
-    * Group.remove
-    * Group.has
-    * Group.draw
-    * Group.clear
-    * Group.empty
-    * Group.update
+    Group object.
     """
 
     _identity = 0
 
     def __init__(self, *sprites):
         """
-        Return Group.
+        Initialize Group object.
+
         Can optionally be called with sprite(s) to add.
         """
         self._identity = Group._identity
@@ -233,7 +223,9 @@ class Group(object):
 
     def clear(self, surface, background):
         """
-        Clear previous sprite draw to surface using a background surface.
+        Clear previous sprite drawn to surface
+
+        Uses the background surface to clear.
         The background argument can be a callback function.
         """
         self._clear_active = True
@@ -254,6 +246,8 @@ class Group(object):
 
     def update(self, *args):
         """
+        Group update.
+
         Update sprites in group by calling sprite.update.
         """
         for sprite in self._sprites.values():
@@ -263,7 +257,7 @@ class Group(object):
 
 class RenderPlain(Group):
     """
-    **pyjsdl.sprite.RenderPlain**
+    RenderPlain object.
 
     Same as sprite.Group.
     """
@@ -272,7 +266,7 @@ class RenderPlain(Group):
 
 class RenderClear(Group):
     """
-    **pyjsdl.sprite.RenderClear**
+    RenderClear object.
 
     Same as sprite.Group.
     """
@@ -281,14 +275,14 @@ class RenderClear(Group):
 
 class GroupSingle(Group):
     """
-    **pyjsdl.sprite.GroupSingle**
-    
-    * Group subclass
+    GroupSingle object.
     """
 
     def __init__(self, sprite=None):
         """
-        Return GroupSingle, a Group subclass that holds a single sprite.
+        Initialize GroupSingle object.
+
+        Group subclass that holds a single sprite.
         Can optionally be called with sprite to add.
         """
         if sprite:
@@ -298,7 +292,9 @@ class GroupSingle(Group):
 
     def add(self, sprite):
         """
-        Add sprite to group, replacing existing sprite.
+        Add sprite to group.
+
+        Addition replaces existing sprite.
         """
         self.empty()
         self._sprites[id(sprite)] = sprite
@@ -323,14 +319,14 @@ class GroupSingle(Group):
 
 class RenderUpdates(Group):
     """
-    **pyjsdl.sprite.RenderUpdates**
-    
-    * Group subclass
+    RenderUpdates object.
     """
 
     def __init__(self, *sprites):
         """
-        Return RenderUpdates, a Group subsclass that provides dirty draw functions.
+        Initialize RenderUpdates object.
+
+        Group subsclass that provides dirty draw functions.
         Can optionally be called with sprite(s) to add.
         """
         Group.__init__(self, *sprites)
@@ -339,6 +335,7 @@ class RenderUpdates(Group):
     def draw(self, surface):
         """
         Draw sprite on surface.
+
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
         surface._blits([(sprite.image,sprite.rect) for sprite in self])
@@ -372,14 +369,14 @@ class RenderUpdates(Group):
 
 class OrderedUpdates(RenderUpdates):
     """
-    **pyjsdl.sprite.OrderedUpdates**
-    
-    * RenderUpdates subclass
+    OrderUpdates object.
     """
 
     def __init__(self, *sprites):
         """
-        Return OrderedUpdates, a RenderUpdates subclass that maintains order of sprites.
+        Initialize OrderedUpdates object.
+
+        RenderUpdates subclass that maintains order of sprites.
         Can optionally be called with sprite(s) to add.
         """
         self._orderedsprites = []
@@ -404,7 +401,9 @@ class OrderedUpdates(RenderUpdates):
 
     def add(self, *sprites):
         """
-        Add sprite(s) to group, maintaining order of addition.
+        Add sprite(s) to group.
+
+        Maintains order of sprite addition.
         """
         for sprite in sprites:
             if hasattr(sprite, '_groups'):
@@ -442,15 +441,13 @@ class OrderedUpdates(RenderUpdates):
 
 class LayeredUpdates(OrderedUpdates):
     """
-    **pyjsdl.sprite.LayeredUpdates**
-    
-    * OrderedUpdates subclass
-    * subclass not implemented
+    LayeredUpdates object.
     """
 
     def __init__(self, *sprites, **kwargs):
         """
-        Return LayeredUpdates
+        Initialize LayeredUpdates object.
+
         Optional argument sprites to add to group.
         If sprite has a _layer attribute, it will be added to that layer,
         otherwise it will be added to the default layer.
@@ -489,7 +486,9 @@ class LayeredUpdates(OrderedUpdates):
 
     def add(self, *sprites, **kwargs):
         """
-        Add sprite(s) to group, maintaining order based on layer of sprite,
+        Add sprite(s) to group.
+
+        Add sprites with maintaining order based on layer of sprite,
         derived from sprite _layer attribute or if absent default layer.
         If layer keyword argument is provided it is used.
         """
@@ -676,23 +675,22 @@ class LayeredUpdates(OrderedUpdates):
 
 class LayeredDirty(LayeredUpdates):
     """
-    **pyjsdl.sprite.LayeredDirty**
-    
-    * LayeredUpdates subclass
-    * subclass not implemented
+    LayeredDirty object.
     """
 
     def __init__(self, *sprites):
         """
-        Return LayeredUpdates - subclass not implemented.
+        Initialize LayeredUpdates object.
+
+        Subclass not implemented.
         """
         LayeredUpdates(self, *sprites)
 
 
 def spritecollide(sprite, group, dokill, collided=None):
     """
-    **pyjsdl.sprite.spritecollide**
-    
+    Sprite collision function.
+
     Return list of sprites in group that intersect with sprite.
     The dokill argument is a bool, True removes sprites that collide from all groups.
     An optional collided is a callback function taking two sprites and return bool collision.
@@ -714,8 +712,8 @@ def spritecollide(sprite, group, dokill, collided=None):
 
 def collide_rect(sprite1, sprite2):
     """
-    **pyjsdl.sprite.collide_rect**
-    
+    Sprite collision function.
+
     Check if the rects of the two sprites intersect.
     Can be used as spritecollide callback function.
     """
@@ -724,8 +722,8 @@ def collide_rect(sprite1, sprite2):
 
 def collide_rect_ratio(ratio):
     """
-    **pyjsdl.sprite.collide_rect_ratio**
-    
+    Sprite collision function.
+
     Return a callable that checks if the rects of the two sprites intersect.
     The ratio attribute will determine scaling of the rect, where 1.0 is same size.
     Can be used as spritecollide callback function.
@@ -760,8 +758,8 @@ class _collide_rect_ratio(object):
 
 def collide_circle(sprite1, sprite2):
     """
-    **pyjsdl.sprite.collide_circle**
-    
+    Sprite collision function.
+
     Check two sprites intersect by checking by intersection of circle around their centers.
     Will use sprite radius attribute or circle will encompass rect attribute.
     Can be used as spritecollide callback function.
@@ -785,8 +783,8 @@ def collide_circle(sprite1, sprite2):
 
 def collide_circle_ratio(ratio):
     """
-    **pyjsdl.sprite.collide_circle_ratio**
-    
+    Sprite collision function.
+
     Return a callable that checks two sprites intersect by checking by intersection of circle around their centers.
     The ratio attribute will determine scaling of the circle, where 1.0 is same size.
     Will use sprite radius attribute or circle will encompass rect attribute.
@@ -823,8 +821,8 @@ class _collide_circle_ratio(object):
 
 def collide_mask(sprite1, sprite2):
     """
-    **pyjsdl.sprite.collide_mask**
-    
+    Sprite collision function.
+
     Check if mask of sprites intersect.
     Will use sprite mask attribute or mask generated from image attribute.
     Can be used as spritecollide callback function.
@@ -846,8 +844,8 @@ def collide_mask(sprite1, sprite2):
 
 def groupcollide(group1, group2, dokill1, dokill2):
     """
-    **pyjsdl.sprite.groupcollide**
-    
+    Sprite collision function.
+
     Return dictionary of sprites in group1 with list of sprites in group2 that intersect.
     The dokill argument is a bool, True removes sprites that collide from all groups.
     """
@@ -873,8 +871,8 @@ def groupcollide(group1, group2, dokill1, dokill2):
 
 def spritecollideany(sprite, group):
     """
-    **pyjsdl.sprite.spritecollideany**
-    
+    Sprite collision function.
+
     Check if sprite intersect with any sprites in group.
     """
     for _sprite in group:

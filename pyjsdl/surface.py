@@ -1,6 +1,12 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Surface module**
+
+The module provides surface object.
+"""
+
 from pyjsdl.pyjsobj import HTML5Canvas
 from pyjsdl.rect import Rect, rectPool
 from pyjsdl.color import Color
@@ -10,44 +16,23 @@ import sys
 if sys.version_info < (3,):
     from pyjsdl.util import _range as range
 
-__docformat__ = 'restructuredtext'
-
 
 _return_rect = True
 
 
 class Surface(HTML5Canvas):
     """
-    **pyjsdl.Surface**
-    
-    * Surface.get_size
-    * Surface.get_width
-    * Surface.get_height
-    * Surface.get_rect
-    * Surface.resize
-    * Surface.copy
-    * Surface.subsurface
-    * Surface.getSubimage
-    * Surface.blit
-    * Surface.blits
-    * Surface.set_alpha
-    * Surface.get_alpha
-    * Surface.set_colorkey
-    * Surface.get_colorkey
-    * Surface.replace_color
-    * Surface.get_at
-    * Surface.set_at
-    * Surface.fill
-    * Surface.get_parent
-    * Surface.get_offset
-    * Surface.toDataURL
+    Surface object.
     """
+
     def __init__(self, size, *args, **kwargs):
         """
-        Return Surface subclassed from a Canvas implementation.
-        The size argument is the dimension (w,h) of surface.
+        Initialize Surface object.
 
-        Module initialization places pyjsdl.Surface in module's namespace.
+        Return Surface subclassed from a Canvas implementation.
+        The size argument is the dimension (width, height) of surface.
+
+        Module initialization places Surface in module's namespace.
         """
         self.width = int(size[0])
         self.height = int(size[1])
@@ -98,6 +83,7 @@ class Surface(HTML5Canvas):
     def get_rect(self, **attr):
         """
         Return rect of the surface.
+
         An optional keyword argument of the rect position.
         """
         rect = Rect(0, 0, self.width, self.height)
@@ -117,7 +103,9 @@ class Surface(HTML5Canvas):
 
     def subsurface(self, rect):
         """
-        Return Surface that represents a subsurface.
+        Return subsurface.
+
+        Subsurface shares data with this surface.
         The rect argument is the area of the subsurface.
         Argument can be 't'/'f' for data sync to/from subsurface.
         """
@@ -149,6 +137,7 @@ class Surface(HTML5Canvas):
     def getSubimage(self, x, y, width, height):
         """
         Return subimage of Surface.
+
         Arguments include x, y, width, and height of the subimage.
         """
         surface = Surface((width,height))
@@ -159,6 +148,7 @@ class Surface(HTML5Canvas):
     def blit(self, surface, position, area=None):
         """
         Draw given surface on this surface at position.
+
         Optional area delimitates the region of given surface to draw.
         """
         ctx = self.impl.canvasContext
@@ -193,6 +183,7 @@ class Surface(HTML5Canvas):
     def blits(self, blit_sequence, doreturn=True):
         """
         Draw a sequence of surfaces on this surface.
+
         Argument blit_sequence of (source, dest) or (source, dest, area).
         Optional doreturn (defaults to True) to return list of rects.
         """
@@ -251,7 +242,9 @@ class Surface(HTML5Canvas):
 
     def set_alpha(self, alpha):
         """
-        Set surface alpha (0-255), disabled by passing None.
+        Set surface alpha.
+
+        Surface alpha can have values of 0 to 255, disabled by passing None.
         """
         if alpha is not None:
             _alpha = alpha/255.0
@@ -344,7 +337,9 @@ class Surface(HTML5Canvas):
 
     def get_at(self, pos):
         """
-        Get color of a surface pixel. The pos argument represents x,y position of pixel.
+        Get color of a surface pixel.
+
+        The pos argument represents x,y position of pixel.
         Return color (r,g,b,a) of a surface pixel.
         """
         pixel = self.impl.getImageData(pos[0], pos[1], 1, 1)
@@ -353,6 +348,7 @@ class Surface(HTML5Canvas):
     def set_at(self, pos, color):
         """
         Set color of a surface pixel.
+
         The arguments represent position x,y and color of pixel.
         """
         if self._fill_style != color:
@@ -423,6 +419,7 @@ class Surface(HTML5Canvas):
     def toDataURL(self, datatype=None):
         """
         Return surface data as a base64 data string.
+
         Optional datatype to set data format, default to 'image/png'.
         Implemented with HTML5 Canvas toDataURL method.
         """
@@ -442,8 +439,16 @@ class Surface(HTML5Canvas):
 
 
 class Surf(object):
+    """
+    Surf object.
+    """
 
     def __init__(self, image):
+        """
+        Initialize Surf object.
+
+        Image argument wrapped to provide limited Surface functionality.
+        """
         self.canvas = image
         self.width = self.canvas.width
         self.height = self.canvas.height
@@ -456,21 +461,40 @@ class Surf(object):
         return s % (self.__class__.__name__, self.width, self.height)
 
     def get_size(self):
+        """
+        Return size of surface.
+        """
         return (self.width, self.height)
 
     def get_width(self):
+        """
+        Return width of surface.
+        """
         return self.width
 
     def get_height(self):
+        """
+        Return height of surface.
+        """
         return self.height
 
     def get_rect(self, **attr):
+        """
+        Return rect of the surface.
+
+        An optional keyword argument of the rect position.
+        """
         rect = Rect(0, 0, self.width, self.height)
         for key in attr:
             setattr(rect, key, attr[key])
         return rect
 
     def set_alpha(self, alpha):
+        """
+        Set surface alpha.
+
+        Surface alpha can have values of 0 to 255, disabled by passing None.
+        """
         if alpha is not None:
             _alpha = alpha/255.0
             if _alpha < 0.0:
@@ -482,15 +506,23 @@ class Surf(object):
             self._alpha = 1.0
 
     def get_alpha(self):
+        """
+        Get surface alpha value.
+        """
         return int(self._alpha*255)
 
 
 class IndexSizeError(Exception):
+    """
+    Exception object.
+    """
     pass
 
 
 def bounding_rect_return(setting):
     """
+    Bounding rect return.
+
     Set whether surface blit/fill functions return bounding Rect.
     Setting (bool) defaults to True on module initialization.
     """

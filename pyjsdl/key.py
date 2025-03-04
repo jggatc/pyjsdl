@@ -1,20 +1,19 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Key module**
+
+The module provides keyboard functionality.
+"""
+
 from pyjsdl import env
 from pyjsdl import constants as Const
-
-__docformat__ = 'restructuredtext'
 
 
 class Key(object):
     """
-    **pyjsdl.key**
-    
-    * pyjsdl.key.name
-    * pyjsdl.key.get_mods
-    * pyjsdl.key.set_repeat
-    * pyjsdl.key.get_repeat
+    Key object.
     """
 
     def __init__(self):
@@ -56,6 +55,8 @@ class Key(object):
 
     def set_repeat(self, delay=0, interval=0):
         """
+        Set key repeat.
+
         Set key repeat delay (ms) and interval (ms) settings.
         Key repeat initially disabled.
         """

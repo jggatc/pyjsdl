@@ -1,13 +1,15 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Draw module**
+
+The module provides functions to draw shapes on a surface.
+"""
+
 from math import pi as _pi
 from pyjsdl.rect import Rect
 from pyjsdl.color import Color
-
-__docformat__ = 'restructuredtext'
-
-__doc__ = 'Draw shapes'
 
 
 _return_rect = True
@@ -15,9 +17,11 @@ _return_rect = True
 
 def rect(surface, color, rect, width=0):
     """
-    Draw rectangle shape, and returns bounding Rect.
+    Draw rectangle shape.
+
     Arguments include surface to draw, color, Rect.
     Optional width argument of outline, which defaults to 0 for filled shape.
+    Return bounding Rect.
     """
     if hasattr(rect, 'width'):
         _rect = rect
@@ -50,9 +54,11 @@ def rect(surface, color, rect, width=0):
 
 def circle(surface, color, position, radius, width=0):
     """
-    Draw circular shape, and returns bounding Rect.
+    Draw circular shape.
+
     Arguments include surface to draw, color, position and radius.
     Optional width argument of outline, which defaults to 0 for filled shape.
+    Return bounding Rect.
     """
     surface.beginPath()
     surface.arc(position[0], position[1], radius, 0, 2*_pi, False)
@@ -85,9 +91,11 @@ def circle(surface, color, position, radius, width=0):
 
 def ellipse(surface, color, rect, width=0):
     """
-    Draw ellipse shape, and returns bounding Rect.
+    Draw ellipse shape.
+
     Arguments include surface to draw, color, and rect.
     Optional width argument of outline, which defaults to 0 for filled shape.
+    Return bounding Rect.
     """
     if hasattr(rect, 'width'):
         _rect = rect
@@ -132,9 +140,11 @@ def ellipse(surface, color, rect, width=0):
 
 def arc(surface, color, rect, start_angle, stop_angle, width=1):
     """
-    Draw arc shape, and returns bounding Rect.
+    Draw arc shape.
+
     Arguments include surface to draw, color, rect, start_angle, stop_angle.
     Optional width argument of outline.
+    Return bounding Rect.
     """
     if hasattr(rect, 'width'):
         _rect = rect
@@ -203,9 +213,11 @@ def arc(surface, color, rect, start_angle, stop_angle, width=1):
 
 def polygon(surface, color, pointlist, width=0):
     """
-    Draw polygon shape, and returns bounding Rect.
+    Draw polygon shape.
+
     Arguments include surface to draw, color, and pointlist.
     Optional width argument of outline, which defaults to 0 for filled shape.
+    Return bounding Rect.
     """
     surface.beginPath()
     surface.moveTo(*pointlist[0])
@@ -245,9 +257,11 @@ def polygon(surface, color, pointlist, width=0):
 
 def line(surface, color, point1, point2, width=1):
     """
-    Draw line, and returns bounding Rect.
+    Draw line.
+
     Arguments include surface to draw, color, point1, point2.
     Optional width argument of line.
+    Return bounding Rect.
     """
     surface.beginPath()
     surface.moveTo(*point1)
@@ -276,9 +290,11 @@ def line(surface, color, point1, point2, width=1):
 
 def lines(surface, color, closed, pointlist, width=1):
     """
-    Draw interconnected lines, and returns Rect bound.
+    Draw interconnected lines.
+
     Arguments include surface to draw, color, closed, and pointlist.
     Optional width argument of line.
+    Return bounding Rect.
     """
     surface.beginPath()
     surface.moveTo(*pointlist[0])
@@ -310,8 +326,10 @@ def lines(surface, color, closed, pointlist, width=1):
 
 def aaline(surface, color, point1, point2, blend=1):
     """
-    Draw line, and returns bounding Rect.
+    Draw line.
+
     Arguments include surface to draw, color, point1, point2.
+    Return bounding Rect.
     """
     rect = line(surface, color, point1, point2)
     return rect
@@ -319,8 +337,10 @@ def aaline(surface, color, point1, point2, blend=1):
 
 def aalines(surface, color, closed, pointlist, blend=1):
     """
-    Draw interconnected lines, and returns Rect bound.
+    Draw interconnected lines.
+
     Arguments include surface to draw, color, closed, and pointlist.
+    Return bounding Rect.
     """
     rect = lines(surface, color, closed, pointlist)
     return rect
@@ -328,6 +348,8 @@ def aalines(surface, color, closed, pointlist, blend=1):
 
 def bounding_rect_return(setting):
     """
+    Bounding rect return.
+
     Set whether draw functions return bounding Rect.
     Setting (bool) defaults to True on module initialization.
     """

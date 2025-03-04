@@ -1,7 +1,11 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-#Module constants defined as in Pygame/SDL and Web browser events.
+"""
+**Constants**
+
+Constants are defined as in Pygame/SDL and JavaScript events. Examine constants.py for information on the constants. The constant variables are imported into the Pyjsdl module namespace.
+"""
 
 
 KMOD_ALT = 4
@@ -158,16 +162,14 @@ K_w = 119
 K_x = 120
 K_y = 121
 K_z = 122
-
 MOUSEBUTTONDOWN = 5
 MOUSEBUTTONUP = 6
 MOUSEMOTION = 4
 KEYDOWN = 2
 KEYUP = 3
-
 ACTIVEEVENT = 32768
-APPFOCUSMOUSE = 0    #Pygame
-APPMOUSEFOCUS = 0    #SDL
+APPFOCUSMOUSE = 0
+APPMOUSEFOCUS = 0
 APPINPUTFOCUS = 1
 APPACTIVE = 2
 DOUBLEBUF = 0x40000000

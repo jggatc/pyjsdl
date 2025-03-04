@@ -1,6 +1,10 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Pyjsarray - Numeric module**
+"""
+
 from math import ceil as _ceil
 from __pyjamas__ import JS
 import sys
@@ -15,9 +19,9 @@ if sys.version_info < (3,):
 
 
 class TypedArray(object):
-
     """
     TypedArray is the base class that wraps the JavaScript TypedArray objects.
+
     The derived objects provides an interface to the JavaScript array objects.
     Typedarray implemented: Uint8ClampedArray, Uint8Array, Uint16Array, Uint32Array, Int8Array, Int16Array, Int32Array, Float32Array, Float64Array.
     The module contains an Ndarray class to instantiate N-dimensional arrays, ImageData and ImageMatrix classes that provide an interface to canvas ImageData, and BitSet classes that implement a bit array.
@@ -35,6 +39,8 @@ class TypedArray(object):
 
     def __init__(self, data=None, offset=None, length=None, typedarray=None):
         """
+        Initialize TypedArray object.
+
         The TypedArray object is instantiated with either the array size, an array of TypedArray or Python type, or an existing ArrayBuffer to view, which creates a new TypedArray of size and included data as the specified type. Optional arguments include offset index at which ArrayBuffer data is inserted and length of an ArrayBuffer.
         """
         if data:
@@ -118,7 +124,9 @@ class TypedArray(object):
 
     def set(self, data, offset=0):
         """
-        Set data to the array. Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
+        Set data to the array.
+
+        Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
         """
         if isinstance(data, (list,tuple)):
             if pyjs_mode.optimized:
@@ -131,7 +139,9 @@ class TypedArray(object):
 
     def subarray(self, begin=0, end=None):
         """
-        Retrieve a subarray of the array. The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
+        Retrieve a subarray of the array.
+
+        The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
         """
         if end is None:
             end = self._data.length
@@ -368,7 +378,9 @@ class CanvasPixelArray(TypedArray):
 
     def set(self, data, offset=0):
         """
-        Set data to the array. Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
+        Set data to the array.
+
+        Arguments: data is a list of either the TypedArray or Python type, offset is the start index where data will be set (defaults to 0).
         """
         if not self._superArray:
             for index in range(len(data)):
@@ -378,7 +390,9 @@ class CanvasPixelArray(TypedArray):
 
     def subarray(self, begin=0, end=None):
         """
-        Retrieve a subarray of the array. The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
+        Retrieve a subarray of the array.
+
+        The subarray is a is a view of the derived array. Optional arguments begin and end (default to begin/end of the array) are the index spanning the subarray.
         """
         if end is None:
             end = self._data.length
@@ -390,6 +404,9 @@ class CanvasPixelArray(TypedArray):
 
 
 class Ndarray(object):
+    """
+    Ndarray object.
+    """
 
     __typedarray = { 'uint8c':  Uint8ClampedArray,
                      'int8':    Int8Array,
@@ -414,6 +431,7 @@ class Ndarray(object):
     def __init__(self, dim, dtype='float64'):
         """
         Generate an N-dimensional array of TypedArray data.
+
         Argument can be size (int or tuple) or data (list or TypedArray).
         Optional argument dtype specifies TypedArray data type:
                 'uint8c'    Uint8ClampedArray
@@ -462,6 +480,7 @@ class Ndarray(object):
     def getshape(self):
         """
         Return array shape.
+
         Ndarray.shape accessible with compilation in --strict mode,
         and with --enable-descriptor-proto option in --optimized mode.
         """
@@ -470,6 +489,7 @@ class Ndarray(object):
     def setshape(self, *dim):
         """
         Set shape of array.
+
         Argument is new shape.
         Raises TypeError if shape is not appropriate.
         Ndarray.shape accessible with compilation in --strict mode,
@@ -1141,6 +1161,7 @@ class Ndarray(object):
     def op(self, operator, other):
         """
         Arithemtic operation across array elements.
+
         Arguments include operator and int/array.
         Operators: 'add', 'sub', 'mul', 'div', etc.
         Return array of the operation.
@@ -1153,6 +1174,7 @@ class Ndarray(object):
     def cmp(self, operator, other):
         """
         Comparison operation across array elements.
+
         Arguments include operator and int/array.
         Operators: 'lt', 'le', 'eq', 'ne', 'gt', 'ge'.
         Return comparison array.
@@ -1163,6 +1185,7 @@ class Ndarray(object):
     def matmul(self, other):
         """
         Matrix multiplication.
+
         Argument is an int or array.
         Return matrix multiplied array.
         """
@@ -1171,6 +1194,7 @@ class Ndarray(object):
     def reshape(self, dim):
         """
         Return view of array with new shape.
+
         Argument is new shape.
         Raises TypeError if shape is not appropriate.
         """
@@ -1195,6 +1219,7 @@ class Ndarray(object):
     def set(self, data):
         """
         Set array elements.
+
         Data argument can be a 1d/2d array or number used to set Ndarray elements, data used repetitively if consists of fewer elements than Ndarray.
         """
         if isinstance(data, (list,tuple)):
@@ -1263,6 +1288,7 @@ class Ndarray(object):
     def astype(self, dtype):
         """
         Return copy of array.
+
         Argument dtype is TypedArray data type.
         """
         typedarray = self.__typedarray[self.__dtypes[dtype]]
@@ -1285,6 +1311,7 @@ class Ndarray(object):
     def swapaxes(self, axis1, axis2):
         """
         Swap axes of array.
+
         Arguments are the axis to swap.
         Return view of array with axes changed.
         """
@@ -1324,6 +1351,9 @@ class Ndarray(object):
 
 
 class NP(object):
+    """
+    NP object.
+    """
 
     def zeros(self, size, dtype):
         """
@@ -1356,6 +1386,7 @@ class ImageData(object):
     def __init__(self, imagedata):
         """
         Provides an interface to canvas ImageData.
+
         The argument required is the ImageData instance to be accessed.
         """
         self._imagedata = imagedata
@@ -1379,6 +1410,7 @@ class ImageMatrix(Ndarray):
     def __init__(self, imagedata):
         """
         Provides an interface to canvas ImageData as an Ndarray array.
+
         The argument required is the ImageData instance to be accessed.
         """
         self._imagedata = ImageData(imagedata)
@@ -1405,7 +1437,8 @@ class ImageMatrix(Ndarray):
     def getPixel(self, index):
         """
         Get pixel RGBA.
-        The index arguement references the 2D array element.
+
+        The index argument references the 2D array element.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         return (self._imagedata.data[i], self._imagedata.data[i+1], self._imagedata.data[i+2], self._imagedata.data[i+3])
@@ -1413,7 +1446,8 @@ class ImageMatrix(Ndarray):
     def setPixel(self, index, value):
         """
         Set pixel RGBA.
-        The arguements index references the 2D array element and value is pixel RGBA.
+
+        The arguments index references the 2D array element and value is pixel RGBA.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         self._imagedata.data[i], self._imagedata.data[i+1], self._imagedata.data[i+2], self._imagedata.data[i+3] = value[0], value[1], value[2], value[3]
@@ -1422,7 +1456,8 @@ class ImageMatrix(Ndarray):
     def getPixelRGB(self, index):
         """
         Get pixel RGB.
-        The index arguement references the 2D array element.
+
+        The index argument references the 2D array element.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         return (self._imagedata.data[i], self._imagedata.data[i+1], self._imagedata.data[i+2])
@@ -1430,7 +1465,8 @@ class ImageMatrix(Ndarray):
     def setPixelRGB(self, index, value):
         """
         Set pixel RGB.
-        The arguements index references the 2D array element and value is pixel RGB.
+
+        The arguments index references the 2D array element and value is pixel RGB.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         self._imagedata.data[i], self._imagedata.data[i+1], self._imagedata.data[i+2] = value[0], value[1], value[2]
@@ -1439,7 +1475,8 @@ class ImageMatrix(Ndarray):
     def getPixelAlpha(self, index):
         """
         Get pixel alpha.
-        The index arguement references the 2D array element.
+
+        The index argument references the 2D array element.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         return self._imagedata.data[i+3]
@@ -1447,7 +1484,8 @@ class ImageMatrix(Ndarray):
     def setPixelAlpha(self, index, value):
         """
         Set pixel alpha.
-        The arguements index references the 2D array element and value is pixel alpha.
+
+        The arguments index references the 2D array element and value is pixel alpha.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         self._imagedata.data[i+3] = value
@@ -1456,7 +1494,8 @@ class ImageMatrix(Ndarray):
     def getPixelInteger(self, index):
         """
         Get pixel integer color.
-        The index arguement references the 2D array element.
+
+        The index argument references the 2D array element.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         return self._imagedata.data[i]<<16 | self._imagedata.data[i+1]<<8 | self._imagedata.data[i+2] | self.imagedata.data[i+3]<<24
@@ -1464,7 +1503,8 @@ class ImageMatrix(Ndarray):
     def setPixelInteger(self, index, value):
         """
         Set pixel integer color.
-        The arguements index references the 2D array element and value is pixel color.
+
+        The arguments index references the 2D array element and value is pixel color.
         """
         i = (index[0]*self._indices[0]) + (index[1]*4)
         self._imagedata.data[i], self._imagedata.data[i+1], self._imagedata.data[i+2], self._imagedata.data[i+3] = value>>16 & 0xff, value>>8 & 0xff, value & 0xff, value>>24 & 0xff
@@ -1478,8 +1518,9 @@ class ImageMatrix(Ndarray):
 
 
 class BitSet(object):
-
     """
+    BitSet object.
+
     BitSet provides a bitset object to use in a Python-to-JavaScript application. The object stores data in a JavaScript Uint8Array 8-bit typedarray. BitSet16 and BitSet32 stores data in Uint16Array (16-bit) and Uint32Array (32-bit) typedarray. The BitSet will dynamically expand to hold the bits required, an optional width argument define number of bits the BitSet instance will initially hold.
     """
 
@@ -1534,6 +1575,7 @@ class BitSet(object):
     def get(self, index, toIndex=None):
         """
         Get bit by index.
+
         Arguments include index of bit, and optional toIndex that return a slice as a BitSet.
         """
         if index > self._width-1:
@@ -1564,6 +1606,7 @@ class BitSet(object):
     def set(self, index, value=1):
         """
         Set bit by index.
+
         Optional argument value is the bit state of 1(True) or 0(False). Default:1
         """
         if index > self._width-1:
@@ -1579,7 +1622,9 @@ class BitSet(object):
 
     def fill(self, index=None, toIndex=None):
         """
-        Set the bit. If no argument provided, all bits are set.
+        Set the bit.
+
+        If no argument provided, all bits are set.
         Optional argument index is bit index to set, and toIndex to set a range of bits.
         """
         if index is None and toIndex is None:
@@ -1594,7 +1639,9 @@ class BitSet(object):
 
     def clear(self, index=None, toIndex=None):
         """
-        Clear the bit. If no argument provided, all bits are cleared.
+        Clear the bit.
+
+        If no argument provided, all bits are cleared.
         Optional argument index is bit index to clear, and toIndex to clear a range of bits.
         """
         if index is None:
@@ -1614,6 +1661,7 @@ class BitSet(object):
     def flip(self, index, toIndex=None):
         """
         Flip the state of the bit.
+
         Argument index is the bit index to flip, and toIndex to flip a range of bits.
         """
         if toIndex is None:
@@ -1642,6 +1690,7 @@ class BitSet(object):
     def intersects(self, bitset):
         """
         Check if set bits in this BitSet are also set in the bitset argument.
+
         Return True if bitsets intersect, otherwise return False.
         """
         for dat in range(len(bitset._data)):
@@ -1701,6 +1750,7 @@ class BitSet(object):
     def isEmpty(self):
         """
         Check whether any bit is set.
+
         Return True if none set, otherwise return False.
         """
         for data in self._data:
@@ -1723,6 +1773,7 @@ class BitSet16(BitSet):
     """
     BitSet using Uint16Array typedarray.
     """
+
     _bit = 16
     _bitmask = None
     __typedarray = Uint16Array
@@ -1735,6 +1786,7 @@ class BitSet32(BitSet):
     """
     BitSet using Uint32Array typedarray.
     """
+
     _bit = 32
     _bitmask = None
     __typedarray = Uint32Array
@@ -1754,8 +1806,16 @@ def typeOf(obj):
 
 
 class PyjsMode(object):
+    """
+    PyjsMode object.
+    """
 
     def __init__(self):
+        """
+        PyjsMode initialization.
+
+        Attributes strict and optimized set to Pyjs mode.
+        """
         self.strict, self.optimized = self._setmode()
 
     def __getattr__(self, attr):
@@ -1769,4 +1829,5 @@ class PyjsMode(object):
             return False, True
 
 pyjs_mode = PyjsMode()
+"Pyjs mode"
 

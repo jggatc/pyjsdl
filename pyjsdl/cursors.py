@@ -1,18 +1,25 @@
 #Pyjsdl - Copyright (C) 2013 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Cursors module**
+
+The module provides access to mouse cursors.
+"""
+
 from pyjsdl.surface import Surface
 from pyjsdl.color import Color
 from pyjsdl import constants as Const
 
 
-#cursors not implemented
 arrow = diamond = broken_x = tri_left = tri_right = ()
+"Unimplemented variables."
 
 
 def compile(strings, black='X', white='.', xor='o'):
     """
     Compile binary data from cursor string.
+
     Arguments cursor string, and optional symbols representing colors.
     Data represents black and white pixels, xor color defaulting to black.
     Data should be a string list of width divisible by 8.
@@ -43,6 +50,7 @@ def compile(strings, black='X', white='.', xor='o'):
 def create_cursor(size, data, mask):
     """
     Create cursor image from binary data.
+
     Arguments cursor size and its binary data and mask.
     Return surface, can be used with mouse.set_cursor.
     """
