@@ -274,11 +274,6 @@ class Canvas(Surface):
             callback.onTouchCancel(event)
 
     def preventContextMenu(self, setting=True):
-        """
-        Control contextmenu event.
-
-        Optional bool setting to prevent event, default to True.
-        """
         if setting:
             if self.onContextMenu: return
             element = self.getElement()

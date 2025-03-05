@@ -196,7 +196,7 @@ class TypedArray(object):
 
 class Uint8ClampedArray(TypedArray):
     """
-    Create a TypedArray interface to Uint8ClampedArray.
+    Uint8ClampedArray TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -212,7 +212,7 @@ class Uint8ClampedArray(TypedArray):
 
 class Uint8Array(TypedArray):
     """
-    Create a TypedArray interface to Uint8Array.
+    Uint8Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -228,7 +228,7 @@ class Uint8Array(TypedArray):
 
 class Uint16Array(TypedArray):
     """
-    Create a TypedArray interface to Uint16Array.
+    Uint16Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -244,7 +244,7 @@ class Uint16Array(TypedArray):
 
 class Uint32Array(TypedArray):
     """
-    Create a TypedArray interface to Uint32Array.
+    Uint32Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -260,7 +260,7 @@ class Uint32Array(TypedArray):
 
 class Int8Array(TypedArray):
     """
-    Create a TypedArray interface to Int8Array.
+    Int8Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -276,7 +276,7 @@ class Int8Array(TypedArray):
 
 class Int16Array(TypedArray):
     """
-    Create a TypedArray interface to Int16Array.
+    Int16Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -292,7 +292,7 @@ class Int16Array(TypedArray):
 
 class Int32Array(TypedArray):
     """
-    Create a TypedArray interface to Int32Array.
+    Int32Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -308,7 +308,7 @@ class Int32Array(TypedArray):
 
 class Float32Array(TypedArray):
     """
-    Create a TypedArray interface to Float32Array.
+    Float32Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -327,7 +327,7 @@ class Float32Array(TypedArray):
 
 class Float64Array(TypedArray):
     """
-    Create a TypedArray interface to Float64Array.
+    Float64Array TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):
@@ -346,7 +346,7 @@ class Float64Array(TypedArray):
 
 class CanvasPixelArray(TypedArray):
     """
-    Create a TypedArray interface to CanvasPixelArray.
+    CanvasPixelArray TypedArray interface.
     """
 
     def __init__(self, data=None, offset=None, length=None):

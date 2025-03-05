@@ -18,9 +18,9 @@ class Rect(object):
     def __init__(self, *args):
         """
         Initialize Rect object.
-        
+
         Alternative arguments:
-        
+
         * x, y, width, height
         * (x, y), (width, height)
         * (x, y, width, height)
@@ -28,7 +28,7 @@ class Rect(object):
         * Obj with rect attribute
 
         Rect has the attributes::
-        
+
         x, y, width, height
         top, left, bottom, right
         topleft, bottomleft, topright, bottomright
@@ -41,7 +41,7 @@ class Rect(object):
         with x/y/width/height whereas other attributes can be
         accessed with getattr/setattr functions or build with
         the --enable-descriptor-proto option.
-        
+
         Module initialization places Rect in module's namespace.
         """
         if len(args) == 1:

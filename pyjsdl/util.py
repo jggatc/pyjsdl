@@ -198,7 +198,7 @@ def dispatchEvent(event, element=None):
     """
     Dispatch JavaScript event.
 
-    The event is dispatched to the element.
+    The event is dispatched from the element.
     Default element is the canvas.
     """
     if element is None:

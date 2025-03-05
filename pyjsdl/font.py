@@ -66,7 +66,7 @@ def get_fonts():
 def match_font(name):
     """
     Find system font.
-    
+
     Argument name is a font name, or comma-delimited string of font names.
     Return font string in compliant format.
     """

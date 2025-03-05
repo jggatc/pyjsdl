@@ -18,7 +18,7 @@ if sys.version_info < (3,):
 def from_surface(surface, threshold=127):
     """
     Mask from surface.
-    
+
     Return Mask derived from surface using alpha transparency.
     Optional argument to set alpha threshold.
     """
@@ -40,7 +40,7 @@ def from_surface(surface, threshold=127):
 def from_threshold(surface, color, threshold=(0,0,0,255)):
     """
     Mask from surface.
-    
+
     Return Mask from surface using a given color.
     Optional threshold argument to set color range and alpha threshold.
     """

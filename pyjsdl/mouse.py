@@ -20,7 +20,7 @@ class Mouse(object):
     def __init__(self):
         """
         Provides methods to access the mouse function.
-        
+
         Module initialization creates pyjsdl.mouse instance.
         """
         self.mousePos = env.event.mousePos

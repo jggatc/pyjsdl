@@ -21,7 +21,7 @@ class Image(object):
     def __init__(self):
         """
         Initialize Image module.
-        
+
         Module initialization creates pyjsdl.image instance.
         """
         self.images = None

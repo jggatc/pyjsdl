@@ -18,9 +18,9 @@ class Color(_Color):
     def __init__(self, *color):
         """
         Initialize Color object.
-        
-        Alternative arguments::
-        
+
+        Alternative arguments:
+
         * r,g,b,a
         * r,g,b
         * (r,g,b,a)
@@ -31,7 +31,7 @@ class Color(_Color):
         * Color
 
         Color has the attributes::
-        
+
             r, g, b, a
 
         Operator functionality in --optimized mode (-O) requires --enable-operator-funcs.

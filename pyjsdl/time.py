@@ -178,7 +178,7 @@ class Time(object):
 
     def clear_timeout(self, id):
         """
-        Clear timer.
+        Clear timeout.
 
         Argument timer id of set_timeout.
         """

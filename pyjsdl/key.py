@@ -19,7 +19,7 @@ class Key(object):
     def __init__(self):
         """
         Provides methods to access the key function.
-        
+
         Module initialization creates pyjsdl.key instance.
         """
         self.keyPress = env.event.keyPress
