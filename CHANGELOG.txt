@@ -2,6 +2,7 @@
 -refactor mouse positioning.
 -add mouse get_focused method.
 -add display resize method.
+-revise canvas initialization.
 
 0.27    2025-01-18
 -revise surface alpha.
