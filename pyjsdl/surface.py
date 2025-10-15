@@ -10,6 +10,7 @@ The module provides surface object.
 from pyjsdl.pyjsobj import HTML5Canvas
 from pyjsdl.rect import Rect, rectPool
 from pyjsdl.color import Color
+from pyjsdl import constants as Const
 from __pyjamas__ import JS
 import sys
 
@@ -25,12 +26,13 @@ class Surface(HTML5Canvas):
     Surface object.
     """
 
-    def __init__(self, size, *args, **kwargs):
+    def __init__(self, size, flags=0, *args, **kwargs):
         """
         Initialize Surface object.
 
         Return Surface subclassed from a Canvas implementation.
         The size argument is the dimension (width, height) of surface.
+        Optional flags include SRCALPHA to instantiate a transparent surface.
 
         Module initialization places Surface in module's namespace.
         """
@@ -38,6 +40,9 @@ class Surface(HTML5Canvas):
         self.height = int(size[1])
         HTML5Canvas.__init__(self, self.width, self.height)
         HTML5Canvas.resize(self, self.width, self.height)
+        if not (flags & Const.SRCALPHA):
+            self.setFillStyle(Color(0,0,0,255))
+            self.fillRect(0, 0, self.width, self.height)
         self._display = None    #display surface
         self._super_surface = None
         self._offset = (0,0)
@@ -95,7 +100,7 @@ class Surface(HTML5Canvas):
         """
         Return Surface that is a copy of this surface.
         """
-        surface = Surface((self.width, self.height))
+        surface = Surface((self.width, self.height), Const.SRCALPHA)
         surface.drawImage(self.canvas, 0, 0)
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
@@ -140,7 +145,7 @@ class Surface(HTML5Canvas):
 
         Arguments include x, y, width, and height of the subimage.
         """
-        surface = Surface((width,height))
+        surface = Surface((width,height), Const.SRCALPHA)
         surface.drawImage(self.canvas,
                           x, y, width, height, 0, 0, width, height)
         return surface

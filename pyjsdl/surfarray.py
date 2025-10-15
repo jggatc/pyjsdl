@@ -8,6 +8,7 @@ The module provides array access to surface pixel data.
 """
 
 from pyjsdl.surface import Surface
+from pyjsdl import constants as Const
 from pyjsdl.pyjsarray import Ndarray
 from pyjsdl.pyjsarray import Uint8ClampedArray
 from pyjsdl.pyjsarray import Uint8Array
@@ -83,7 +84,7 @@ def make_surface(array):
     Argument array containing image data.
     Return Surface generated from array.
     """
-    surface = Surface((array._imagedata.width,array._imagedata.height))
+    surface = Surface((array._imagedata.width,array._imagedata.height), Const.SRCALPHA)
     blit_array(surface, array)
     return surface
 
