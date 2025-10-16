@@ -107,6 +107,8 @@ class Canvas(Surface):
         self.event.mousePosPre['y'] = y
         self.event.mousePosRel['x'] = x
         self.event.mousePosRel['y'] = y
+        if 'mousefocus' in self.event.events:
+            self.event._updateQueue(self.evt['mousefocus'](event))
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event))
 
@@ -120,6 +122,8 @@ class Canvas(Surface):
         for keycode in self.modKeyCode:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
+        if 'mousefocus' in self.event.events:
+            self.event._updateQueue(self.evt['mousefocus'](event))
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event))
 

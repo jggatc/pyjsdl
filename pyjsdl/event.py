@@ -49,6 +49,8 @@ class Event(object):
                           Const.MOUSEBUTTONUP: 'MouseButtonUp',
                           Const.KEYDOWN: 'KeyDown',
                           Const.KEYUP: 'KeyUp',
+                          Const.WINDOWENTER: 'WindowEnter',
+                          Const.WINDOWLEAVE: 'WindowLeave',
                           Const.ACTIVEEVENT: 'ActiveEvent',
                           Const.QUIT: 'Quit',
                           'mousemove': 'MouseMotion',
@@ -56,8 +58,9 @@ class Event(object):
                           'mouseup': 'MouseButtonUp',
                           'keydown': 'KeyDown',
                           'keyup': 'KeyUp',
-                          'mouseover': 'ActiveEvent',
-                          'mouseout': 'ActiveEvent',
+                          'mouseover': 'WindowEnter',
+                          'mouseout': 'WindowLeave',
+                          'mousefocus': 'ActiveEvent',
                           'focus': 'ActiveEvent',
                           'blur': 'ActiveEvent',
                           'visibilitychange': 'ActiveEvent',
@@ -65,11 +68,12 @@ class Event(object):
         self.eventType = [Const.MOUSEMOTION,
                           Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP,
                           Const.KEYDOWN, Const.KEYUP,
+                          Const.WINDOWENTER, Const.WINDOWLEAVE,
                           Const.ACTIVEEVENT, Const.QUIT,
                           'mousemove', 'mousedown', 'mouseup',
                           'wheel', 'mousewheel', 'DOMMouseScroll',
                           'keydown', 'keypress', 'keyup',
-                          'mouseover', 'mouseout',
+                          'mouseover', 'mouseout', 'mousefocus',
                           'focus', 'blur', 'visibilitychange', 'pagehide']
         self.events = set(self.eventType)
         self.eventTypes = {Const.MOUSEMOTION:
@@ -83,10 +87,13 @@ class Event(object):
                                set([Const.KEYDOWN, 'keydown', 'keypress']),
                            Const.KEYUP:
                                set([ Const.KEYUP, 'keyup']),
+                           Const.WINDOWENTER:
+                               set([Const.WINDOWENTER, 'mouseenter']),
+                           Const.WINDOWLEAVE:
+                               set([Const.WINDOWLEAVE, 'mouseleave']),
                            Const.ACTIVEEVENT:
                                set([Const.ACTIVEEVENT,
-                                   'mouseover', 'mouseout',
-                                   'focus', 'blur', 'visibilitychange']),
+                                   'mousefocus', 'focus', 'blur', 'visibilitychange']),
                            Const.QUIT:
                                set([Const.QUIT, 'pagehide'])}
         self.eventObj = {'mousedown': MouseDownEvent,
@@ -97,8 +104,9 @@ class Event(object):
                          'mousemove': MouseMoveEvent,
                          'keydown': KeyDownEvent,
                          'keyup': KeyUpEvent,
-                         'mouseover': MouseFocusEvent,
-                         'mouseout': MouseFocusEvent,
+                         'mouseover': MouseEnterEvent,
+                         'mouseout': MouseLeaveEvent,
+                         'mousefocus': MouseFocusEvent,
                          'focus': InputFocusEvent,
                          'blur': InputFocusEvent,
                          'visibilitychange': VisibilityEvent,
@@ -441,6 +449,8 @@ class JEvent(object):
         * MouseFocusEvent
         * InputFocusEvent
         * VisibilityEvent
+        * WindowEnter
+        * WindowLeave
         * PageHide
     """
 
@@ -867,6 +877,50 @@ class VisibilityEvent(JEvent):
         self.type = Const.ACTIVEEVENT
         self.state = Const.APPACTIVE
         self.gain = self._gain[not document.getVisibility()]
+
+
+class MouseEnterEvent(JEvent):
+    """
+    MouseEnterEvent object.
+
+    JEvent wrapper with WINDOWENTER event interface.
+    """
+
+    __slots__ = ['type', 'event']
+    _eventName = {Const.WINDOWENTER: 'WindowEnter'}
+
+    def __init__(self, event):
+        """
+        Initialize event.
+
+        Attributes:
+            * type: WINDOWENTER
+            * event: JavaScript event
+        """
+        self.event = event
+        self.type = Const.WINDOWENTER
+
+
+class MouseLeaveEvent(JEvent):
+    """
+    MouseLeaveEvent object.
+
+    JEvent wrapper with WINDOWLEAVE event interface.
+    """
+
+    __slots__ = ['type', 'event']
+    _eventName = {Const.WINDOWLEAVE: 'WindowLeave'}
+
+    def __init__(self, event):
+        """
+        Initialize event.
+
+        Attributes:
+            * type: MWINDOWLEAVE
+            * event: JavaScript event
+        """
+        self.event = event
+        self.type = Const.WINDOWLEAVE
 
 
 class PageHide(JEvent):
