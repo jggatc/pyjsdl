@@ -34,9 +34,7 @@ class Event(object):
         self.queue = []
         self.queueNil = []
         self.queueTmp = []
-        self.mousePos = {'x':-1, 'y':-1}
-        self.mousePosPre = {'x':-1, 'y':-1}
-        self.mousePosRel = {'x':-1, 'y':-1}
+        self.mouseEvt = {'pos':None, 'pre':None, 'rel':None, 'focus':False}
         self.mousePress = {0:False, 1:False, 2:False}
         self.keyPress = {Const.K_ALT: False,
                          Const.K_CTRL: False,
@@ -370,6 +368,11 @@ class Event(object):
         self._unlock()
         return None
 
+    def _set_mouse_event(self):
+        self.mouseEvt['pos'] = _Evt()
+        self.mouseEvt['pre'] = _Evt()
+        self.mouseEvt['rel'] = _Evt()
+
     def _set_key_event(self):
         self.eventObj['keydown'] = _KeyDownEvent
         self.eventObj['keyup'] = _KeyUpEvent
@@ -623,8 +626,8 @@ class MouseMoveEvent(MouseEvent):
                         (int(event.buttons) & 2) == 2)
         self.pos = (x + env.frame.scrollLeft,
                     y + env.frame.scrollTop)
-        self.rel = (x - env.event.mousePosPre['x'],
-                    y - env.event.mousePosPre['y'])
+        self.rel = (x - env.event.mouseEvt['pre'].x,
+                    y - env.event.mouseEvt['pre'].y)
 
 
 class KeyEvent(JEvent):
@@ -943,6 +946,15 @@ class PageHide(JEvent):
         """
         self.event = event
         self.type = Const.QUIT
+
+
+class _Evt(object):
+
+    __slots__ = ['x', 'y']
+
+    def __init__(self):
+        self.x = -1
+        self.y = -1
 
 
 class TouchListener:

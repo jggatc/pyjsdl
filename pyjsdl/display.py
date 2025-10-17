@@ -64,22 +64,25 @@ class Canvas(Surface):
         self._frametime = 0
         self._rendertime = self.time.time()
         self._pause = False
-        self._canvas_init()
         self.initialized = False
 
-    def _canvas_init(self):
+    def _initiate(self):
         global _canvas, _ctx, _img, _wnd
+        panel = SimplePanel(Widget=self)
+        RootPanel().add(panel)
         _canvas = self
         _ctx = self.impl.canvasContext
         _img = self.surface.canvas
         _wnd = requestAnimationFrameInit()
+        self.event._set_mouse_event()
+        return panel
 
     def onMouseMove(self, sender, x, y):
         event = DOM.eventGetCurrentEvent()
-        self.event.mousePosPre['x'] = self.event.mousePos['x']
-        self.event.mousePosPre['y'] = self.event.mousePos['y']
-        self.event.mousePos['x'] = x
-        self.event.mousePos['y'] = y
+        self.event.mouseEvt['pre'].x = self.event.mouseEvt['pos'].x
+        self.event.mouseEvt['pre'].y = self.event.mouseEvt['pos'].y
+        self.event.mouseEvt['pos'].x = x
+        self.event.mouseEvt['pos'].y = y
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event, x, y))
 
@@ -101,12 +104,12 @@ class Canvas(Surface):
              - DOM.getAbsoluteLeft(sender.getElement()))
         y = (DOM.eventGetClientY(event)
              - DOM.getAbsoluteTop(sender.getElement()))
-        self.event.mousePos['x'] = x
-        self.event.mousePos['y'] = y
-        self.event.mousePosPre['x'] = x
-        self.event.mousePosPre['y'] = y
-        self.event.mousePosRel['x'] = x
-        self.event.mousePosRel['y'] = y
+        self.event.mouseEvt['pos'].x = x
+        self.event.mouseEvt['pos'].y = y
+        self.event.mouseEvt['pre'].x = x
+        self.event.mouseEvt['pre'].y = y
+        self.event.mouseEvt['rel'].x = x
+        self.event.mouseEvt['rel'].y = y
         if 'mousefocus' in self.event.events:
             self.event._updateQueue(self.evt['mousefocus'](event))
         if event.type in self.event.events:
@@ -114,8 +117,6 @@ class Canvas(Surface):
 
     def onMouseLeave(self, sender):
         event = DOM.eventGetCurrentEvent()
-        self.event.mousePos['x'] = -1
-        self.event.mousePos['y'] = -1
         self.event.mousePress[0] = False
         self.event.mousePress[1] = False
         self.event.mousePress[2] = False
@@ -223,11 +224,13 @@ class Canvas(Surface):
 
     def onFocus(self, sender):
         event = DOM.eventGetCurrentEvent()
+        self.event.mouseEvt['focus'] = True
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event))
 
     def onLostFocus(self, sender):
         event = DOM.eventGetCurrentEvent()
+        self.event.mouseEvt['focus'] = False
         if event.type in self.event.events:
             self.event._updateQueue(self.evt[event.type](event))
 
@@ -406,9 +409,7 @@ class Display(object):
         env.set_env('canvas', self.canvas)
         self.frame = Window.getDocumentRoot()
         env.set_env('frame', self.frame)
-        panel = SimplePanel(Widget=self.canvas)
-        RootPanel().add(panel)
-        self.panel = panel
+        self.panel = self.canvas._initiate()
         self.vpanel = None
         self.textbox = None
         self.textarea = None
