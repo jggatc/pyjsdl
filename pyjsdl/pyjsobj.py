@@ -39,7 +39,8 @@ class MouseWheelHandler(object):
         element = self.getElement()
         listener = lambda event: self.onMouseWheel(event)
         self._listener[self] = listener
-        element.addEventListener(self._mousewheel, listener)
+        mousewheel = self._mousewheel
+        JS("element.addEventListener(mousewheel, listener, {passive: false});")
 
     def removeMouseWheelListener(self):
         element = self.getElement()

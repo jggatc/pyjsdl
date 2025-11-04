@@ -45,6 +45,7 @@ class Event(object):
         self.eventName = {Const.MOUSEMOTION: 'MouseMotion',
                           Const.MOUSEBUTTONDOWN: 'MouseButtonDown',
                           Const.MOUSEBUTTONUP: 'MouseButtonUp',
+                          Const.MOUSEWHEEL: 'MouseWheel',
                           Const.KEYDOWN: 'KeyDown',
                           Const.KEYUP: 'KeyUp',
                           Const.WINDOWENTER: 'WindowEnter',
@@ -54,6 +55,7 @@ class Event(object):
                           'mousemove': 'MouseMotion',
                           'mousedown': 'MouseButtonDown',
                           'mouseup': 'MouseButtonUp',
+                          'mousewheel': 'MouseWheel',
                           'keydown': 'KeyDown',
                           'keyup': 'KeyUp',
                           'mouseover': 'WindowEnter',
@@ -64,12 +66,16 @@ class Event(object):
                           'visibilitychange': 'ActiveEvent',
                           'pagehide': 'Quit'}
         self.eventType = [Const.MOUSEMOTION,
-                          Const.MOUSEBUTTONDOWN, Const.MOUSEBUTTONUP,
-                          Const.KEYDOWN, Const.KEYUP,
-                          Const.WINDOWENTER, Const.WINDOWLEAVE,
-                          Const.ACTIVEEVENT, Const.QUIT,
-                          'mousemove', 'mousedown', 'mouseup',
-                          'wheel', 'mousewheel', 'DOMMouseScroll',
+                          Const.MOUSEBUTTONDOWN,
+                          Const.MOUSEBUTTONUP,
+                          Const.MOUSEWHEEL,
+                          Const.KEYDOWN,
+                          Const.KEYUP,
+                          Const.WINDOWENTER,
+                          Const.WINDOWLEAVE,
+                          Const.ACTIVEEVENT,
+                          Const.QUIT,
+                          'mousemove', 'mousedown', 'mouseup', 'mousewheel',
                           'keydown', 'keypress', 'keyup',
                           'mouseover', 'mouseout', 'mousefocus',
                           'focus', 'blur', 'visibilitychange', 'pagehide']
@@ -77,10 +83,13 @@ class Event(object):
         self.eventTypes = {Const.MOUSEMOTION:
                                set([Const.MOUSEMOTION, 'mousemove']),
                            Const.MOUSEBUTTONDOWN:
-                               set([Const.MOUSEBUTTONDOWN,
-                               'mousedown', 'wheel', 'mousewheel', 'DOMMouseScroll']),
+                               set([Const.MOUSEBUTTONDOWN, 'mousedown',
+                                   'mousewheeldown']),
                            Const.MOUSEBUTTONUP:
-                               set([Const.MOUSEBUTTONUP, 'mouseup']),
+                               set([Const.MOUSEBUTTONUP, 'mouseup',
+                                   'mousewheelup']),
+                           Const.MOUSEWHEEL:
+                               set([Const.MOUSEWHEEL, 'mousewheel']),
                            Const.KEYDOWN:
                                set([Const.KEYDOWN, 'keydown', 'keypress']),
                            Const.KEYUP:
@@ -96,9 +105,9 @@ class Event(object):
                                set([Const.QUIT, 'pagehide'])}
         self.eventObj = {'mousedown': MouseDownEvent,
                          'mouseup': MouseUpEvent,
-                         'wheel': MouseWheelEvent,
                          'mousewheel': MouseWheelEvent,
-                         'DOMMouseScroll': _MouseWheelEvent,
+                         'mousewheeldown': MouseWheelDownEvent,
+                         'mousewheelup': MouseWheelUpEvent,
                          'mousemove': MouseMoveEvent,
                          'keydown': KeyDownEvent,
                          'keyup': KeyUpEvent,
@@ -486,16 +495,12 @@ class MouseEvent(JEvent):
     JEvent wrapper for:
         * MouseDownEvent
         * MouseUpEvent
-        * MouseWheelEvent
         * MouseMoveEvent
     """
 
     _types = {'mousemove': Const.MOUSEMOTION,
               'mousedown': Const.MOUSEBUTTONDOWN,
-              'mouseup': Const.MOUSEBUTTONUP,
-              'wheel': Const.MOUSEBUTTONDOWN,
-              'mousewheel': Const.MOUSEBUTTONDOWN,
-              'DOMMouseScroll': Const.MOUSEBUTTONDOWN}
+              'mouseup': Const.MOUSEBUTTONUP}
     _eventName = {Const.MOUSEMOTION: 'MouseMotion',
                   Const.MOUSEBUTTONDOWN: 'MouseButtonDown',
                   Const.MOUSEBUTTONUP: 'MouseButtonUp'}
@@ -555,50 +560,6 @@ class MouseUpEvent(MouseEvent):
                     y + env.frame.scrollTop)
 
 
-class MouseWheelEvent(MouseEvent):
-    """
-    MouseWheelEvent object.
-
-    JEvent wrapper with MOUSEBUTTONDOWN event interface.
-    """
-
-    __slots__ = ['type', 'button', 'pos', 'event']
-
-    def __init__(self, event, x, y):
-        """
-        Initialize event.
-
-        Attributes:
-            * type: MOUSEBUTTONDOWN
-            * button: mouse button pressed (4-5)
-            * pos: mouse position (x,y)
-            * event: JavaScript event
-        """
-        self.event = event
-        self.type = self._types[event.type]
-        if event.deltaY < 0:
-            self.button = 4
-        else:
-            self.button = 5
-        self.pos = (x + env.frame.scrollLeft,
-                    y + env.frame.scrollTop)
-
-
-class _MouseWheelEvent(MouseEvent):
-
-    __slots__ = ['type', 'button', 'pos', 'event']
-
-    def __init__(self, event, x, y):
-        self.event = event
-        self.type = self._types[event.type]
-        if event.detail < 0:
-            self.button = 4
-        else:
-            self.button = 5
-        self.pos = (x + env.frame.scrollLeft,
-                    y + env.frame.scrollTop)
-
-
 class MouseMoveEvent(MouseEvent):
     """
     MouseMoveEvent object.
@@ -628,6 +589,113 @@ class MouseMoveEvent(MouseEvent):
                     y + env.frame.scrollTop)
         self.rel = (x - env.event.mouseEvt['pre'].x,
                     y - env.event.mouseEvt['pre'].y)
+
+
+class MouseWheelDownEvent(JEvent):
+    """
+    MouseWheelEvent object.
+
+    JEvent wrapper with MOUSEBUTTONDOWN event interface.
+    """
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    _eventName = {Const.MOUSEBUTTONDOWN: 'MouseButtonDown'}
+
+    def __init__(self, event, x, y):
+        """
+        Initialize event.
+
+        Attributes:
+            * type: MOUSEBUTTONDOWN
+            * button: mouse button pressed (4-5)
+            * pos: mouse position (x,y)
+            * event: JavaScript event
+        """
+        self.event = event
+        self.type = Const.MOUSEBUTTONDOWN
+        if event.deltaY < 0:
+            self.button = 4
+        else:
+            self.button = 5
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
+
+
+class MouseWheelUpEvent(JEvent):
+    """
+    MouseWheelEvent object.
+
+    JEvent wrapper with MOUSEBUTTONUP event interface.
+    """
+
+    __slots__ = ['type', 'button', 'pos', 'event']
+
+    _eventName = {Const.MOUSEBUTTONUP: 'MouseButtonUp'}
+
+    def __init__(self, event, x, y):
+        """
+        Initialize event.
+
+        Attributes:
+            * type: MOUSEBUTTONUP
+            * button: mouse button pressed (4-5)
+            * pos: mouse position (x,y)
+            * event: JavaScript event
+        """
+        self.event = event
+        self.type = Const.MOUSEBUTTONUP
+        if event.deltaY < 0:
+            self.button = 4
+        else:
+            self.button = 5
+        self.pos = (x + env.frame.scrollLeft,
+                    y + env.frame.scrollTop)
+
+
+class MouseWheelEvent(JEvent):
+    """
+    MouseWheelEvent object.
+
+    JEvent wrapper with MOUSEWHEEL event interface.
+    """
+
+    __slots__ = ['type', 'x', 'y', 'precise_x', 'precise_y', 'event']
+
+    _eventName = {Const.MOUSEWHEEL: 'MouseWheel'}
+
+    def __init__(self, event):
+        """
+        Initialize event.
+
+        Attributes:
+            * type: MOUSEWHEEL
+            * x: mouse wheel rotation (-1,0,1)
+            * y: mouse wheel rotation (-1,0,1)
+            * precise_x: mouse precise wheel rotation (-1,0,1)
+            * precise_y: mouse precise wheel rotation (-1,0,1)
+            * event: JavaScript event
+        """
+        self.event = event
+        self.type = Const.MOUSEWHEEL
+        if event.deltaY != 0:
+            self.x = 0
+            self.precise_x = 0.0
+            if event.deltaY < 0:
+                self.y = 1
+                self.precise_y = 1.0
+            else:
+                self.y = -1
+                self.precise_y = -1.0
+        else:
+            self.y = 0
+            self.precise_y = 0.0
+            if event.deltaX < 0:
+                self.x = -1
+                self.precise_x = -1.0
+            else:
+                self.x = 1
+                self.precise_x = 1.0
 
 
 class KeyEvent(JEvent):

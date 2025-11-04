@@ -129,12 +129,30 @@ class Canvas(Surface):
             self.event._updateQueue(self.evt[event.type](event))
 
     def onMouseWheel(self, event):
-        if event.type in self.event.events:
-            x = (DOM.eventGetClientX(event)
-                 - DOM.getAbsoluteLeft(self.getElement()))
-            y = (DOM.eventGetClientY(event)
-                 - DOM.getAbsoluteTop(self.getElement()))
-            self.event._updateQueue(self.evt[event.type](event, x, y))
+        if not hasattr(event, 'deltaY'):
+            if hasattr(event, 'wheeleventY'):
+                event.deltaX = -event.wheeleventX
+                event.deltaY = -event.wheeleventY
+            elif hasattr(event, 'detail'):
+                event.deltaX = 0
+                event.deltaY = event.detail
+            else:
+                return
+        if event.deltaY:
+            if 'mousedown' in self.event.events:
+                x = (DOM.eventGetClientX(event)
+                     - DOM.getAbsoluteLeft(self.getElement()))
+                y = (DOM.eventGetClientY(event)
+                     - DOM.getAbsoluteTop(self.getElement()))
+                self.event._updateQueue(self.evt['mousewheeldown'](event, x, y))
+            if 'mouseup' in self.event.events:
+                x = (DOM.eventGetClientX(event)
+                     - DOM.getAbsoluteLeft(self.getElement()))
+                y = (DOM.eventGetClientY(event)
+                     - DOM.getAbsoluteTop(self.getElement()))
+                self.event._updateQueue(self.evt['mousewheelup'](event, x, y))
+        if 'mousewheel' in self.event.events:
+            self.event._updateQueue(self.evt['mousewheel'](event))
         DOM.eventPreventDefault(event)
 
     def onKeyEvent(self, event):
