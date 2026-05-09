@@ -151,8 +151,8 @@ class Vector2(object):
         mag = self.magnitude()
         if mag == 0:
             raise ValueError('Cannot normalize vector of zero length')
-        self.x /= mag
-        self.y /= mag
+        self.x = self.x / mag
+        self.y = self.y / mag
         return None
 
     def is_normalized(self):
@@ -193,8 +193,8 @@ class Vector2(object):
         if nn == 0:
             raise ValueError('Cannot reflect from normal of zero length')
         c = 2 * vn / nn
-        self.x -= (vector[0] * c)
-        self.y -= (vector[1] * c)
+        self.x = self.x - (vector[0] * c)
+        self.y = self.y - (vector[1] * c)
         return None
 
     def distance_to(self, vector):
@@ -252,12 +252,9 @@ class Vector2(object):
         else:
             a = 1.0
             b = 0.0
-        v = self.__class__((sx * a) + (vx * b),
-                           (sy * a) + (vy * b))
         smag = ((1.0-t) * smag) + (t * vmag)
-        v.x *= smag
-        v.y *= smag
-        return v
+        return self.__class__(((sx * a) + (vx * b)) * smag,
+                              ((sy * a) + (vy * b)) * smag)
 
     def elementwise(self):
         """
