@@ -23,7 +23,7 @@
 **Pyjsdl - Pyjs Canvas Library**
 """
 
-__version__ = '0.27'
+__version__ = '0.28'
 
 from pyjsdl import env
 from pyjsdl import util

@@ -1,4 +1,4 @@
-0.27_dev
+0.28    2026-05-09
 -refactor mouse positioning.
 -add mouse get_focused method.
 -add display resize method.
