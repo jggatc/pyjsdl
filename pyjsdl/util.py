@@ -132,11 +132,12 @@ class PyjsMode:
 
     Attributes:
         strict/optimized to specify mode
-        getattr_call/eq_call to specify functionality
+        getattr_call/eq_call/op_call to specify functionality
     """
     def __init__(self):
         self.getattr_call = self.test_getattr()
         self.eq_call = self.test_eq()
+        self.op_call = self.test_op()
         self.strict, self.optimized = self.test_mode()
 
     def test_mode(self):
@@ -159,6 +160,20 @@ class PyjsMode:
         Test if object __eq__ method is called.
         """
         return (Rect(0,0,20,20) == Rect(0,0,20,20))
+
+    def test_op(self):
+        """
+        Test if object __add__ op method is called.
+        """
+        class Obj(object):
+            def __init__(self, x):
+                self.x = x
+            def __add__(self, other):
+                return self.__class__(self.x + other.x)
+        obj = Obj(1)
+        obj2 = obj + obj
+        return hasattr(obj2, 'x') and obj2.x == 2
+
 
 env.set_env('pyjs_mode', PyjsMode())
 
