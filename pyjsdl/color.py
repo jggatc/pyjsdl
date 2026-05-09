@@ -159,13 +159,13 @@ class Color(_Color):
         return self.__class__(r,g,b,a)
 
     def __floordiv__(self, other):
-        if other.r != 0: r = int(self.r // other.r)
+        if other.r != 0: r = self.r // other.r
         else: r = 0
-        if other.g != 0: g = int(self.g // other.g)
+        if other.g != 0: g = self.g // other.g
         else: g = 0
-        if other.b != 0: b = int(self.b // other.b)
+        if other.b != 0: b = self.b // other.b
         else: b = 0
-        if other.a != 0: a = int(self.a // other.a)
+        if other.a != 0: a = self.a // other.a
         else: a = 0
         return self.__class__(r,g,b,a)
 
@@ -214,13 +214,13 @@ class Color(_Color):
         return self
 
     def __ifloordiv__(self, other):
-        if other.r != 0: self.r //= other.r
+        if other.r != 0: self.r = self.r // other.r
         else: self.r = 0
-        if other.g != 0: self.g //= other.g
+        if other.g != 0: self.g = self.g // other.g
         else: self.g = 0
-        if other.b != 0: self.b //= other.b
+        if other.b != 0: self.b = self.b // other.b
         else: self.b = 0
-        if other.a != 0: self.a //= other.a
+        if other.a != 0: self.a = self.a // other.a
         else: self.a = 0
         return self
 
