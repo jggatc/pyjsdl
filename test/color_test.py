@@ -147,8 +147,6 @@ def test_color_comparison():
 
 
 def test_color_operator():
-    if (env['pyjs_opt'] and not env['pyjs_attr']):    #special methods ignored
-        raise NotImplementedError
     if not env['pyjs_opt']:
         c1 = pg.Color(60, 220, 120, 100)
         c2 = pg.Color(40, 40, 40, 255)
@@ -180,7 +178,7 @@ def test_color_operator():
         assert c == pg.Color(0, 10, 20, 55)
         c = pg.Color(0, 10, 20, 255)
         assert ~c == pg.Color(255, 245, 235, 0)
-    if (env['pyjs_opt'] and env['pyjs_attr']):
+    elif env['pyjs_opt'] and env['pyjs_op']:
         c1 = pg.Color(60, 220, 120, 100)
         c2 = pg.Color(40, 40, 40, 255)
         c3 = pg.Color(255, 0, 0, 100)

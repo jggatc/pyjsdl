@@ -4,9 +4,11 @@ Libtest
 Check doc/libtest.txt for information.
 
 pyjsmode:
-pyjsbuild -S: opt=False/attr=True
-pyjsbuild -O: opt=True/attr=False
-pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True
+pyjsbuild -S: opt=False/attr=True/op=True
+pyjsbuild -O: opt=True/attr=False/op=False
+pyjsbuild -O descriptor-proto: opt=True/attr=True/op=False
+pyjsbuild -O operator-funcs: opt=True/attr=False/op=True
+pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True/op=True
 """
 
 import os, sys
@@ -53,16 +55,20 @@ if executor in ('python', 'jython', 'pyjs'):
 
 
 def set_pyjsmode():
-    #pyjsbuild -S: opt=False/attr=True
-    #pyjsbuild -O: opt=True/attr=False
-    #pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True
+    #pyjsbuild -S: opt=False/attr=True/op=True
+    #pyjsbuild -O: opt=True/attr=False/op=False
+    #pyjsbuild -O descriptor-proto: opt=True/attr=True/op=False
+    #pyjsbuild -O operator-funcs: opt=True/attr=False/op=True
+    #pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True/op=True
     if executor == 'pyjs':
         pyjs_opt = pg.env.pyjs_mode.optimized
         pyjs_attr = pg.env.pyjs_mode.getattr_call
+        pyjs_op = pg.env.pyjs_mode.op_call
     else:
         pyjs_opt = False
         pyjs_attr = True
-    return pyjs_opt, pyjs_attr
+        pyjs_op = True
+    return pyjs_opt, pyjs_attr, pyjs_op
 
 
 class Log:
@@ -137,7 +143,7 @@ def tests_init():
     width, height = 20,20
     display = pg.display.set_mode((width, height))
     surface = pg.Surface((width, height))
-    pyjs_opt, pyjs_attr = set_pyjsmode()
+    pyjs_opt, pyjs_attr, pyjs_op = set_pyjsmode()
     log = Log()
     env['pg'] = pg
     env['platform'] = platform
@@ -146,6 +152,7 @@ def tests_init():
     env['log'] = log
     env['pyjs_opt'] = pyjs_opt
     env['pyjs_attr'] = pyjs_attr
+    env['pyjs_op'] = pyjs_op
     env['display'] = display
     env['surface'] = surface
     env['width'] = width

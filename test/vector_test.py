@@ -70,7 +70,7 @@ def test_vector_operator():
     Vector2 = pg.Vector2
     v1 = Vector2(2.2, 3.0)
     v2 = Vector2(3.0, 4.0)
-    if not (env['pyjs_opt'] and not env['pyjs_attr']):
+    if not env['pyjs_opt'] or (env['pyjs_opt'] and env['pyjs_op']):
         v = v1 + v2
         assert v.x == 5.2 and v.y == 7.0
         v = v1 + (5.0, 5.0)
@@ -91,11 +91,11 @@ def test_vector_operator():
         v.x = v.x + 1.0
         v.y = v.y + 2.0
         assert v.x == 3.2 and v.y == 5.0
-        v.x += 0.5
-        v.y -= 0.5
+        v.x = v.x + 0.5
+        v.y = v.y - 0.5
         assert v.x == 3.7 and v.y == 4.5
-    if not (env['pyjs_opt'] and not env['pyjs_attr']):
-        #-S / -O --enable-descriptor-proto --enable-operator-funcs
+    if not env['pyjs_opt'] or (env['pyjs_opt'] and env['pyjs_op']):
+        #-S / -O --enable-operator-funcs
         #unable cmp vector to tuple
         el = v1.elementwise()
         v = el + v2
@@ -117,7 +117,7 @@ def test_vector_operator():
         assert (v1 * 2) == Vector2(4.0, 6.0)
         assert (v1 / 2) == Vector2(1.0, 1.5)
         assert (v1 // 2) == Vector2(1.0, 1.0)
-        if env['platform'] != 'js':    ##
+        if env['platform'] != 'js':    #pyjs cmp obj identity
             assert ((2.0,3.0) + v2) == Vector2(5.0, 7.0)
             assert ((2.0,3.0) - v2) == Vector2(-1.0, -1.0)
             assert ((2.0,3.0) * v2) == 18.0
@@ -199,7 +199,7 @@ def test_vector_operator():
         assert (v1 != 2) == True
         assert (el == el) == True
         assert (el != el) == False
-        if env['platform'] != 'js':    ##pyjs cmp obj identity
+        if env['platform'] != 'js':    #pyjs cmp obj identity
             assert (el == v1) == True
             assert (el == v2) == False
             assert (el != v1) == False
@@ -240,13 +240,11 @@ def test_vector_direction():
     assert _rd(v3.angle_to(v4)) == -180.0
     v = v1.rotate(30)
     assert _rd(v.x) == 0.232 and _rd(v.y) == 3.598
-#    if env['platform'] in ('jvm', 'js'):
     v = v1.rotate_rad(1.0)
     assert _rd(v.x) == -1.444 and _rd(v.y) == 3.304
     v = Vector2(v1)
     v.rotate_ip(30)
     assert _rd(v.x) == 0.232 and _rd(v.y) == 3.598
-#    if env['platform'] in ('jvm', 'js'):
     v = Vector2(v1)
     v.rotate_ip_rad(1.0)
     assert _rd(v.x) == -1.444 and _rd(v.y) == 3.304
@@ -273,7 +271,7 @@ def test_vector_dot():
     assert v1.dot(v3) == 9.0
     assert v1.dot(v4) == -36.0
     assert v1.dot(v5) == 18.0
-    if not (env['pyjs_opt'] and not env['pyjs_attr']):
+    if not env['pyjs_opt'] or (env['pyjs_opt'] and env['pyjs_op']):
         assert (v1 * v2) == 4.0
         assert (v1 * v3) == 9.0
         assert (v1 * v4) == -36.0
@@ -323,7 +321,7 @@ def test_vector_lerp():
     assert _rd(v.x) == 6.0 and _rd(v.y) == 8.0
     v = v1.slerp(v1, 0.5)
     assert _rd(v.x) == 2.0 and _rd(v.y) == 3.0
-    if not (env['pyjs_opt'] and not env['pyjs_attr']):
+    if not env['pyjs_opt'] or (env['pyjs_opt'] and env['pyjs_op']):
         v = v1.slerp(v1*2.0, 0.5)
         assert _rd(v.x) == 3.0 and _rd(v.y) == 4.5
     v = v1.slerp(Vector2(-6.0, -8.0), 0.5)
